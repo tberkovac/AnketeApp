@@ -17,12 +17,26 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/listaAnketa"
-        android:layout_width="300dp"
+        android:layout_width="400dp"
         android:layout_height="600dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="30dp"
         />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/upisDugme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/listaAnketa"
+        app:srcCompat="@android:drawable/ic_menu_add"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        android:contentDescription="@string/upisDugme"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
