@@ -36,7 +36,7 @@ class AnketaListAdapter(
         val anketa = ankete[position]
 
         holder.nazivAnkete.text = anketa.naziv
-        holder.brojIstrazivanja.text = anketa.nazivIstraživanja
+        holder.brojIstrazivanja.text = anketa.nazivIstrazivanja
         holder.progresZavrsetka.setProgress(anketa.progres.toInt(), false)
 
 
@@ -52,10 +52,10 @@ class AnketaListAdapter(
                 holder.pismeniStatus.text = "Vrijeme aktiviranja: " + anketa.datumPocetak
             }else if( date > anketa.datumKraj){
                 boja = "crvena"
-                holder.pismeniStatus.text = "Anketa zatvorena: " + anketa.datumKraj
+                holder.pismeniStatus.text = "Anketa zatvorena: " + anketa.datumKraj.time
             }else{
                 boja = "zelena"
-                holder.pismeniStatus.text = "Vrijeme zatvaranja: " + anketa.datumKraj
+                holder.pismeniStatus.text = "Vrijeme zatvaranja: " + anketa.datumKraj.time
 
             }
         }else{
