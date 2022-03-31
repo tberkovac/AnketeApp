@@ -37,7 +37,7 @@
         android:id="@+id/dodajIstrazivanjeDugme"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/zaUpisDugme"
+        android:text="@string/upisDugme2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
