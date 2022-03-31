@@ -5,22 +5,23 @@
     android:layout_height="190dp"
     xmlns:tools="http://schemas.android.com/tools"
     >
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="8dp">
 
         <RelativeLayout
-            android:layout_width="190dp"
-            android:layout_height="30dp"
-            >
+            android:layout_width="wrap_content"
+            android:layout_height="30dp">
 
             <TextView
                 android:id="@+id/nazivAnkete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
                 android:width="80dp"
                 android:text="@string/nazivAnkete" />
 
@@ -28,16 +29,15 @@
                 android:id="@+id/statusAnkete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="170dp"
+                android:layout_marginStart="150dp"
                 android:layout_marginTop="12dp"
-                android:contentDescription="@string/statusankete"
-                />
+                android:contentDescription="@string/statusankete" />
         </RelativeLayout>
 
         <TextView
             android:id="@+id/brojIstrazivanja"
-            android:layout_width="93dp"
-            android:layout_height="31dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="@string/brojistrazivanja"
             tools:layout_editor_absoluteX="158dp" />
@@ -45,16 +45,17 @@
         <ProgressBar
             android:id="@+id/progresZavrsetka"
             style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="124dp"
-            android:layout_height="37dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal" />
 
         <TextView
             android:id="@+id/pismeniStatus"
-            android:layout_width="111dp"
-            android:layout_height="43dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="@string/pismenistatus"/>
+            android:layout_marginBottom="10dp"
+            android:text="@string/pismenistatus" />
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>
