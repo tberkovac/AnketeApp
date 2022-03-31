@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Spirala1</string>
+    <string name="nazivAnkete">anketa 1</string>
+    <string name="statusankete">statusAnkete</string>
+    <string name="brojistrazivanja">brojIstrazivanja</string>
+    <string name="pismenistatus">status</string>
+    <string name="upisDugme">zaUpisNaIstrazivanje</string>
+    <string name="upisDugme2">Upiši me</string>
 </resources>
