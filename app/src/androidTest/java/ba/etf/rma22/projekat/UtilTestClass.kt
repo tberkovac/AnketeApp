@@ -12,7 +12,7 @@ import androidx.test.espresso.ViewAssertion
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers
-import ba.etf.rma22.projekat.data.Anketa
+import ba.etf.rma22.projekat.data.models.Anketa
 import junit.framework.Assert
 import org.hamcrest.CoreMatchers
 import org.hamcrest.Description
@@ -63,11 +63,11 @@ class UtilTestClass {
             Espresso.onView(ViewMatchers.withId(R.id.listaAnketa)).perform(
                 RecyclerViewActions.scrollTo<RecyclerView.ViewHolder>(
                     firstNotVisited(posjeceni,
-                    CoreMatchers.allOf(
-                        ViewMatchers.hasDescendant(ViewMatchers.withText(k.naziv)),
-                        ViewMatchers.hasDescendant(ViewMatchers.withText(k.nazivIstrazivanja))
+                        CoreMatchers.allOf(
+                            ViewMatchers.hasDescendant(ViewMatchers.withText(k.naziv)),
+                            ViewMatchers.hasDescendant(ViewMatchers.withText(k.nazivIstrazivanja))
+                        )
                     )
-                )
                 )
             )
         }
@@ -96,8 +96,8 @@ class UtilTestClass {
 
                 override fun matchesSafely(view: RecyclerView): Boolean {
                     val viewHolder = view.findViewHolderForAdapterPosition(position)
-                            ?: // has no item on such position
-                            return false
+                        ?: // has no item on such position
+                        return false
                     return itemMatcher.matches(viewHolder.itemView)
                 }
             }

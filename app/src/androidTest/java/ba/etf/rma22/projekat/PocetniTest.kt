@@ -11,7 +11,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import ba.etf.rma22.projekat.UtilTestClass.Companion.hasItemCount
 import ba.etf.rma22.projekat.UtilTestClass.Companion.itemTest
 import ba.etf.rma22.projekat.UtilTestClass.Companion.itemTestNotVisited
-import ba.etf.rma22.projekat.data.Anketa
+import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.repositories.AnketaRepository
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.CoreMatchers.instanceOf
