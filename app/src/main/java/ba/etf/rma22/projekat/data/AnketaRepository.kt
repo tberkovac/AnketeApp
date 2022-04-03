@@ -1,12 +1,26 @@
 package ba.etf.rma22.projekat.data
 
+import android.util.Log
 import java.time.LocalDate
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 object AnketaRepository {
+    var k : Korisnik = Korisnik()
     fun getMyAnkete() : List<Anketa> {
-        return dajAnketeStatic()
+        var naziviUpisanihIstrazivanja : MutableList<String> = mutableListOf()
+        var naziviUpisanihGrupa: MutableList<String> = mutableListOf()
+
+        for( i in k.upisanaIstrazivanja) {
+            naziviUpisanihIstrazivanja = naziviUpisanihIstrazivanja.plus(i.naziv) as MutableList<String>
+        }
+        for( i in k.upisaneGrupe) {
+            naziviUpisanihGrupa = naziviUpisanihGrupa.plus(i.naziv) as MutableList<String>
+        }
+
+        return dajAnketeStatic().filter {anketa -> naziviUpisanihIstrazivanja.contains(anketa.nazivIstrazivanja)}
+            .filter { anketa -> k.upisaneGrupe.contains(Grupa(anketa.nazivGrupe,anketa.nazivIstrazivanja)) }
     }
 
     fun getAll(): List<Anketa> {
@@ -14,17 +28,22 @@ object AnketaRepository {
     }
 
     fun getDone(): List<Anketa> {
-        return dajAnketeStatic().filter{anketa ->  anketa.datumRada!=null}.toList()
+        return getMyAnkete().filter{anketa ->  anketa.datumRada!=null}.toList()
     }
 
     fun getFuture(): List<Anketa> {
         val cal: Calendar = Calendar.getInstance()
         cal.set(LocalDate.now().year, LocalDate.now().monthValue, LocalDate.now().dayOfMonth)
         val date: Date = cal.time
-        return getAll().filter { anketa -> anketa.datumPocetak> date}
+
+        return getMyAnkete().filter { anketa -> anketa.datumPocetak> date && anketa.datumRada==null}
     }
 
     fun getNotTaken(): List<Anketa> {
-        return getAll().filter{ anketa -> anketa.datumRada == null }
+        val cal: Calendar = Calendar.getInstance()
+        cal.set(LocalDate.now().year, LocalDate.now().monthValue, LocalDate.now().dayOfMonth)
+        val date: Date = cal.time
+
+        return getMyAnkete().filter{ anketa -> anketa.datumRada == null && anketa.datumKraj<date }
     }
 }
