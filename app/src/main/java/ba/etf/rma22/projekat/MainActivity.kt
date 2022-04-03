@@ -62,8 +62,10 @@ class MainActivity : AppCompatActivity() {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 val vrijednost : String = podaciZaSpinner[p2]
 
-                if(vrijednost == podaciZaSpinner[1])
+                if(vrijednost == podaciZaSpinner[0])
                     listaAnketaAdapter.updateAnkete(anketeListViewModel.getAnkete())
+                else if(vrijednost == podaciZaSpinner[1])
+                    listaAnketaAdapter.updateAnkete(anketeListViewModel.getAll())
                 else if(vrijednost == podaciZaSpinner[2])
                     listaAnketaAdapter.updateAnkete(anketeListViewModel.getDone())
                 else if(vrijednost == podaciZaSpinner[3])
@@ -73,7 +75,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
-                TODO("Not yet implemented")
+
             }
 
         }
