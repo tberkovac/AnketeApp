@@ -8,7 +8,11 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
-import ba.etf.rma22.projekat.data.*
+import ba.etf.rma22.projekat.data.models.Grupa
+import ba.etf.rma22.projekat.data.models.Istrazivanje
+import ba.etf.rma22.projekat.data.models.Korisnik
+import ba.etf.rma22.projekat.data.repositories.GrupaRepository
+import ba.etf.rma22.projekat.data.repositories.IstrazivanjeRepository
 
 
 class UpisIstrazivanje : AppCompatActivity() {
@@ -50,7 +54,8 @@ class UpisIstrazivanje : AppCompatActivity() {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                // val vrijednost : Int = godine[p2]
                 adapterIstrazivanjaSpiner.clear()
-                adapterIstrazivanjaSpiner.addAll(IstrazivanjeRepository.getAll()
+                adapterIstrazivanjaSpiner.addAll(
+                    IstrazivanjeRepository.getAll()
                     .filter { istrazivanje -> istrazivanje.godina.toString()==godine[p2] }
                     .filter { istrazivanje -> !korisnik.upisanaIstrazivanja.contains(istrazivanje) })
                 adapterIstrazivanjaSpiner.notifyDataSetChanged()
@@ -65,7 +70,8 @@ class UpisIstrazivanje : AppCompatActivity() {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 adapterGrupeSpiner.clear()
                 adapterGrupeSpiner
-                    .addAll(GrupaRepository.getGroupsByIstrazivanje(adapterIstrazivanjaSpiner.toString())
+                    .addAll(
+                        GrupaRepository.getGroupsByIstrazivanje(adapterIstrazivanjaSpiner.toString())
                     .filter { grupa -> grupa.nazivIstrazivanja ==  spinerIstrazivanja.selectedItem.toString()}
                         .filter { grupa -> !korisnik.upisaneGrupe.contains(grupa) })
                 adapterGrupeSpiner.notifyDataSetChanged()

@@ -1,9 +1,11 @@
-package ba.etf.rma22.projekat.data
+package ba.etf.rma22.projekat.data.repositories
 
-import android.util.Log
+import ba.etf.rma22.projekat.data.models.Anketa
+import ba.etf.rma22.projekat.data.models.Grupa
+import ba.etf.rma22.projekat.data.models.Korisnik
+import ba.etf.rma22.projekat.data.dajAnketeStatic
 import java.time.LocalDate
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 object AnketaRepository {
@@ -19,7 +21,7 @@ object AnketaRepository {
             naziviUpisanihGrupa = naziviUpisanihGrupa.plus(i.naziv) as MutableList<String>
         }
 
-        return dajAnketeStatic().filter {anketa -> naziviUpisanihIstrazivanja.contains(anketa.nazivIstrazivanja)}
+        return dajAnketeStatic().filter { anketa -> naziviUpisanihIstrazivanja.contains(anketa.nazivIstrazivanja)}
             .filter { anketa -> k.upisaneGrupe.contains(Grupa(anketa.nazivGrupe,anketa.nazivIstrazivanja)) }
     }
 
@@ -28,7 +30,7 @@ object AnketaRepository {
     }
 
     fun getDone(): List<Anketa> {
-        return getMyAnkete().filter{anketa ->  anketa.datumRada!=null}.toList()
+        return getMyAnkete().filter{ anketa ->  anketa.datumRada!=null}.toList()
     }
 
     fun getFuture(): List<Anketa> {
@@ -36,7 +38,7 @@ object AnketaRepository {
         cal.set(LocalDate.now().year, LocalDate.now().monthValue, LocalDate.now().dayOfMonth)
         val date: Date = cal.time
 
-        return getMyAnkete().filter { anketa -> anketa.datumPocetak> date && anketa.datumRada==null}
+        return getMyAnkete().filter { anketa -> (anketa.datumPocetak> date || anketa.datumKraj>date)  && anketa.datumRada==null}
     }
 
     fun getNotTaken(): List<Anketa> {

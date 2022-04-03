@@ -9,7 +9,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ba.etf.rma22.projekat.R
-import ba.etf.rma22.projekat.data.Anketa
+import ba.etf.rma22.projekat.data.models.Anketa
 import java.time.LocalDate
 import java.util.*
 

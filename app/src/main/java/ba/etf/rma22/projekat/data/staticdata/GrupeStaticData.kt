@@ -1,5 +1,7 @@
 package ba.etf.rma22.projekat.data
 
+import ba.etf.rma22.projekat.data.models.Grupa
+
 fun dajGrupeStatic() : List<Grupa>{
     return listOf(
         Grupa("grupica 1","lagano istrazivanje"),

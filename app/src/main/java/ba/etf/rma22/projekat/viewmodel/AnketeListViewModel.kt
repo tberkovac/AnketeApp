@@ -1,7 +1,7 @@
 package ba.etf.rma22.projekat.viewmodel
 
-import ba.etf.rma22.projekat.data.Anketa
-import ba.etf.rma22.projekat.data.AnketaRepository
+import ba.etf.rma22.projekat.data.models.Anketa
+import ba.etf.rma22.projekat.data.repositories.AnketaRepository
 
 class AnketeListViewModel {
     fun getAnkete(): List<Anketa>{
