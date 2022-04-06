@@ -38,7 +38,7 @@ object AnketaRepository {
         cal.set(LocalDate.now().year, LocalDate.now().monthValue, LocalDate.now().dayOfMonth)
         val date: Date = cal.time
 
-        return getMyAnkete().filter { anketa -> (anketa.datumPocetak> date || anketa.datumKraj>date)  && anketa.datumRada==null}
+        return getMyAnkete().filter { anketa -> anketa.datumPocetak> date  && anketa.datumRada==null}
     }
 
     fun getNotTaken(): List<Anketa> {
