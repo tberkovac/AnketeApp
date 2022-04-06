@@ -12,6 +12,7 @@ import ba.etf.rma22.projekat.R
 import ba.etf.rma22.projekat.data.models.Anketa
 import java.time.LocalDate
 import java.util.*
+import kotlin.math.roundToInt
 
 
 class AnketaListAdapter(
@@ -37,7 +38,7 @@ class AnketaListAdapter(
 
         holder.nazivAnkete.text = anketa.naziv
         holder.brojIstrazivanja.text = anketa.nazivIstrazivanja
-        holder.progresZavrsetka.setProgress(anketa.progres.toInt(), false)
+        holder.progresZavrsetka.setProgress(zaokruziProgres(anketa.progres), false)
 
 
         var cal: Calendar = Calendar.getInstance()
@@ -69,6 +70,13 @@ class AnketaListAdapter(
 
         holder.pismeniStatus.text
 
+    }
+
+    private fun zaokruziProgres(progres: Float): Int {
+        var rez : Int = (progres*10).toInt()
+        if(rez % 2 != 0) rez += 1
+        rez *= 10
+        return rez
     }
 
     override fun getItemCount(): Int {
