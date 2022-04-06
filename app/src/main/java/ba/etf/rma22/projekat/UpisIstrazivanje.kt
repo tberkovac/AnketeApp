@@ -1,5 +1,6 @@
 package ba.etf.rma22.projekat
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -21,6 +22,10 @@ class UpisIstrazivanje : AppCompatActivity() {
     private lateinit var spinerGrupe : Spinner
     private var korisnik : Korisnik = Korisnik()
     private lateinit var dodajIstrazivanjeDugme : Button
+    var companion  = Companion
+    companion object {
+        var zadnji : String = ""
+    }
 
 
 
@@ -34,71 +39,101 @@ class UpisIstrazivanje : AppCompatActivity() {
         spinerGrupe = findViewById(R.id.odabirGrupa)
         dodajIstrazivanjeDugme = findViewById(R.id.dodajIstrazivanjeDugme)
 
-        val godine = listOf( "1","2","3","4","5")
+        val godine = listOf( "","1","2","3","4","5")
 
         val adapterGodineSpiner : ArrayAdapter<String> = ArrayAdapter(
             this,android.R.layout.simple_spinner_item,godine
         )
-        val adapterIstrazivanjaSpiner : ArrayAdapter<Istrazivanje> = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item
+        val adapterIstrazivanjaSpiner : ArrayAdapter<String> = ArrayAdapter(
+            this, android.R.layout.simple_spinner_item, ArrayList<String>()
         )
-        val adapterGrupeSpiner : ArrayAdapter<Grupa> = ArrayAdapter(
-            this, android.R.layout.simple_spinner_item
+        val adapterGrupeSpiner : ArrayAdapter<String> = ArrayAdapter(
+            this, android.R.layout.simple_spinner_item, ArrayList<String>()
         )
 
         spinerGodine.adapter = adapterGodineSpiner
         spinerIstrazivanja.adapter = adapterIstrazivanjaSpiner
         spinerGrupe.adapter = adapterGrupeSpiner
 
+        spinerGodine.setSelection(adapterGodineSpiner.getPosition(zadnji))
+
         spinerGodine.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-               // val vrijednost : Int = godine[p2]
+                zadnji = spinerGodine.selectedItem.toString()
+                if(spinerGodine.selectedItem == "") {
+                    adapterIstrazivanjaSpiner.clear()
+                    adapterIstrazivanjaSpiner.add("")
+                    adapterGrupeSpiner.clear()
+                    adapterGrupeSpiner.add("")
+                    dodajIstrazivanjeDugme.isEnabled = false
+                    return
+                }
                 adapterIstrazivanjaSpiner.clear()
+                adapterIstrazivanjaSpiner.add("")
                 adapterIstrazivanjaSpiner.addAll(
-                    IstrazivanjeRepository.getAll()
-                    .filter { istrazivanje -> istrazivanje.godina.toString()==godine[p2] }
-                    .filter { istrazivanje -> !korisnik.upisanaIstrazivanja.contains(istrazivanje) })
+                    IstrazivanjeRepository.getIstrazivanjeByGodina(spinerGodine.selectedItem.toString().toInt())
+                    .filter { istrazivanje -> !korisnik.companion.upisanaIstrazivanja.contains(istrazivanje) }
+                        . map { istrazivanje -> istrazivanje.naziv })
                 adapterIstrazivanjaSpiner.notifyDataSetChanged()
+                zadnji = godine[p2]
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
-
+                spinerGodine.setSelection(zadnji.toInt())
             }
         }
 
         spinerIstrazivanja.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                if(spinerIstrazivanja.selectedItem == "") {
+                    adapterGrupeSpiner.clear()
+                    adapterGrupeSpiner.add("")
+                    dodajIstrazivanjeDugme.isEnabled = false
+                    return
+                }
                 adapterGrupeSpiner.clear()
+                adapterGrupeSpiner.add("")
                 adapterGrupeSpiner
                     .addAll(
                         GrupaRepository.getGroupsByIstrazivanje(adapterIstrazivanjaSpiner.toString())
                     .filter { grupa -> grupa.nazivIstrazivanja ==  spinerIstrazivanja.selectedItem.toString()}
-                        .filter { grupa -> !korisnik.upisaneGrupe.contains(grupa) })
+                        .filter { grupa -> !korisnik.companion.upisaneGrupe.contains(grupa) }
+                            .map { grupa -> grupa.naziv })
                 adapterGrupeSpiner.notifyDataSetChanged()
             }
 
-
-
             override fun onNothingSelected(p0: AdapterView<*>?) {
-
+                dodajIstrazivanjeDugme.isEnabled = false
+                adapterGrupeSpiner.clear()
             }
         }
 
+        spinerGrupe.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                if(spinerGrupe.selectedItem == "") {
+                    dodajIstrazivanjeDugme.isEnabled = false
+                    return
+                }
+                dodajIstrazivanjeDugme.isEnabled = true
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+                dodajIstrazivanjeDugme.isEnabled = false
+            }
+
+        }
+
         dodajIstrazivanjeDugme.setOnClickListener{
-            if(spinerGodine.selectedItem != null && spinerIstrazivanja.selectedItem !=null
-                && spinerGrupe.selectedItem != null){
-                korisnik.upisanaIstrazivanja = korisnik.upisanaIstrazivanja.plus(Istrazivanje(spinerIstrazivanja.selectedItem.toString(),spinerGodine.selectedItemPosition+1))
-                //plusElement(spinerIstrazivanja.selectedItem)
-                //= append(spinerIstrazivanja.selectedItem)
-                korisnik.upisaneGrupe = korisnik.upisaneGrupe.plus(Grupa(spinerGrupe.selectedItem.toString(),spinerIstrazivanja.selectedItem.toString()))
+            if(spinerGodine.selectedItem != "" && spinerIstrazivanja.selectedItem !=""
+                && spinerGrupe.selectedItem != ""){
+                korisnik.companion.upisanaIstrazivanja = korisnik.companion.upisanaIstrazivanja.plus(Istrazivanje(spinerIstrazivanja.selectedItem.toString(),spinerGodine.selectedItemPosition))
+                korisnik.companion.upisaneGrupe = korisnik.companion.upisaneGrupe.plus(Grupa(spinerGrupe.selectedItem.toString(),spinerIstrazivanja.selectedItem.toString()))
 
-                Log.v("NOVO ISTRAZIVANJE", korisnik.upisanaIstrazivanja.toString())
-                Log.v("NOVO GRUPA", korisnik.upisaneGrupe.toString())
-
-
-                adapterIstrazivanjaSpiner.remove(Istrazivanje(spinerIstrazivanja.selectedItem.toString(),spinerGodine.selectedItemPosition+1))
+                adapterIstrazivanjaSpiner.remove(spinerIstrazivanja.selectedItem.toString())
                 adapterGrupeSpiner.notifyDataSetChanged()
                 adapterIstrazivanjaSpiner.notifyDataSetChanged()
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
             }
         }
 
