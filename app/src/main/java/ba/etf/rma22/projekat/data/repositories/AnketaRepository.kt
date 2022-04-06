@@ -14,15 +14,15 @@ object AnketaRepository {
         var naziviUpisanihIstrazivanja : MutableList<String> = mutableListOf()
         var naziviUpisanihGrupa: MutableList<String> = mutableListOf()
 
-        for( i in k.upisanaIstrazivanja) {
+        for( i in k.companion.upisanaIstrazivanja) {
             naziviUpisanihIstrazivanja = naziviUpisanihIstrazivanja.plus(i.naziv) as MutableList<String>
         }
-        for( i in k.upisaneGrupe) {
+        for( i in k.companion.upisaneGrupe) {
             naziviUpisanihGrupa = naziviUpisanihGrupa.plus(i.naziv) as MutableList<String>
         }
 
         return dajAnketeStatic().filter { anketa -> naziviUpisanihIstrazivanja.contains(anketa.nazivIstrazivanja)}
-            .filter { anketa -> k.upisaneGrupe.contains(Grupa(anketa.nazivGrupe,anketa.nazivIstrazivanja)) }
+            .filter { anketa -> k.companion.upisaneGrupe.contains(Grupa(anketa.nazivGrupe,anketa.nazivIstrazivanja)) }
     }
 
     fun getAll(): List<Anketa> {
