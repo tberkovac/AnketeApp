@@ -50,17 +50,17 @@ class AnketaListAdapter(
         if(anketa.datumRada == null){
             if(date < anketa.datumPocetak){
                 boja = "zuta"
-                holder.pismeniStatus.text = "Vrijeme aktiviranja: " + anketa.datumPocetak
+                holder.pismeniStatus.text = "Vrijeme aktiviranja: " + formatirajDatum(anketa.datumPocetak)
             }else if( date > anketa.datumKraj){
                 boja = "crvena"
-                holder.pismeniStatus.text = "Anketa zatvorena: " + anketa.datumKraj.time
+                holder.pismeniStatus.text = "Anketa zatvorena: " + formatirajDatum(anketa.datumKraj)
             }else{
                 boja = "zelena"
-                holder.pismeniStatus.text = "Vrijeme zatvaranja: " + anketa.datumKraj.time
+                holder.pismeniStatus.text = "Vrijeme zatvaranja: " + formatirajDatum(anketa.datumKraj)
 
             }
         }else{
-            holder.pismeniStatus.text = "Anketa urađena: " + anketa.datumRada
+            holder.pismeniStatus.text = "Anketa urađena: " + formatirajDatum(anketa.datumRada)
             boja = "plava"
         }
 
@@ -70,6 +70,12 @@ class AnketaListAdapter(
 
         holder.pismeniStatus.text
 
+    }
+
+    private fun formatirajDatum(date : Date) : String {
+        val cal : Calendar  = Calendar.getInstance()
+        cal.time = date
+        return cal.get(3).toString() + "." + cal.get(2).toString() +"."+ cal.get(1).toString()
     }
 
     private fun zaokruziProgres(progres: Float): Int {
