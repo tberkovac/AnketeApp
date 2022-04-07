@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import ba.etf.rma22.projekat.view.AnketaListAdapter
 import ba.etf.rma22.projekat.viewmodel.AnketeListViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var spinerFilter : Spinner
@@ -61,28 +60,21 @@ class MainActivity : AppCompatActivity() {
 
         spinerFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                val vrijednost : String = podaciZaSpinner[p2]
+                val vrijednost: String = podaciZaSpinner[p2]
 
-                if(vrijednost == podaciZaSpinner[0])
+                if (vrijednost == podaciZaSpinner[0])
                     listaAnketaAdapter.updateAnkete(anketeListViewModel.getAnkete())
-                else if(vrijednost == podaciZaSpinner[1])
+                else if (vrijednost == podaciZaSpinner[1])
                     listaAnketaAdapter.updateAnkete(anketeListViewModel.getAll())
-                else if(vrijednost == podaciZaSpinner[2])
+                else if (vrijednost == podaciZaSpinner[2])
                     listaAnketaAdapter.updateAnkete(anketeListViewModel.getDone())
-                else if(vrijednost == podaciZaSpinner[3])
+                else if (vrijednost == podaciZaSpinner[3])
                     listaAnketaAdapter.updateAnkete(anketeListViewModel.getFuture())
-                else if(vrijednost == podaciZaSpinner[4])
+                else if (vrijednost == podaciZaSpinner[4])
                     listaAnketaAdapter.updateAnkete(anketeListViewModel.getNotTaken())
             }
 
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-
-            }
-
+            override fun onNothingSelected(p0: AdapterView<*>?) {}
         }
-
-
-
     }
-
 }
