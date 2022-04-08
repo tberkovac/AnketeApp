@@ -23,14 +23,16 @@ object AnketaRepository {
 
         return dajAnketeStatic().filter { anketa -> naziviUpisanihIstrazivanja.contains(anketa.nazivIstrazivanja)}
             .filter { anketa -> k.companion.upisaneGrupe.contains(Grupa(anketa.nazivGrupe,anketa.nazivIstrazivanja)) }
+            .ifEmpty { emptyList() }
     }
 
     fun getAll(): List<Anketa> {
-        return dajAnketeStatic()
+        return dajAnketeStatic().ifEmpty { emptyList() }
     }
 
     fun getDone(): List<Anketa> {
-        return getMyAnkete().filter{ anketa ->  anketa.datumRada!=null}.toList()
+        return getMyAnkete().filter{ anketa ->  anketa.datumRada!=null}
+            .ifEmpty { emptyList() }
     }
 
     fun getFuture(): List<Anketa> {
@@ -39,6 +41,7 @@ object AnketaRepository {
         val date: Date = cal.time
 
         return getMyAnkete().filter { anketa -> anketa.datumPocetak> date  && anketa.datumRada==null}
+            .ifEmpty { emptyList() }
     }
 
     fun getNotTaken(): List<Anketa> {
@@ -47,5 +50,6 @@ object AnketaRepository {
         val date: Date = cal.time
 
         return getMyAnkete().filter{ anketa -> anketa.datumRada == null && anketa.datumKraj<date }
+            .ifEmpty { emptyList() }
     }
 }

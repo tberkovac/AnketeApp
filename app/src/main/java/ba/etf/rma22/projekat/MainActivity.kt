@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         )
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinerFilter.adapter = adapter
-        spinerFilter.setSelection(1)
+        spinerFilter.setSelection(0)
 
         spinerFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
