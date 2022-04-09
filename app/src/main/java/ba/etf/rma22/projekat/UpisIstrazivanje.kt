@@ -95,10 +95,9 @@ class UpisIstrazivanje : AppCompatActivity() {
                 adapterGrupeSpiner.add("")
                 adapterGrupeSpiner
                     .addAll(
-                        GrupaRepository.getGroupsByIstrazivanje(adapterIstrazivanjaSpiner.toString())
-                    .filter { grupa -> grupa.nazivIstrazivanja ==  spinerIstrazivanja.selectedItem.toString()}
-                        .filter { grupa -> !korisnik.companion.upisaneGrupe.contains(grupa) }
-                            .map { grupa -> grupa.naziv })
+                        GrupaRepository.getGroupsByIstrazivanje(spinerIstrazivanja.selectedItem.toString())
+                            .filter { grupa -> !korisnik.companion.upisaneGrupe.contains(grupa) }
+                                .map { grupa -> grupa.naziv })
                 adapterGrupeSpiner.notifyDataSetChanged()
             }
 
