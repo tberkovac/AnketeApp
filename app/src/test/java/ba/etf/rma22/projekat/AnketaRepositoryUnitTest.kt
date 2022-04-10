@@ -1,6 +1,10 @@
 package ba.etf.rma22.projekat
 
+import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.repositories.AnketaRepository
+import org.hamcrest.Matchers.hasItem
+import org.hamcrest.Matchers.hasProperty
+import org.hamcrest.CoreMatchers.`is` as Is
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -26,6 +30,7 @@ class AnketaRepositoryUnitTest {
         val sveMojeUradjeneAnkete = AnketaRepository.getDone()
 
         assertEquals(sveMojeUradjeneAnkete.size, 1)
+        assertThat(sveMojeUradjeneAnkete, hasItem<Anketa>(hasProperty("nazivIstrazivanja", Is("lagano istrazivanje"))))
     }
 
 
