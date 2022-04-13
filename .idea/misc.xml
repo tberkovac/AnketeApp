@@ -9,6 +9,8 @@
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.147" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.14039154052734376" />
         <entry key="app/src/main/res/layout/activity_upis_istrazivanje.xml" value="0.19610507246376813" />
+        <entry key="app/src/main/res/layout/fragment_ankete.xml" value="0.1375" />
+        <entry key="app/src/main/res/layout/fragment_istrazivanje.xml" value="0.1375" />
         <entry key="app/src/main/res/layout/kartice_elementi.xml" value="0.25" />
       </map>
     </option>
