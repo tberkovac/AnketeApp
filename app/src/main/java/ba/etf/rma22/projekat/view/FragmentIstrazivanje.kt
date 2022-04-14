@@ -1,7 +1,7 @@
 package ba.etf.rma22.projekat.view
 
-import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +12,6 @@ import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import ba.etf.rma22.projekat.MainActivity
 import ba.etf.rma22.projekat.R
-import ba.etf.rma22.projekat.UpisIstrazivanje
 import ba.etf.rma22.projekat.data.models.Grupa
 import ba.etf.rma22.projekat.data.models.Istrazivanje
 import ba.etf.rma22.projekat.data.models.Korisnik
@@ -58,11 +57,11 @@ class FragmentIstrazivanje : Fragment() {
         spinerIstrazivanja.adapter = adapterIstrazivanjaSpiner
         spinerGrupe.adapter = adapterGrupeSpiner
 
-        spinerGodine.setSelection(adapterGodineSpiner.getPosition(UpisIstrazivanje.zadnji))
+        spinerGodine.setSelection(adapterGodineSpiner.getPosition(zadnji))
 
         spinerGodine.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                UpisIstrazivanje.zadnji = spinerGodine.selectedItem.toString()
+                zadnji = spinerGodine.selectedItem.toString()
                 if(spinerGodine.selectedItem == "") {
                     adapterIstrazivanjaSpiner.clear()
                     adapterIstrazivanjaSpiner.add("")
@@ -78,11 +77,11 @@ class FragmentIstrazivanje : Fragment() {
                         .filter { istrazivanje -> !korisnik.companion.upisanaIstrazivanja.contains(istrazivanje) }
                         . map { istrazivanje -> istrazivanje.naziv })
                 adapterIstrazivanjaSpiner.notifyDataSetChanged()
-                UpisIstrazivanje.zadnji = godine[p2]
+                zadnji = godine[p2]
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
-                spinerGodine.setSelection(UpisIstrazivanje.zadnji.toInt())
+                spinerGodine.setSelection(zadnji.toInt())
             }
         }
 
@@ -131,13 +130,16 @@ class FragmentIstrazivanje : Fragment() {
                 korisnik.companion.upisanaIstrazivanja = korisnik.companion.upisanaIstrazivanja.plus(
                     Istrazivanje(spinerIstrazivanja.selectedItem.toString(),spinerGodine.selectedItemPosition)
                 )
-                korisnik.companion.upisaneGrupe = korisnik.companion.upisaneGrupe.plus(Grupa(spinerGrupe.selectedItem.toString(),spinerIstrazivanja.selectedItem.toString()))
+
+                val grupa = Grupa(spinerGrupe.selectedItem.toString(),spinerIstrazivanja.selectedItem.toString())
+                korisnik.companion.upisaneGrupe = korisnik.companion.upisaneGrupe.plus(grupa)
 
                 adapterIstrazivanjaSpiner.remove(spinerIstrazivanja.selectedItem.toString())
                 adapterGrupeSpiner.notifyDataSetChanged()
                 adapterIstrazivanjaSpiner.notifyDataSetChanged()
-                val intent = Intent(view.context, MainActivity::class.java)
-                startActivity(intent)
+
+                MainActivity.adapter.refreshFragment(1,FragmentPoruka(grupa))
+
             }
         }
 

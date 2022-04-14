@@ -1,6 +1,9 @@
 package ba.etf.rma22.projekat.view
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +13,7 @@ import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import ba.etf.rma22.projekat.MainActivity
 import ba.etf.rma22.projekat.R
 import ba.etf.rma22.projekat.viewmodel.AnketeListViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -71,5 +75,14 @@ class FragmentAnkete : Fragment() {
             override fun onNothingSelected(p0: AdapterView<*>?) {}
         }
         return view
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        Log.v("POCNE OPET", "DAAA")
+        Handler(Looper.getMainLooper()).postDelayed({
+            MainActivity.adapter.refreshFragment(1,FragmentIstrazivanje())
+        }, 100)
     }
 }
