@@ -16,7 +16,8 @@ import kotlin.math.roundToInt
 
 
 class AnketaListAdapter(
-    private var ankete : List<Anketa>
+    private var ankete : List<Anketa>,
+    private val onItemClicked: (anketa : Anketa) -> Unit
 ) : RecyclerView.Adapter<AnketaListAdapter.AnketaViewHolder>(){
     inner class AnketaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nazivAnkete : TextView = itemView.findViewById(R.id.nazivAnkete)
@@ -69,6 +70,8 @@ class AnketaListAdapter(
         holder.statusAnkete.setImageResource(id)
 
         holder.pismeniStatus.text
+        
+        holder.itemView.setOnClickListener { onItemClicked(ankete[position]) }
 
     }
 

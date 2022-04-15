@@ -6,4 +6,6 @@
     <string name="pismenistatus">status</string>
     <string name="upisDugme">zaUpisNaIstrazivanje</string>
     <string name="upisDugme2">Upiši me</string>
+    <string name="poruka">poruka</string>
+    <string name="predaj">Predaj</string>
 </resources>

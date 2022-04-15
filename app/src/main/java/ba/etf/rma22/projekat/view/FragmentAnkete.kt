@@ -1,5 +1,6 @@
 package ba.etf.rma22.projekat.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -15,6 +16,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ba.etf.rma22.projekat.MainActivity
 import ba.etf.rma22.projekat.R
+import ba.etf.rma22.projekat.data.models.Anketa
+import ba.etf.rma22.projekat.data.models.Pitanje
+import ba.etf.rma22.projekat.data.repositories.PitanjeAnketaRepository
 import ba.etf.rma22.projekat.viewmodel.AnketeListViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -26,6 +30,12 @@ class FragmentAnkete : Fragment() {
     private lateinit var listaAnketaAdapter : AnketaListAdapter
     private lateinit var upisIstrazivanja : FloatingActionButton
 
+    private fun prikaziAnketu(anketa: Anketa) {
+        MainActivity.adapter.removeAll()
+        var pitanja : List<Pitanje> = PitanjeAnketaRepository.getPitanja(anketa.naziv,anketa.nazivIstrazivanja)
+        pitanja.forEach { pitanje -> MainActivity.adapter.addOnLastPosition(FragmentPitanje(pitanje)) }
+        MainActivity.adapter.addOnLastPosition(FragmentPredaj(anketa))
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -39,7 +49,10 @@ class FragmentAnkete : Fragment() {
         listaAnketa.layoutManager = GridLayoutManager(
             view.context, 2, GridLayoutManager.VERTICAL, false
         )
-        listaAnketaAdapter = AnketaListAdapter(arrayListOf())
+        listaAnketaAdapter = AnketaListAdapter(arrayListOf()) {
+            prikaziAnketu(it)
+        }
+
         listaAnketa.adapter = listaAnketaAdapter
         listaAnketaAdapter.updateAnkete(anketeListViewModel.getAnkete())
 
@@ -83,6 +96,6 @@ class FragmentAnkete : Fragment() {
         Log.v("POCNE OPET", "DAAA")
         Handler(Looper.getMainLooper()).postDelayed({
             MainActivity.adapter.refreshFragment(1,FragmentIstrazivanje())
-        }, 100)
+        }, 300)
     }
 }

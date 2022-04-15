@@ -12,8 +12,6 @@ import ba.etf.rma22.projekat.view.ViewPagerAdapter
 class MainActivity : AppCompatActivity() {
 
     private lateinit var viewPager2 : ViewPager2
-    private var fragmentIstrazivanje = FragmentIstrazivanje()
-    private lateinit var dugme : Button
 
     companion object{
         lateinit var adapter : ViewPagerAdapter
@@ -28,7 +26,6 @@ class MainActivity : AppCompatActivity() {
         viewPager2 = findViewById(R.id.viewpager)
 
         viewPager2.adapter = adapter
-
 
     }
 
