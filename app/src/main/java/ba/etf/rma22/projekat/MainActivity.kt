@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
 
 
         adapter = ViewPagerAdapter(this)
-        viewPager2 = findViewById(R.id.viewpager)
+        viewPager2 = findViewById(R.id.pager)
 
         viewPager2.adapter = adapter
 
