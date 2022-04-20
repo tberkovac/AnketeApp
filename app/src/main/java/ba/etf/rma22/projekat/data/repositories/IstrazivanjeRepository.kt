@@ -5,7 +5,7 @@ import ba.etf.rma22.projekat.data.dajIstrazivanjaStaticData
 import ba.etf.rma22.projekat.data.models.Korisnik
 
 object IstrazivanjeRepository {
-    val korisnik = Korisnik()
+    private val korisnik = Korisnik()
 
     fun getIstrazivanjeByGodina(godina:Int) : List<Istrazivanje>{
         return dajIstrazivanjaStaticData().filter { istrazivanje -> istrazivanje.godina == godina }
