@@ -15,6 +15,7 @@
         <entry key="app/src/main/res/layout/fragment_poruka.xml" value="0.1453125" />
         <entry key="app/src/main/res/layout/fragment_predaj.xml" value="0.140625" />
         <entry key="app/src/main/res/layout/kartice_elementi.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/odgovor_element.xml" value="0.1" />
       </map>
     </option>
   </component>

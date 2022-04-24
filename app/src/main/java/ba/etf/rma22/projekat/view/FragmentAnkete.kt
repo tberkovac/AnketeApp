@@ -33,7 +33,7 @@ class FragmentAnkete : Fragment() {
     private fun prikaziAnketu(anketa: Anketa) {
         MainActivity.adapter.removeAll()
         var pitanja : List<Pitanje> = PitanjeAnketaRepository.getPitanja(anketa.naziv,anketa.nazivIstrazivanja)
-        pitanja.forEach { pitanje -> MainActivity.adapter.addOnLastPosition(FragmentPitanje(pitanje)) }
+        pitanja.forEach { pitanje -> MainActivity.adapter.addOnLastPosition(FragmentPitanje.newInstance(anketa, pitanje)) }
         MainActivity.adapter.addOnLastPosition(FragmentPredaj(anketa))
     }
     override fun onCreateView(
@@ -93,7 +93,6 @@ class FragmentAnkete : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        Log.v("POCNE OPET", "DAAA")
         Handler(Looper.getMainLooper()).postDelayed({
             MainActivity.adapter.refreshFragment(1,FragmentIstrazivanje())
         }, 300)
