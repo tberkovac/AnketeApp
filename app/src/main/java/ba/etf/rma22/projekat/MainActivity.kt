@@ -11,10 +11,9 @@ import ba.etf.rma22.projekat.view.ViewPagerAdapter
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var viewPager2 : ViewPager2
-
     companion object{
         lateinit var adapter : ViewPagerAdapter
+        lateinit var viewPager2 : ViewPager2
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

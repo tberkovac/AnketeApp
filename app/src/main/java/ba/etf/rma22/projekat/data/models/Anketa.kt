@@ -9,10 +9,10 @@ data class Anketa(
     val nazivIstrazivanja: String,
     val datumPocetak: Date,
     val datumKraj: Date,
-    val datumRada: Date?,
+    var datumRada: Date?,
     val trajanje: Int,
     val nazivGrupe: String,
-    val progres: Float
+    var progres: Float
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString()!!,

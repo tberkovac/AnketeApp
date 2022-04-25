@@ -138,8 +138,8 @@ class FragmentIstrazivanje : Fragment() {
                 adapterGrupeSpiner.notifyDataSetChanged()
                 adapterIstrazivanjaSpiner.notifyDataSetChanged()
 
-                MainActivity.adapter.refreshFragment(1,FragmentPoruka(grupa))
-
+                MainActivity.adapter.refreshFragment(1,FragmentPoruka.newInstance(grupa,"izFragmentIsteazivanje"))
+                MainActivity.adapter.notifyDataSetChanged()
             }
         }
 

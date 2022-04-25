@@ -11,12 +11,15 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ba.etf.rma22.projekat.MainActivity
 import ba.etf.rma22.projekat.R
 import ba.etf.rma22.projekat.data.models.Anketa
+import ba.etf.rma22.projekat.data.models.Istrazivanje
+import ba.etf.rma22.projekat.data.models.Korisnik
 import ba.etf.rma22.projekat.data.models.Pitanje
 import ba.etf.rma22.projekat.data.repositories.PitanjeAnketaRepository
 import ba.etf.rma22.projekat.viewmodel.AnketeListViewModel
@@ -28,13 +31,12 @@ class FragmentAnkete : Fragment() {
     private lateinit var spinerFilter : Spinner
     private lateinit var listaAnketa : RecyclerView
     private lateinit var listaAnketaAdapter : AnketaListAdapter
-    private lateinit var upisIstrazivanja : FloatingActionButton
 
     private fun prikaziAnketu(anketa: Anketa) {
         MainActivity.adapter.removeAll()
         var pitanja : List<Pitanje> = PitanjeAnketaRepository.getPitanja(anketa.naziv,anketa.nazivIstrazivanja)
         pitanja.forEach { pitanje -> MainActivity.adapter.addOnLastPosition(FragmentPitanje.newInstance(anketa, pitanje)) }
-        MainActivity.adapter.addOnLastPosition(FragmentPredaj(anketa))
+        MainActivity.adapter.addOnLastPosition(FragmentPredaj.newInstance(anketa))
     }
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,7 +46,6 @@ class FragmentAnkete : Fragment() {
         val view = inflater.inflate(R.layout.fragment_ankete, container, false)
 
         spinerFilter = view.findViewById(R.id.filterAnketa)
-        upisIstrazivanja = view.findViewById(R.id.upisDugme)
         listaAnketa = view.findViewById(R.id.listaAnketa)
         listaAnketa.layoutManager = GridLayoutManager(
             view.context, 2, GridLayoutManager.VERTICAL, false
@@ -72,7 +73,6 @@ class FragmentAnkete : Fragment() {
         spinerFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 val vrijednost: String = podaciZaSpinner[p2]
-
                 if (vrijednost == podaciZaSpinner[0])
                     listaAnketaAdapter.updateAnkete(anketeListViewModel.getAnkete())
                 else if (vrijednost == podaciZaSpinner[1])
@@ -90,11 +90,13 @@ class FragmentAnkete : Fragment() {
         return view
     }
 
-
     override fun onResume() {
         super.onResume()
         Handler(Looper.getMainLooper()).postDelayed({
+            MainActivity.adapter.notifyDataSetChanged()
             MainActivity.adapter.refreshFragment(1,FragmentIstrazivanje())
         }, 300)
+        spinerFilter.setSelection(0)
+        listaAnketaAdapter.updateAnkete(anketeListViewModel.getAnkete())
     }
 }

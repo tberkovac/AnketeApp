@@ -26,9 +26,6 @@ class FragmentPitanje : Fragment() {
     private lateinit var anketa: Anketa
     private lateinit var pitanje: Pitanje
 
-    private fun oznaciOdgovor(anketa: String, istrazivanje: String, pitanje: String, odgovor: String){
-     //   Log.v("KLIKNUTO", "OZNACEN JE ODGOVOR " + anketa + " " + istrazivanje + ": " + pitanje)
-    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -44,9 +41,6 @@ class FragmentPitanje : Fragment() {
         anketa = arguments?.getParcelable("anketica")!!
 
         textPitanja.text = pitanje.tekst
-
-       // val adapter = this.context?.let { ArrayAdapter(it, android.R.layout.simple_list_item_1, pitanje.opcije) }
-       // listaOdgovora.adapter = adapter
 
         listaOdgovora.adapter = context?.let {
             OdgovoriListAdapter(anketa, pitanje, it)

@@ -80,11 +80,5 @@ class OdgovoriListAdapter(
             return true
         return false
     }
-
-    private fun jelOznacenOdgovor(pitanje: Pitanje, odgovor: String): Boolean{
-
-        return false
-    }
-
 }
 
