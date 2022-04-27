@@ -9,9 +9,9 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import ba.etf.rma22.projekat.MainActivity
 import ba.etf.rma22.projekat.R
+import ba.etf.rma22.projekat.data.AnketaStaticData.sveAnkete
 import ba.etf.rma22.projekat.data.models.*
 import ba.etf.rma22.projekat.viewmodel.PitanjeAnketaViewModel
-import org.hamcrest.core.Is
 import java.util.*
 
 class FragmentPredaj : Fragment() {
@@ -55,11 +55,18 @@ class FragmentPredaj : Fragment() {
         postotakUradjenosti.text = zaokruziProgres(postotak).toString() + "%"
 
         predajDugme.setOnClickListener {
-            val date = Calendar.getInstance()
-            anketa.datumRada = date.time
+            val danasnjiDatum = Calendar.getInstance()
+
             MainActivity.adapter.removeAll()
             MainActivity.adapter.add(0, FragmentAnkete())
             val istrazivanje = Korisnik.upisanaIstrazivanja.filter { istrazivanje -> istrazivanje.naziv == anketa.nazivIstrazivanja }
+            var index = sveAnkete.indexOf(sveAnkete.find { anketa2 -> anketa2.naziv == anketa.naziv })
+
+            sveAnkete[index].progres = postotak
+            sveAnkete[index].datumRada = danasnjiDatum.time
+
+            FragmentAnkete.listaAnketaAdapter.updateAnkete(sveAnkete)
+
             MainActivity.adapter.add(1, FragmentPoruka.newInstance(anketa, istrazivanje[0] ,"fragmentPredaj"))
             MainActivity.viewPager2.currentItem = 1
         }

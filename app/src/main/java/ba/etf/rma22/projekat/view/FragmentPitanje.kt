@@ -11,8 +11,10 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import ba.etf.rma22.projekat.MainActivity
 import ba.etf.rma22.projekat.R
+import ba.etf.rma22.projekat.data.AnketaStaticData
 import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.Istrazivanje
+import ba.etf.rma22.projekat.data.models.Korisnik
 import ba.etf.rma22.projekat.data.models.Pitanje
 import org.hamcrest.core.Is
 
@@ -46,8 +48,22 @@ class FragmentPitanje : Fragment() {
             OdgovoriListAdapter(anketa, pitanje, it)
         }
 
+        var postotak : Float
+
+        var brojOdgovorenih = Korisnik.odgovorenaPitanjaAnketa
+            .filter { pitanjeAnketa -> pitanjeAnketa.anketa == anketa.naziv }.size
+
+        var brojPitanja = MainActivity.viewPager2.childCount-1
+
+        postotak = brojOdgovorenih/brojPitanja.toFloat()
+
         zaustaviDugme.setOnClickListener {
             MainActivity.adapter.removeAll()
+            var index = AnketaStaticData.sveAnkete.indexOf(AnketaStaticData.sveAnkete.find { anketa2 -> anketa2.naziv == anketa.naziv })
+
+            AnketaStaticData.sveAnkete[index].progres = postotak
+
+            FragmentAnkete.listaAnketaAdapter.updateAnkete(AnketaStaticData.sveAnkete)
             MainActivity.adapter.add(0, FragmentAnkete())
         }
 

@@ -1,6 +1,7 @@
 package ba.etf.rma22.projekat.view
 
 import android.content.Context
+import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -72,7 +73,7 @@ class AnketaListAdapter(
 
         holder.pismeniStatus.text
         
-        holder.itemView.setOnClickListener { onItemClicked(ankete[position]) }
+        holder.itemView.setOnClickListener { if(holder.statusAnkete.equals("drawable/zelena.png")) onItemClicked(ankete[position]) }
 
     }
 

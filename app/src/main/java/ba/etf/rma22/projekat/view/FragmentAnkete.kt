@@ -30,7 +30,10 @@ class FragmentAnkete : Fragment() {
     private var anketeListViewModel = AnketeListViewModel()
     private lateinit var spinerFilter : Spinner
     private lateinit var listaAnketa : RecyclerView
-    private lateinit var listaAnketaAdapter : AnketaListAdapter
+
+    companion object{
+        lateinit var listaAnketaAdapter : AnketaListAdapter
+    }
 
     private fun prikaziAnketu(anketa: Anketa) {
         MainActivity.adapter.removeAll()
