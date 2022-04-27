@@ -54,23 +54,31 @@ class FragmentPredaj : Fragment() {
 
         postotakUradjenosti.text = zaokruziProgres(postotak).toString() + "%"
 
-        predajDugme.setOnClickListener {
-            val danasnjiDatum = Calendar.getInstance()
+        if(provjeriJeLiAnketaDostupnaZaRad(anketa)) {
+            predajDugme.isEnabled = false
+        } else {
+            predajDugme.setOnClickListener {
+                val danasnjiDatum = Calendar.getInstance()
 
-            MainActivity.adapter.removeAll()
-            MainActivity.adapter.add(0, FragmentAnkete())
-            val istrazivanje = Korisnik.upisanaIstrazivanja.filter { istrazivanje -> istrazivanje.naziv == anketa.nazivIstrazivanja }
-            var index = sveAnkete.indexOf(sveAnkete.find { anketa2 -> anketa2.naziv == anketa.naziv })
+                MainActivity.adapter.removeAll()
+                MainActivity.adapter.add(0, FragmentAnkete())
+                val istrazivanje =
+                    Korisnik.upisanaIstrazivanja.filter { istrazivanje -> istrazivanje.naziv == anketa.nazivIstrazivanja }
+                var index =
+                    sveAnkete.indexOf(sveAnkete.find { anketa2 -> anketa2.naziv == anketa.naziv })
 
-            sveAnkete[index].progres = postotak
-            sveAnkete[index].datumRada = danasnjiDatum.time
+                sveAnkete[index].progres = postotak
+                sveAnkete[index].datumRada = danasnjiDatum.time
 
-            FragmentAnkete.listaAnketaAdapter.updateAnkete(sveAnkete)
+                FragmentAnkete.listaAnketaAdapter.updateAnkete(sveAnkete)
 
-            MainActivity.adapter.add(1, FragmentPoruka.newInstance(anketa, istrazivanje[0] ,"fragmentPredaj"))
-            MainActivity.viewPager2.currentItem = 1
+                MainActivity.adapter.add(
+                    1,
+                    FragmentPoruka.newInstance(anketa, istrazivanje[0], "fragmentPredaj")
+                )
+                MainActivity.viewPager2.currentItem = 1
+            }
         }
-
         return view
     }
 
@@ -82,18 +90,8 @@ class FragmentPredaj : Fragment() {
             .filter { pitanjeAnketa -> pitanjeAnketa.anketa == anketa.naziv }.size
 
         var brojPitanja = pitanjeAnketaViewModel.getPitanja(anketa.naziv, anketa.nazivIstrazivanja).size
-
         postotak = brojOdgovorenih/brojPitanja.toFloat()
-
         anketa.progres = postotak
-
-        fun zaokruziProgres(progres: Float): Int {
-            var rez : Int = (progres*10).toInt()
-            if(rez % 2 != 0) rez += 1
-            rez *= 10
-            return rez
-        }
-
         postotakUradjenosti.text = zaokruziProgres(postotak).toString() + "%"
     }
 
@@ -103,5 +101,17 @@ class FragmentPredaj : Fragment() {
                 putParcelable("anketica", anketa)
             }
         }
+    }
+
+    fun provjeriJeLiAnketaDostupnaZaRad(anketa: Anketa) : Boolean{
+        return anketa.datumRada != null || anketa.datumKraj < Calendar.getInstance().time ||
+                anketa.datumPocetak > Calendar.getInstance().time
+    }
+
+    fun zaokruziProgres(progres: Float): Int {
+        var rez : Int = (progres*10).toInt()
+        if(rez % 2 != 0) rez += 1
+        rez *= 10
+        return rez
     }
 }

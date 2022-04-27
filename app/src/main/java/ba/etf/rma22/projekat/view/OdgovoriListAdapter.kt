@@ -60,17 +60,13 @@ class OdgovoriListAdapter(
 
         odgovor.isClickable = true
         odgovor.setOnClickListener {
-            // Log.v("KLIKNUTO", "OZNACEN JE ODGOVOR " + anketa.naziv + " " + anketa.nazivIstrazivanja + ": " + odgovori[p0])
-            var zaZapisat = PitanjeAnketa(pitanje.naziv,anketa.naziv)
+            var zaZapisatOdgovor = PitanjeAnketa(pitanje.naziv,anketa.naziv)
 
-            Korisnik.odgovorenaPitanjaAnketa = Korisnik.odgovorenaPitanjaAnketa.plus(zaZapisat)
+            Korisnik.odgovorenaPitanjaAnketa = Korisnik.odgovorenaPitanjaAnketa.plus(zaZapisatOdgovor)
 
-            Log.v("ZAPISANO", zaZapisat.naziv + " u " + zaZapisat.anketa + " Odgovor je " + pitanje.opcije[p0])
-            Log.v("VELICINA LISTE ODGVORENIH", Korisnik.odgovorenaPitanjaAnketa.size.toString())
             odgovor.setTextColor(Color.parseColor("#0000FF"))
 
             Korisnik.odgovorenaPitanjaSaOdgovorom = Korisnik.odgovorenaPitanjaSaOdgovorom.plus(pitanje to odgovor.text.toString())
-
         }
         return view
     }

@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import ba.etf.rma22.projekat.R
 import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.Istrazivanje
+import ba.etf.rma22.projekat.data.models.Korisnik
+import ba.etf.rma22.projekat.viewmodel.KorisnikViewModel
 import java.time.LocalDate
 import java.util.*
 import kotlin.math.roundToInt
@@ -38,6 +40,7 @@ class AnketaListAdapter(
     override fun onBindViewHolder(holder: AnketaViewHolder, position: Int) {
 
         val anketa = ankete[position]
+        val korisnikViewModel = KorisnikViewModel()
 
         holder.nazivAnkete.text = anketa.naziv
         holder.brojIstrazivanja.text = anketa.nazivIstrazivanja
@@ -73,7 +76,7 @@ class AnketaListAdapter(
 
         holder.pismeniStatus.text
         
-        holder.itemView.setOnClickListener { if(holder.statusAnkete.equals("drawable/zelena.png")) onItemClicked(ankete[position]) }
+        holder.itemView.setOnClickListener { if(korisnikViewModel.jeLiUpisanaAnketa(anketa)) onItemClicked(ankete[position]) }
 
     }
 

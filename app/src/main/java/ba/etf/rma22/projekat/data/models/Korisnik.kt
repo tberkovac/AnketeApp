@@ -1,7 +1,6 @@
 package ba.etf.rma22.projekat.data.models
 
 class Korisnik {
-
     val ime: String = "Testni korisnik"
     companion object{
         var upisanaIstrazivanja: List<Istrazivanje> = mutableListOf(
