@@ -54,7 +54,7 @@ class FragmentPredaj : Fragment() {
 
         postotakUradjenosti.text = zaokruziProgres(postotak).toString() + "%"
 
-        if(provjeriJeLiAnketaDostupnaZaRad(anketa)) {
+        if(anketaNijeDostupnaZaRad(anketa)) {
             predajDugme.isEnabled = false
         } else {
             predajDugme.setOnClickListener {
@@ -103,9 +103,13 @@ class FragmentPredaj : Fragment() {
         }
     }
 
-    fun provjeriJeLiAnketaDostupnaZaRad(anketa: Anketa) : Boolean{
-        return anketa.datumRada != null || anketa.datumKraj < Calendar.getInstance().time ||
-                anketa.datumPocetak > Calendar.getInstance().time
+    fun anketaNijeDostupnaZaRad(anketa: Anketa) : Boolean{
+        return when {
+            anketa.datumRada != null -> true
+            anketa.datumKraj < Calendar.getInstance().time -> true
+            anketa.datumPocetak > Calendar.getInstance().time -> true
+            else -> false
+        }
     }
 
     fun zaokruziProgres(progres: Float): Int {

@@ -2,24 +2,18 @@ package ba.etf.rma22.projekat.view
 
 import android.content.Context
 import android.graphics.Color
-import android.os.Parcel
-import android.os.Parcelable
-import android.text.Layout
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.TextView
-import androidx.core.view.children
-import androidx.core.view.get
 import ba.etf.rma22.projekat.R
 import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.Korisnik
 import ba.etf.rma22.projekat.data.models.Pitanje
 import ba.etf.rma22.projekat.data.models.PitanjeAnketa
+import java.util.*
 
 class OdgovoriListAdapter(
     private var anketa: Anketa,
@@ -41,9 +35,8 @@ class OdgovoriListAdapter(
 
     override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
         var odgovor: TextView
-
         var view = LayoutInflater.from(mcontext).inflate(R.layout.odgovor_element, p2, false)
-
+        val lv = view.findViewById<ListView>(R.id.odgovoriLista)
         odgovor = view.findViewById(R.id.odgovor)
 
         odgovor.text = pitanje.opcije[p0]
@@ -57,24 +50,38 @@ class OdgovoriListAdapter(
                 }
             }
         }
+        if(!anketaNijeDostupnaZaRad(anketa)) {
+            odgovor.isClickable = true
+            odgovor.setOnClickListener {
+                var zaZapisatOdgovor = PitanjeAnketa(pitanje.naziv, anketa.naziv, anketa.nazivIstrazivanja)
+                Korisnik.odgovorenaPitanjaAnketa =
+                    Korisnik.odgovorenaPitanjaAnketa.plus(zaZapisatOdgovor)
 
-        odgovor.isClickable = true
-        odgovor.setOnClickListener {
-            var zaZapisatOdgovor = PitanjeAnketa(pitanje.naziv,anketa.naziv)
+                odgovor.setTextColor(Color.parseColor("#0000FF"))
 
-            Korisnik.odgovorenaPitanjaAnketa = Korisnik.odgovorenaPitanjaAnketa.plus(zaZapisatOdgovor)
-
-            odgovor.setTextColor(Color.parseColor("#0000FF"))
-
-            Korisnik.odgovorenaPitanjaSaOdgovorom = Korisnik.odgovorenaPitanjaSaOdgovorom.plus(pitanje to odgovor.text.toString())
+                Korisnik.odgovorenaPitanjaSaOdgovorom =
+                    Korisnik.odgovorenaPitanjaSaOdgovorom.plus(pitanje to odgovor.text.toString())
+            }
+        }else{
+            odgovor.isClickable = false
         }
         return view
     }
 
     private fun odgovorOznacenZaPitanje(pitanje: Pitanje, anketa: Anketa): Boolean {
-        if(Korisnik.odgovorenaPitanjaAnketa.contains(PitanjeAnketa(pitanje.naziv, anketa.naziv)))
+        if(Korisnik.odgovorenaPitanjaAnketa.contains(PitanjeAnketa(pitanje.naziv, anketa.naziv, anketa.nazivIstrazivanja)))
             return true
         return false
     }
+
+    fun anketaNijeDostupnaZaRad(anketa: Anketa) : Boolean{
+        return when {
+            anketa.datumRada != null -> true
+            anketa.datumKraj < Calendar.getInstance().time -> true
+            anketa.datumPocetak > Calendar.getInstance().time -> true
+            else -> false
+        }
+    }
+
 }
 
