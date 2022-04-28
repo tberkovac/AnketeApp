@@ -21,10 +21,4 @@ object IstrazivanjeRepository {
         return dajIstrazivanjaStaticData().filter { istrazivanje -> korisnik.companion.upisanaIstrazivanja.contains(istrazivanje) }
             .ifEmpty { emptyList() }
     }
-/*
-    fun getIstrazivanjeByGrupa(grupa: Grupa): Istrazivanje{
-
-    }
-
- */
 }

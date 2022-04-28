@@ -170,15 +170,15 @@ object AnketaStaticData {
         ), //treba biti zuto
 
         Anketa(
-            "Anketa 31", "tesko istrazivanje", date5, date6, null, 10,
+            "Anketa 31", "tesko istrazivanje2", date5, date6, null, 10,
             "grupica 1", 0.4f
         ), //treba biti zuto
         Anketa(
-            "Anketa 32", "tesko istrazivanje", date5, date6, null, 10,
+            "Anketa 32", "tesko istrazivanje2", date5, date6, null, 10,
             "grupica 2", 0.4f
         ), //treba biti zuto
         Anketa(
-            "Anketa 33", "tesko istrazivanje", date5, date6, null, 10,
+            "Anketa 33", "tesko istrazivanje2", date5, date6, null, 10,
             "grupica 3", 0.4f
         ), //treba biti zuto
     )
