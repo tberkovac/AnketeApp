@@ -33,7 +33,7 @@ class ViewPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activi
         if(index >= fragments.size)
             fragments.add(1,FragmentIstrazivanje())
         fragments[index] = fragment
-        notifyItemChanged(index)
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {

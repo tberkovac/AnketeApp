@@ -8,10 +8,10 @@ import ba.etf.rma22.projekat.view.FragmentIstrazivanje
 
 object PitanjeAnketaRepository {
     fun getPitanja(nazivAnkete: String, nazivIstrazivanja : String) :List<Pitanje>{
-        val pitanjeAnkete = dajPitanjeAnkete().filter { pitanjeAnketa -> pitanjeAnketa.anketa == nazivAnkete }
+        val pitanjeAnkete = dajPitanjeAnkete().filter { pitanjeAnketa -> pitanjeAnketa.anketa == nazivAnkete && pitanjeAnketa.istrazivanje == nazivIstrazivanja }
                                 .ifEmpty { listOf() }
         return dajPitanjaStaticData()
-            .filter { pitanje -> pitanjeAnkete.contains(PitanjeAnketa( pitanje.naziv,nazivAnkete)) }
+            .filter { pitanje -> pitanjeAnkete.contains(PitanjeAnketa( pitanje.naziv,nazivAnkete, nazivIstrazivanja)) }
             .ifEmpty { listOf() }
     }
 }
