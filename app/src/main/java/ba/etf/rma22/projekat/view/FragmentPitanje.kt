@@ -16,7 +16,7 @@ import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.Istrazivanje
 import ba.etf.rma22.projekat.data.models.Korisnik
 import ba.etf.rma22.projekat.data.models.Pitanje
-import org.hamcrest.core.Is
+import java.util.*
 
 class FragmentPitanje : Fragment() {
 
@@ -58,16 +58,32 @@ class FragmentPitanje : Fragment() {
         postotak = brojOdgovorenih/brojPitanja.toFloat()
 
         zaustaviDugme.setOnClickListener {
-            MainActivity.adapter.removeAll()
-            var index = AnketaStaticData.sveAnkete.indexOf(AnketaStaticData.sveAnkete.find { anketa2 -> anketa2.naziv == anketa.naziv })
+            if(!anketaNijeDostupnaZaRad(anketa)) {
 
-            AnketaStaticData.sveAnkete[index].progres = postotak
+                MainActivity.adapter.removeAll()
+                var index =
+                    AnketaStaticData.sveAnkete.indexOf(AnketaStaticData.sveAnkete.find { anketa2 -> anketa2.naziv == anketa.naziv })
 
-            FragmentAnkete.listaAnketaAdapter.updateAnkete(AnketaStaticData.sveAnkete)
-            MainActivity.adapter.add(0, FragmentAnkete())
+                AnketaStaticData.sveAnkete[index].progres = postotak
+
+                FragmentAnkete.listaAnketaAdapter.updateAnkete(AnketaStaticData.sveAnkete)
+                MainActivity.adapter.add(0, FragmentAnkete())
+            }else {
+                MainActivity.adapter.removeAll()
+                MainActivity.adapter.add(0, FragmentAnkete())
+            }
         }
 
         return view
+    }
+
+    fun anketaNijeDostupnaZaRad(anketa: Anketa) : Boolean{
+        return when {
+            anketa.datumRada != null -> true
+            anketa.datumKraj < Calendar.getInstance().time -> true
+            anketa.datumPocetak > Calendar.getInstance().time -> true
+            else -> false
+        }
     }
 
     companion object {

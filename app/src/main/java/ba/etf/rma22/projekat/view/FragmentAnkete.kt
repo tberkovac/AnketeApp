@@ -95,10 +95,10 @@ class FragmentAnkete : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        Handler(Looper.getMainLooper()).postDelayed({
+        Handler(Looper.getMainLooper()).post({
             MainActivity.adapter.notifyDataSetChanged()
             MainActivity.adapter.refreshFragment(1,FragmentIstrazivanje())
-        }, 300)
+        })
         spinerFilter.setSelection(0)
         listaAnketaAdapter.updateAnkete(anketeListViewModel.getAnkete())
     }
