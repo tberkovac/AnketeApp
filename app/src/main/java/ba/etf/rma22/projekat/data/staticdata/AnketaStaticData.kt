@@ -24,15 +24,15 @@ object AnketaStaticData {
         date0 = cal.time
         cal.set(2022,3,10)
         date = cal.time
-        cal.set(2022, 5, 10)
+        cal.set(2022, 7, 10)
         date2 = cal.time
-        cal.set(2022, 5, 19)
+        cal.set(2022, 7, 19)
          date3 = cal.time
-        cal.set(2022,5,20)
-         date4 = cal.time
-        cal.set(2022,6,20)
-         date5 = cal.time
         cal.set(2022,7,20)
+         date4 = cal.time
+        cal.set(2022,8,20)
+         date5 = cal.time
+        cal.set(2022,9,20)
          date6 = cal.time
     }
 
