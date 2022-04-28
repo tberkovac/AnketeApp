@@ -15,14 +15,14 @@ class AnketaRepositoryUnitTest {
     fun getMyAnketeTest() {
         val mojeAnkete = AnketaRepository.getMyAnkete()
 
-        assertEquals(mojeAnkete.size,5)
+        assertEquals(mojeAnkete.size,6)
     }
 
     @Test
     fun getAllTest() {
         val sveAnkete = AnketaRepository.getAll()
 
-        assertEquals(sveAnkete.size, 33)
+        assertEquals(sveAnkete.size, 34)
     }
 
     @Test

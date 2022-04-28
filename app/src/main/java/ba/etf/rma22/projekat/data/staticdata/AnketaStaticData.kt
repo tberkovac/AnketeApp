@@ -55,7 +55,11 @@ object AnketaStaticData {
         ), //istekla, treba bit crvena
         Anketa(
             "Anketa 5", "lagano istrazivanje", date, date2, null, 10,
-            "grupica 2", 0.3f
+            "grupica 1", 0.0f
+        ), //moze se jos uvijek radit treba bit zelena
+        Anketa(
+            "Anketa 5", "lagano istrazivanje", date, date2, null, 10,
+            "grupica 2", 0.0f
         ), //moze se jos uvijek radit treba bit zelena
         Anketa(
             "Anketa 6", "lagano istrazivanje", date, date2, null, 10,
