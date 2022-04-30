@@ -12,14 +12,13 @@ import androidx.fragment.app.Fragment
 import ba.etf.rma22.projekat.MainActivity
 import ba.etf.rma22.projekat.R
 import ba.etf.rma22.projekat.data.AnketaStaticData
-import ba.etf.rma22.projekat.data.models.Anketa
-import ba.etf.rma22.projekat.data.models.Istrazivanje
-import ba.etf.rma22.projekat.data.models.Korisnik
-import ba.etf.rma22.projekat.data.models.Pitanje
+import ba.etf.rma22.projekat.data.models.*
+import ba.etf.rma22.projekat.viewmodel.PitanjeAnketaViewModel
 import java.util.*
 
 class FragmentPitanje : Fragment() {
 
+    private val pitanjeAnketaViewModel = PitanjeAnketaViewModel()
     private lateinit var textPitanja : TextView
     private lateinit var listaOdgovora : ListView
     private lateinit var zaustaviDugme : Button
@@ -48,21 +47,29 @@ class FragmentPitanje : Fragment() {
             OdgovoriListAdapter(anketa, pitanje, it)
         }
 
-        var postotak : Float
+        var postotak2 : Float
 
-        var brojOdgovorenih = Korisnik.odgovorenaPitanjaAnketa
-            .filter { pitanjeAnketa -> pitanjeAnketa.anketa == anketa.naziv }.size
+        var brojOdgovorenih2 = Korisnik.odgovorenaPitanjaAnketa
+            .filter { pitanjeAnketa -> pitanjeAnketa.anketa == anketa.naziv && pitanjeAnketa.istrazivanje == anketa.nazivIstrazivanja }.size
 
-        var brojPitanja = MainActivity.viewPager2.childCount-1
+        var brojPitanja2 = MainActivity.viewPager2.childCount-1
 
-        postotak = brojOdgovorenih/brojPitanja.toFloat()
+        postotak2 = brojOdgovorenih2/brojPitanja2.toFloat()
 
         zaustaviDugme.setOnClickListener {
             if(!anketaNijeDostupnaZaRad(anketa)) {
+                var postotak : Float
+
+                var brojOdgovorenih = Korisnik.odgovorenaPitanjaAnketa
+                    .filter { pitanjeAnketa -> pitanjeAnketa.anketa == anketa.naziv && pitanjeAnketa.istrazivanje == anketa.nazivIstrazivanja }.size
+
+                var brojPitanja = pitanjeAnketaViewModel.getPitanja(anketa.naziv, anketa.nazivIstrazivanja).size
+
+                postotak = brojOdgovorenih/brojPitanja.toFloat()
 
                 MainActivity.adapter.removeAll()
                 var index =
-                    AnketaStaticData.sveAnkete.indexOf(AnketaStaticData.sveAnkete.find { anketa2 -> anketa2.naziv == anketa.naziv })
+                    AnketaStaticData.sveAnkete.indexOf(AnketaStaticData.sveAnkete.find { anketa2 -> anketa2.naziv == anketa.naziv && anketa2.nazivIstrazivanja == anketa2.nazivIstrazivanja})
 
                 AnketaStaticData.sveAnkete[index].progres = postotak
 

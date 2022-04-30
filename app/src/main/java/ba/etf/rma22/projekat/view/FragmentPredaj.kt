@@ -26,20 +26,20 @@ class FragmentPredaj : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        var predajDugme : Button
-        var view = inflater.inflate(R.layout.fragment_predaj, container, false)
+        val predajDugme : Button
+        val view = inflater.inflate(R.layout.fragment_predaj, container, false)
 
         postotakUradjenosti = view.findViewById(R.id.progresTekst)
         predajDugme = view.findViewById(R.id.dugmePredaj)
 
         anketa = arguments?.getParcelable("anketica")!!
 
-        var postotak : Float
+        val postotak : Float
 
-        var brojOdgovorenih = Korisnik.odgovorenaPitanjaAnketa
-                            .filter { pitanjeAnketa -> pitanjeAnketa.anketa == anketa.naziv }.size
+        val brojOdgovorenih = Korisnik.odgovorenaPitanjaAnketa
+                            .filter { pitanjeAnketa -> pitanjeAnketa.anketa == anketa.naziv && pitanjeAnketa.istrazivanje == anketa.nazivIstrazivanja }.size
 
-        var brojPitanja = pitanjeAnketaViewModel.getPitanja(anketa.naziv, anketa.nazivIstrazivanja).size
+        val brojPitanja = pitanjeAnketaViewModel.getPitanja(anketa.naziv, anketa.nazivIstrazivanja).size
 
         postotak = brojOdgovorenih/brojPitanja.toFloat()
 
