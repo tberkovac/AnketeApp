@@ -1,7 +1,7 @@
 package ba.etf.rma22.projekat.view
 
 import android.content.Context
-import android.content.res.Resources
+import android.icu.text.SimpleDateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,12 +11,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ba.etf.rma22.projekat.R
 import ba.etf.rma22.projekat.data.models.Anketa
-import ba.etf.rma22.projekat.data.models.Istrazivanje
-import ba.etf.rma22.projekat.data.models.Korisnik
 import ba.etf.rma22.projekat.viewmodel.KorisnikViewModel
 import java.time.LocalDate
 import java.util.*
-import kotlin.math.roundToInt
 
 
 class AnketaListAdapter(
@@ -81,9 +78,7 @@ class AnketaListAdapter(
     }
 
     private fun formatirajDatum(date : Date) : String {
-        val cal : Calendar  = Calendar.getInstance()
-        cal.time = date
-        return cal.get(3).toString() + "." + cal.get(2).toString() +"."+ cal.get(1).toString()
+        return SimpleDateFormat("dd.MM.yyyy").format(date)
     }
 
     private fun zaokruziProgres(progres: Float): Int {
