@@ -32,7 +32,7 @@ class FragmentPoruka: Fragment() {
 
         odakleJePozvano = requireArguments().getString("odakleDolazi")!!
 
-        if(odakleJePozvano.equals("fragmentPredaj")) {
+        if(odakleJePozvano == "fragmentPredaj") {
             anketu = requireArguments().getParcelable("anketica")!!
             grupa = Grupa("null", "null")
             val istrazivanj = Korisnik.upisanaIstrazivanja.filter { istrazivanje -> istrazivanje.naziv == anketu.nazivIstrazivanja }

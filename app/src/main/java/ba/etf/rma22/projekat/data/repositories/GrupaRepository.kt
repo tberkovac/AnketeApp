@@ -8,4 +8,8 @@ object GrupaRepository {
         return dajGrupeStatic().filter { grupa -> grupa.nazivIstrazivanja == nazivIstrazivanja }
             .ifEmpty { emptyList() }
     }
+
+    fun getAll() : List<Grupa> {
+        return dajGrupeStatic()
+    }
 }

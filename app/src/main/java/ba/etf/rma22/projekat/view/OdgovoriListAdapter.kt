@@ -54,13 +54,9 @@ class OdgovoriListAdapter(
             odgovor.isClickable = true
             odgovor.setOnClickListener {
                 var zaZapisatOdgovor = PitanjeAnketa(pitanje.naziv, anketa.naziv, anketa.nazivIstrazivanja)
-                Korisnik.odgovorenaPitanjaAnketa =
-                    Korisnik.odgovorenaPitanjaAnketa.plus(zaZapisatOdgovor)
-
+                Korisnik.odgovorenaPitanjaAnketa.add(zaZapisatOdgovor)
                 odgovor.setTextColor(Color.parseColor("#0000FF"))
-
-                Korisnik.odgovorenaPitanjaSaOdgovorom =
-                    Korisnik.odgovorenaPitanjaSaOdgovorom.plus(pitanje to odgovor.text.toString())
+                Korisnik.odgovorenaPitanjaSaOdgovorom.add(pitanje to odgovor.text.toString())
             }
         }else{
             odgovor.isClickable = false

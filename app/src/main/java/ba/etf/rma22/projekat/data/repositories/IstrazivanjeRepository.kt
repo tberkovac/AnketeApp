@@ -18,7 +18,8 @@ object IstrazivanjeRepository {
     }
 
     fun getUpisani() : List<Istrazivanje>{
-        return dajIstrazivanjaStaticData().filter { istrazivanje -> korisnik.companion.upisanaIstrazivanja.contains(istrazivanje) }
-            .ifEmpty { emptyList() }
+        return dajIstrazivanjaStaticData()
+                .filter { istrazivanje -> korisnik.companion.upisanaIstrazivanja.contains(istrazivanje) }
+                .ifEmpty { emptyList() }
     }
 }
