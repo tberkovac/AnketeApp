@@ -47,32 +47,10 @@ class FragmentPitanje : Fragment() {
             OdgovoriListAdapter(anketa, pitanje, it)
         }
 
-        var postotak2 : Float
-
-        var brojOdgovorenih2 = Korisnik.odgovorenaPitanjaAnketa
-            .filter { pitanjeAnketa -> pitanjeAnketa.anketa == anketa.naziv && pitanjeAnketa.istrazivanje == anketa.nazivIstrazivanja }.size
-
-        var brojPitanja2 = MainActivity.viewPager2.childCount-1
-
-        postotak2 = brojOdgovorenih2/brojPitanja2.toFloat()
-
         zaustaviDugme.setOnClickListener {
             if(!anketaNijeDostupnaZaRad(anketa)) {
-                var postotak : Float
-
-                var brojOdgovorenih = Korisnik.odgovorenaPitanjaAnketa
-                    .filter { pitanjeAnketa -> pitanjeAnketa.anketa == anketa.naziv && pitanjeAnketa.istrazivanje == anketa.nazivIstrazivanja }.size
-
-                var brojPitanja = pitanjeAnketaViewModel.getPitanja(anketa.naziv, anketa.nazivIstrazivanja).size
-
-                postotak = brojOdgovorenih/brojPitanja.toFloat()
-
                 MainActivity.adapter.removeAll()
-                var index =
-                    AnketaStaticData.sveAnkete.indexOf(AnketaStaticData.sveAnkete.find { anketa2 -> anketa2.naziv == anketa.naziv && anketa2.nazivIstrazivanja == anketa2.nazivIstrazivanja})
-
-                AnketaStaticData.sveAnkete[index].progres = postotak
-
+                izmijeniAnketuUStaticData(anketa)
                 FragmentAnkete.listaAnketaAdapter.updateAnkete(AnketaStaticData.sveAnkete)
                 MainActivity.adapter.add(0, FragmentAnkete())
             }else {
@@ -84,7 +62,24 @@ class FragmentPitanje : Fragment() {
         return view
     }
 
-    fun anketaNijeDostupnaZaRad(anketa: Anketa) : Boolean{
+    private fun obracunajProgres() : Float {
+        val brojOdgovorenih = Korisnik.odgovorenaPitanjaAnketa
+            .filter { pitanjeAnketa -> pitanjeAnketa.anketa == anketa.naziv && pitanjeAnketa.istrazivanje == anketa.nazivIstrazivanja }
+            .size
+
+        val brojPitanja = pitanjeAnketaViewModel.getPitanja(anketa.naziv, anketa.nazivIstrazivanja).size
+
+        return brojOdgovorenih/brojPitanja.toFloat()
+    }
+
+    private fun izmijeniAnketuUStaticData(anketa: Anketa){
+        val index = AnketaStaticData.sveAnkete.indexOf(AnketaStaticData.sveAnkete
+                .find { anketa2 -> anketa2.naziv == anketa.naziv && anketa2.nazivIstrazivanja == anketa2.nazivIstrazivanja})
+
+        AnketaStaticData.sveAnkete[index].progres = obracunajProgres()
+    }
+
+    private fun anketaNijeDostupnaZaRad(anketa: Anketa) : Boolean{
         return when {
             anketa.datumRada != null -> true
             anketa.datumKraj < Calendar.getInstance().time -> true
