@@ -39,7 +39,7 @@ object AnketaStaticData {
     var sveAnkete: MutableList<Anketa> = mutableListOf(
         Anketa(
             "Anketa 1", "lagano istrazivanje", date, date2, null, 10,
-            "grupica 1", 0.1f
+            "grupica 1", 0.0f
         ), //moze se jos uvijek radit treba bit zelena
         Anketa(
             "Anketa 2", "lagano istrazivanje", date5, date6, null, 10,
@@ -47,11 +47,11 @@ object AnketaStaticData {
         ), //moci ce se raditi u buducnosti, treba bit zuta
         Anketa(
             "Anketa 3", "lagano istrazivanje", date, date2, date, 10,
-            "grupica 1", 1f
+            "grupica 1", 0.67f
         ), //anketa uradjena, treba bit plava
         Anketa(
             "Anketa 4", "lagano istrazivanje", date0, date, null, 10,
-            "grupica 1", 0.4f
+            "grupica 1", 0f
         ), //istekla, treba bit crvena
         Anketa(
             "Anketa 5", "lagano istrazivanje", date, date2, null, 10,
@@ -82,11 +82,11 @@ object AnketaStaticData {
 
         Anketa(
             "Anketa 10", "zadovoljavajuce istrazivanje", date2, date3, null, 10,
-            "grupica 1", 0.6f
+            "grupica 1", 0.0f
         ), //treba biti ispunjena tj plava
         Anketa(
             "Anketa 11", "zadovoljavajuce istrazivanje", date2, date3, null, 10,
-            "grupica 2", 0.6f
+            "grupica 2", 0.0f
         ), //treba biti ispunjena tj plava
         Anketa(
             "Anketa 12", "zadovoljavajuce istrazivanje", date2, date3, null, 10,
@@ -96,20 +96,20 @@ object AnketaStaticData {
 
         Anketa(
             "Anketa 13", "zadovoljavajuce istrazivanje2", date2, date3, null, 10,
-            "grupica 1", 0.6f
+            "grupica 1", 0.0f
         ), //treba biti ispunjena tj plava
         Anketa(
             "Anketa 14", "zadovoljavajuce istrazivanje2", date2, date3, null, 10,
-            "grupica 2", 0.2f
+            "grupica 2", 0.0f
         ), //treba biti ispunjena tj plava
         Anketa(
             "Anketa 15", "zadovoljavajuce istrazivanje2", date2, date3, null, 10,
-            "grupica 3", 0.3f
+            "grupica 3", 0.0f
         ), //treba biti zuto
 
         Anketa(
             "Anketa 16", "srednje tesko istrazivanje", date2, date3, null, 10,
-            "grupica 1", 0.6f
+            "grupica 1", 0.0f
         ), //treba biti ispunjena tj plava
         Anketa(
             "Anketa 17", "srednje tesko istrazivanje", date3, date6, null, 10,
@@ -122,7 +122,7 @@ object AnketaStaticData {
 
         Anketa(
             "Anketa 19", "srednje tesko istrazivanje2", date2, date3, null, 10,
-            "grupica 1", 0.6f
+            "grupica 1", 0.0f
         ), //treba biti ispunjena tj plava
         Anketa(
             "Anketa 20", "srednje tesko istrazivanje2", date3, date6, null, 10,
@@ -135,28 +135,28 @@ object AnketaStaticData {
 
         Anketa(
             "Anketa 22", "zanimljivo istrazivanje", date2, date3, null, 10,
-            "grupica 1", 0.9f
+            "grupica 1", 0.0f
         ), //treba biti ispunjena tj plava
         Anketa(
             "Anketa 23", "zanimljivo istrazivanje", date2, date3, null, 10,
-            "grupica 2", 0.9f
+            "grupica 2", 0.0f
         ), //treba biti ispunjena tj plava
         Anketa(
             "Anketa 24", "zanimljivo istrazivanje", date2, date3, null, 10,
-            "grupica 3", 0.2f
+            "grupica 3", 0.0f
         ), //treba biti ispunjena tj plava
 
         Anketa(
             "Anketa 25", "zanimljivo istrazivanje2", date2, date3, null, 10,
-            "grupica 1", 0.6f
+            "grupica 1", 0.0f
         ), //treba biti ispunjena tj plava
         Anketa(
             "Anketa 26", "zanimljivo istrazivanje2", date2, date3, null, 10,
-            "grupica 2", 0.6f
+            "grupica 2", 0.0f
         ), //treba biti ispunjena tj plava
         Anketa(
             "Anketa 27", "zanimljivo istrazivanje2", date2, date3, null, 10,
-            "grupica 3", 0.6f
+            "grupica 3", 0.0f
         ), //treba biti ispunjena tj plava
 
 

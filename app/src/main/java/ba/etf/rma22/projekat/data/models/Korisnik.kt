@@ -11,8 +11,14 @@ class Korisnik {
             Grupa("grupica 1", "lagano istrazivanje"),
             Grupa("grupica 2", "zadovoljavajuce istrazivanje")
         )
-        var odgovorenaPitanjaAnketa: MutableList<PitanjeAnketa> = mutableListOf()
-        var odgovorenaPitanjaSaOdgovorom: MutableList<Pair<Pitanje,String>> = mutableListOf()
+        var odgovorenaPitanjaAnketa: MutableList<PitanjeAnketa> = mutableListOf(
+            PitanjeAnketa("pitanje1","Anketa 3","lagano istrazivanje"),
+            PitanjeAnketa("pitanje3","Anketa 3","lagano istrazivanje"),
+        )
+        var odgovorenaPitanjaSaOdgovorom: MutableList<Pair<PitanjeAnketa,String>> = mutableListOf(
+            PitanjeAnketa("pitanje1", "Anketa 3", "lagano istrazivanje") to "da",
+            PitanjeAnketa("pitanje3", "Anketa 3", "lagano istrazivanje") to "zelena"
+        )
     }
     var companion = Companion
 }

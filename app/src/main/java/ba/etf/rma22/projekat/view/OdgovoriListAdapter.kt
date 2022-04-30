@@ -36,15 +36,14 @@ class OdgovoriListAdapter(
     override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
         var odgovor: TextView
         var view = LayoutInflater.from(mcontext).inflate(R.layout.odgovor_element, p2, false)
-        val lv = view.findViewById<ListView>(R.id.odgovoriLista)
         odgovor = view.findViewById(R.id.odgovor)
 
         odgovor.text = pitanje.opcije[p0]
 
         if(odgovorOznacenZaPitanje(pitanje, anketa)) {
             var index : Int
-            if(Korisnik.odgovorenaPitanjaSaOdgovorom.contains(pitanje to odgovor.text)) {
-                index = Korisnik.odgovorenaPitanjaSaOdgovorom.indexOf(pitanje to odgovor.text)
+            if(Korisnik.odgovorenaPitanjaSaOdgovorom.contains(PitanjeAnketa(pitanje.naziv, anketa.naziv, anketa.nazivIstrazivanja) to odgovor.text.toString())) {
+                index = Korisnik.odgovorenaPitanjaSaOdgovorom.indexOf(PitanjeAnketa(pitanje.naziv, anketa.naziv, anketa.nazivIstrazivanja) to odgovor.text.toString())
                 if (odgovor.text.equals(Korisnik.odgovorenaPitanjaSaOdgovorom.get(index).second)) {
                     odgovor.setTextColor(Color.parseColor("#0000FF"))
                 }
@@ -56,7 +55,8 @@ class OdgovoriListAdapter(
                 var zaZapisatOdgovor = PitanjeAnketa(pitanje.naziv, anketa.naziv, anketa.nazivIstrazivanja)
                 Korisnik.odgovorenaPitanjaAnketa.add(zaZapisatOdgovor)
                 odgovor.setTextColor(Color.parseColor("#0000FF"))
-                Korisnik.odgovorenaPitanjaSaOdgovorom.add(pitanje to odgovor.text.toString())
+                Korisnik.odgovorenaPitanjaSaOdgovorom
+                    .add(PitanjeAnketa(pitanje.naziv, anketa.naziv, anketa.nazivIstrazivanja) to odgovor.text.toString())
             }
         }else{
             odgovor.isClickable = false
