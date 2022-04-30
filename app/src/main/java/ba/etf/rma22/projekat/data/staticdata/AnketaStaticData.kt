@@ -43,7 +43,7 @@ object AnketaStaticData {
         ), //moze se jos uvijek radit treba bit zelena
         Anketa(
             "Anketa 2", "lagano istrazivanje", date5, date6, null, 10,
-            "grupica 1", 0.2f
+            "grupica 1", 0.0f
         ), //moci ce se raditi u buducnosti, treba bit zuta
         Anketa(
             "Anketa 3", "lagano istrazivanje", date, date2, date, 10,
@@ -63,20 +63,20 @@ object AnketaStaticData {
         ), //moze se jos uvijek radit treba bit zelena
         Anketa(
             "Anketa 6", "lagano istrazivanje", date, date2, null, 10,
-            "grupica 3", 0.4f
+            "grupica 3", 0.0f
         ), //moze se jos uvijek radit treba bit zelena
 
         Anketa(
             "Anketa 7", "lagano istrazivanje2", date2, date3, null, 10,
-            "grupica 1", 0.4f
+            "grupica 1", 0.0f
         ), // treba bit zuto
         Anketa(
             "Anketa 8", "lagano istrazivanje2", date2, date3, null, 10,
-            "grupica 2", 0.3f
+            "grupica 2", 0.0f
         ), //treba biti zuto
         Anketa(
             "Anketa 9", "lagano istrazivanje2", date2, date3, null, 10,
-            "grupica 3", 0.7f
+            "grupica 3", 0.0f
         ), //treba biti zuto
 
 
@@ -90,7 +90,7 @@ object AnketaStaticData {
         ), //treba biti ispunjena tj plava
         Anketa(
             "Anketa 12", "zadovoljavajuce istrazivanje", date2, date3, null, 10,
-            "grupica 3", 0.1f
+            "grupica 3", 0.0f
         ), //treba biti zuto
 
 
@@ -113,11 +113,11 @@ object AnketaStaticData {
         ), //treba biti ispunjena tj plava
         Anketa(
             "Anketa 17", "srednje tesko istrazivanje", date3, date6, null, 10,
-            "grupica 2", 0.4f
+            "grupica 2", 0.0f
         ), //treba biti zuto
         Anketa(
             "Anketa 18", "srednje tesko istrazivanje", date3, date6, null, 10,
-            "grupica 3", 0.1f
+            "grupica 3", 0.0f
         ), //treba biti zuto
 
         Anketa(
@@ -126,11 +126,11 @@ object AnketaStaticData {
         ), //treba biti ispunjena tj plava
         Anketa(
             "Anketa 20", "srednje tesko istrazivanje2", date3, date6, null, 10,
-            "grupica 2", 0.4f
+            "grupica 2", 0.0f
         ), //treba biti zuto
         Anketa(
             "Anketa 21", "srednje tesko istrazivanje2", date3, date6, null, 10,
-            "grupica 3", 0.4f
+            "grupica 3", 0.0f
         ), //treba biti zuto
 
         Anketa(
@@ -162,28 +162,28 @@ object AnketaStaticData {
 
         Anketa(
             "Anketa 28", "tesko istrazivanje", date5, date6, null, 10,
-            "grupica 1", 0.4f
+            "grupica 1", 0.0f
         ), //treba biti zuto
         Anketa(
             "Anketa 29", "tesko istrazivanje", date5, date6, null, 10,
-            "grupica 2", 0.4f
+            "grupica 2", 0.0f
         ), //treba biti zuto
         Anketa(
             "Anketa 30", "tesko istrazivanje", date5, date6, null, 10,
-            "grupica 3", 0.4f
+            "grupica 3", 0.0f
         ), //treba biti zuto
 
         Anketa(
             "Anketa 31", "tesko istrazivanje2", date5, date6, null, 10,
-            "grupica 1", 0.4f
+            "grupica 1", 0.0f
         ), //treba biti zuto
         Anketa(
             "Anketa 32", "tesko istrazivanje2", date5, date6, null, 10,
-            "grupica 2", 0.4f
+            "grupica 2", 0.0f
         ), //treba biti zuto
         Anketa(
             "Anketa 33", "tesko istrazivanje2", date5, date6, null, 10,
-            "grupica 3", 0.4f
+            "grupica 3", 0.0f
         ), //treba biti zuto
     )
 
