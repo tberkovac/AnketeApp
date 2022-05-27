@@ -1,7 +1,6 @@
-package ba.etf.rma22.projekat.data.repositories
+/*package ba.etf.rma22.projekat.data.repositories
 
 import ba.etf.rma22.projekat.data.models.Istrazivanje
-import ba.etf.rma22.projekat.data.dajIstrazivanjaStaticData
 import ba.etf.rma22.projekat.data.models.Grupa
 import ba.etf.rma22.projekat.data.models.Korisnik
 
@@ -23,3 +22,5 @@ object IstrazivanjeRepository {
                 .ifEmpty { emptyList() }
     }
 }
+
+ */

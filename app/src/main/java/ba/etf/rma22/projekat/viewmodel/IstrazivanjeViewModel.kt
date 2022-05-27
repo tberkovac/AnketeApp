@@ -1,6 +1,7 @@
+/*
 package ba.etf.rma22.projekat.viewmodel
 
-import ba.etf.rma22.projekat.data.dajIstrazivanjaStaticData
+
 import ba.etf.rma22.projekat.data.models.Istrazivanje
 import ba.etf.rma22.projekat.data.models.Korisnik
 import ba.etf.rma22.projekat.data.repositories.IstrazivanjeRepository
@@ -16,4 +17,6 @@ class IstrazivanjeViewModel {
     fun getUpisani() : List<Istrazivanje>{
         return IstrazivanjeRepository.getUpisani()
     }
+
 }
+*/

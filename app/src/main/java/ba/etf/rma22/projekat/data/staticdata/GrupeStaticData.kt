@@ -1,4 +1,4 @@
-package ba.etf.rma22.projekat.data
+/*package ba.etf.rma22.projekat.data
 
 import ba.etf.rma22.projekat.data.models.Grupa
 
@@ -38,3 +38,5 @@ fun dajGrupeStatic() : List<Grupa>{
 
     )
 }
+
+ */

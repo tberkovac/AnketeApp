@@ -1,4 +1,4 @@
-package ba.etf.rma22.projekat.data.staticdata
+/*package ba.etf.rma22.projekat.data.staticdata
 
 import ba.etf.rma22.projekat.data.models.Pitanje
 
@@ -16,3 +16,5 @@ fun dajPitanjaStaticData() : List<Pitanje>{
         Pitanje("pitanje10", "Koliko krava ima nogu", listOf("0","1","2","3","4","5"))
     )
 }
+
+ */

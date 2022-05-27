@@ -1,4 +1,4 @@
-package ba.etf.rma22.projekat.data.staticdata
+/*package ba.etf.rma22.projekat.data.staticdata
 
 import ba.etf.rma22.projekat.data.models.PitanjeAnketa
 
@@ -138,3 +138,5 @@ fun dajPitanjeAnkete() : List<PitanjeAnketa>{
         PitanjeAnketa("pitanje1","Anketa 33","tesko istrazivanje2")
     )
 }
+
+ */
