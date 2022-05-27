@@ -2,6 +2,7 @@ package ba.etf.rma22.projekat.data.repositories
 
 import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.GetAnketaResponse
+import ba.etf.rma22.projekat.data.models.GetIstrazivanjeResponse
 import ba.etf.rma22.projekat.data.models.GetPitanjaResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -27,15 +28,15 @@ interface Api {
     @GET("/istrazivanje")
     suspend fun getIstrazivanja(
         @Query("offset") offset: Int
-    ) : Response<GetPitanjaResponse>
+    ) : Response<GetIstrazivanjeResponse>
 
     @GET("/istrazivanje/{id}")
     suspend fun getIstrazivanjaById(
         @Path("id")  id : Int
-    ) : Response<GetPitanjaResponse>
+    ) : Response<GetIstrazivanjeResponse>
 
     @GET("/grupa/{gid}/istrazivanje")
     suspend fun getIstrazivanjaForGroupById(
         @Path("gid")  id : Int
-    ) : Response<GetPitanjaResponse>
+    ) : Response<GetIstrazivanjeResponse>
 }
