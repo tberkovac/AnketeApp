@@ -2,35 +2,43 @@ package ba.etf.rma22.projekat.data.models
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import java.util.*
 
 data class Anketa(
-    val naziv: String,
-    val nazivIstrazivanja: String,
-    val datumPocetak: Date,
-    val datumKraj: Date,
-    var datumRada: Date?,
-    val trajanje: Int,
-    val nazivGrupe: String,
-    var progres: Float
+
+    @SerializedName("id") val id : Int,
+    @SerializedName("naziv") val naziv: String,
+    @SerializedName("datumPocetak") val datumPocetak: Date,
+    @SerializedName("datumKraj") val datumKraj: Date,
+    @SerializedName("datumKraj") val datumRada: Date?,
+
+    @SerializedName("trajanje") val trajanje : Int,
+    @SerializedName("nazivGrupe") val nazivGrupe : String,
+    @SerializedName("nazivIstrazivanja") val nazivIstrazivanja: String,
+
+    @SerializedName("progres") val progres : Float,
+
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
-        parcel.readString()!!,
+        parcel.readInt(),
         parcel.readString()!!,
         parcel.readValue(Date::class.java.classLoader) as Date,
         parcel.readValue(Date::class.java.classLoader) as Date,
         parcel.readValue(Date::class.java.classLoader) as? Date,
         parcel.readInt(),
         parcel.readString()!!,
+        parcel.readString()!!,
         parcel.readFloat()
     ) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeInt(id)
         parcel.writeString(naziv)
-        parcel.writeString(nazivIstrazivanja)
         parcel.writeInt(trajanje)
         parcel.writeString(nazivGrupe)
+        parcel.writeString(nazivIstrazivanja)
         parcel.writeFloat(progres)
     }
 
@@ -47,13 +55,4 @@ data class Anketa(
             return arrayOfNulls(size)
         }
     }
-    fun Parcel.writeDate(date: Date?) {
-        writeLong(date?.time ?: -1)
-    }
-
-    fun Parcel.readDate(): Date? {
-        val long = readLong()
-        return if (long != -1L) Date(long) else null
-    }
-
 }
