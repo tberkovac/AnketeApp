@@ -11,13 +11,9 @@ data class Anketa(
     @SerializedName("naziv") val naziv: String,
     @SerializedName("datumPocetak") val datumPocetak: Date,
     @SerializedName("datumKraj") val datumKraj: Date,
-    @SerializedName("datumKraj") val datumRada: Date?,
-
     @SerializedName("trajanje") val trajanje : Int,
-    @SerializedName("nazivGrupe") val nazivGrupe : String,
-    @SerializedName("nazivIstrazivanja") val nazivIstrazivanja: String,
-
-    @SerializedName("progres") val progres : Float,
+    @SerializedName("createdAt") val createdAt : String,
+    @SerializedName("updatedAt") val updatedAt : String
 
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
@@ -25,21 +21,20 @@ data class Anketa(
         parcel.readString()!!,
         parcel.readValue(Date::class.java.classLoader) as Date,
         parcel.readValue(Date::class.java.classLoader) as Date,
-        parcel.readValue(Date::class.java.classLoader) as? Date,
         parcel.readInt(),
         parcel.readString()!!,
-        parcel.readString()!!,
-        parcel.readFloat()
+        parcel.readString()!!
     ) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(id)
         parcel.writeString(naziv)
+        parcel.writeDate(datumPocetak)
+        parcel.writeDate(datumKraj)
         parcel.writeInt(trajanje)
-        parcel.writeString(nazivGrupe)
-        parcel.writeString(nazivIstrazivanja)
-        parcel.writeFloat(progres)
+        parcel.writeString(createdAt)
+        parcel.writeString(updatedAt)
     }
 
     override fun describeContents(): Int {
@@ -54,5 +49,14 @@ data class Anketa(
         override fun newArray(size: Int): Array<Anketa?> {
             return arrayOfNulls(size)
         }
+    }
+
+    fun Parcel.writeDate(date: Date?) {
+        writeLong(date?.time ?: -1)
+    }
+
+    fun Parcel.readDate(): Date? {
+        val long = readLong()
+        return if (long != -1L) Date(long) else null
     }
 }

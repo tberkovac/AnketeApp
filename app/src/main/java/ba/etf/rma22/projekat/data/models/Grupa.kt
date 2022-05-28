@@ -2,15 +2,15 @@ package ba.etf.rma22.projekat.data.models
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 
 data class Grupa (
-    val naziv: String,
-    val nazivIstrazivanja: String
-
+    @SerializedName("id") val id: Int,
+    @SerializedName("naziv") val naziv: String,
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readInt(),
         parcel.readString()!!,
-        parcel.readString()!!
     ) {
     }
 
@@ -19,8 +19,8 @@ data class Grupa (
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeInt(id)
         parcel.writeString(naziv)
-        parcel.writeString(nazivIstrazivanja)
     }
 
     override fun describeContents(): Int {

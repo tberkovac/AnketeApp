@@ -1,55 +1,54 @@
 package ba.etf.rma22.projekat.data.repositories
 
-import ba.etf.rma22.projekat.data.AnketaStaticData.dajAnketeStatic
+import android.util.Log
 import ba.etf.rma22.projekat.data.models.Anketa
-import ba.etf.rma22.projekat.data.models.Grupa
-import ba.etf.rma22.projekat.data.models.Korisnik
-import java.time.LocalDate
-import java.util.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 
 object AnketaRepository {
-    var k : Korisnik = Korisnik()
-    fun getMyAnkete() : List<Anketa> {
-        var naziviUpisanihIstrazivanja : MutableList<String> = mutableListOf()
-        var naziviUpisanihGrupa: MutableList<String> = mutableListOf()
 
-        for( i in k.companion.upisanaIstrazivanja) {
-            naziviUpisanihIstrazivanja = naziviUpisanihIstrazivanja.plus(i.naziv) as MutableList<String>
+
+    suspend fun getAll(offset:Int):List<Anketa> {
+        return withContext(Dispatchers.IO){
+            val response = ApiConfig.retrofit.getAnkete(offset)
+            return@withContext response
         }
-        for( i in k.companion.upisaneGrupe) {
-            naziviUpisanihGrupa = naziviUpisanihGrupa.plus(i.naziv) as MutableList<String>
+    }
+
+    suspend fun getById(id:Int):Anketa {
+        return withContext(Dispatchers.IO){
+            val response = ApiConfig.retrofit.getAnketaById(id)
+            return@withContext response
         }
-
-        return dajAnketeStatic().filter { anketa -> naziviUpisanihIstrazivanja.contains(anketa.nazivIstrazivanja)}
-            .filter { anketa -> k.companion.upisaneGrupe.contains(Grupa(anketa.nazivGrupe,anketa.nazivIstrazivanja)) }
-            .ifEmpty { emptyList() }
     }
 
-    fun getAll(): List<Anketa> {
-        return dajAnketeStatic().ifEmpty { emptyList() }
+    suspend fun getAll() : List<Anketa> {
+        var sveAnkete = listOf<Anketa>()
+        var i = 1
+        while(true){
+            val velicina : Int
+            withContext(Dispatchers.IO){
+                Log.v("Korutina", "jos jedna zapoceta")
+
+                val response = ApiConfig.retrofit.getAnkete(i)
+                velicina = response.size
+                sveAnkete = sveAnkete.plus(response)
+            }
+            if(velicina != 5)
+                break
+            i++
+        }
+        Log.v("Korutina", " zavrsena, ankete " +sveAnkete.toString() )
+        return sveAnkete
     }
 
-    fun getDone(): List<Anketa> {
-        return getMyAnkete().filter{ anketa ->  anketa.datumRada!=null}
-            .ifEmpty { emptyList() }
+    /*
+    suspend fun getUpisane():List<Anketa> {
+        return withContext(Dispatchers.IO){
+            val response = ApiConfig.retrofit
+        }
     }
 
-    fun getFuture(): List<Anketa> {
-        val cal: Calendar = Calendar.getInstance()
-        cal.set(LocalDate.now().year, LocalDate.now().monthValue, LocalDate.now().dayOfMonth)
-        val date: Date = cal.time
-
-        return getMyAnkete().filter { anketa -> anketa.datumPocetak> date  && anketa.datumRada==null}
-            .ifEmpty { emptyList() }
-    }
-
-    fun getNotTaken(): List<Anketa> {
-        val cal: Calendar = Calendar.getInstance()
-        cal.set(LocalDate.now().year, LocalDate.now().monthValue, LocalDate.now().dayOfMonth)
-        val date: Date = cal.time
-
-        return getMyAnkete().filter{ anketa -> anketa.datumRada == null && anketa.datumKraj<date }
-            .ifEmpty { emptyList() }
-    }
+     */
 }

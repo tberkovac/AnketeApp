@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object ApiConfig {
     var retrofit: Api = Retrofit.Builder()
-        .baseUrl("https://rma22ws.herokuapp.com/")
+        .baseUrl("https://rma22ws.herokuapp.com")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(Api::class.java)

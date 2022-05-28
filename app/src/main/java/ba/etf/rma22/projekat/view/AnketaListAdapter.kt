@@ -11,14 +11,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ba.etf.rma22.projekat.R
 import ba.etf.rma22.projekat.data.models.Anketa
-import ba.etf.rma22.projekat.viewmodel.KorisnikViewModel
 import java.time.LocalDate
 import java.util.*
 
 
 class AnketaListAdapter(
     private var ankete : List<Anketa>,
-    private val onItemClicked: (anketa : Anketa) -> Unit
+    private val onItemClicked: suspend (anketa : Anketa) -> Unit
 ) : RecyclerView.Adapter<AnketaListAdapter.AnketaViewHolder>(){
     inner class AnketaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nazivAnkete : TextView = itemView.findViewById(R.id.nazivAnkete)
@@ -37,11 +36,10 @@ class AnketaListAdapter(
     override fun onBindViewHolder(holder: AnketaViewHolder, position: Int) {
 
         val anketa = ankete[position]
-        val korisnikViewModel = KorisnikViewModel()
 
         holder.nazivAnkete.text = anketa.naziv
-        holder.brojIstrazivanja.text = anketa.nazivIstrazivanja
-        holder.progresZavrsetka.setProgress(zaokruziProgres(anketa.progres), false)
+      //  holder.brojIstrazivanja.text = anketa.nazivIstrazivanja
+      //  holder.progresZavrsetka.setProgress(zaokruziProgres(anketa.progres), false)
 
 
         var cal: Calendar = Calendar.getInstance()
@@ -50,7 +48,7 @@ class AnketaListAdapter(
 
         val boja: String
 
-        if(anketa.datumRada == null){
+     /*   if(anketa.datumRada == null){
             if(date < anketa.datumPocetak){
                 boja = "zuta"
                 holder.pismeniStatus.text = "Vrijeme aktiviranja: " + formatirajDatum(anketa.datumPocetak)
@@ -67,13 +65,22 @@ class AnketaListAdapter(
             boja = "plava"
         }
 
+      */
+
         val context: Context = holder.statusAnkete.context
-        var id: Int = context.resources.getIdentifier(boja, "drawable", context.packageName)
+        var id: Int = context.resources.getIdentifier("zelena", "drawable", context.packageName)
         holder.statusAnkete.setImageResource(id)
 
         holder.pismeniStatus.text
-        
-        holder.itemView.setOnClickListener { if(korisnikViewModel.jeLiUpisanaAnketa(anketa)) onItemClicked(ankete[position]) }
+      /*
+        holder.itemView.setOnClickListener {
+            if(korisnikViewModel.jeLiUpisanaAnketa(anketa))
+                withContext(Dispatchers.IO){
+                    onItemClicked(ankete[position])
+                }
+
+       */
+
 
     }
 

@@ -1,11 +1,9 @@
 package ba.etf.rma22.projekat.data.repositories
 
-import ba.etf.rma22.projekat.data.models.Anketa
-import ba.etf.rma22.projekat.data.models.GetAnketaResponse
-import ba.etf.rma22.projekat.data.models.GetIstrazivanjeResponse
-import ba.etf.rma22.projekat.data.models.GetPitanjaResponse
+import ba.etf.rma22.projekat.data.models.*
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -13,30 +11,49 @@ interface Api {
     @GET("/anketa/{idAnkete}/pitanja")
     suspend fun getPitanja(
         @Path("idAnkete") id : Int
-    ): Response<GetPitanjaResponse>
+    ): ArrayList<Pitanje>
 
     @GET("/anketa")
     suspend fun getAnkete(
         @Query("offset") offset: Int
-    ) : Response<GetAnketaResponse>
+    ) : ArrayList<Anketa>
 
     @GET("/anketa/{id}")
     suspend fun getAnketaById(
         @Path("id") id: Int
-    ) : Response<Anketa>
+    ) : Anketa
 
     @GET("/istrazivanje")
     suspend fun getIstrazivanja(
         @Query("offset") offset: Int
-    ) : Response<GetIstrazivanjeResponse>
+    ) : ArrayList<Istrazivanje>
 
     @GET("/istrazivanje/{id}")
     suspend fun getIstrazivanjaById(
         @Path("id")  id : Int
-    ) : Response<GetIstrazivanjeResponse>
+    ) : Istrazivanje
 
     @GET("/grupa/{gid}/istrazivanje")
     suspend fun getIstrazivanjaForGroupById(
         @Path("gid")  id : Int
-    ) : Response<GetIstrazivanjeResponse>
+    ) : Istrazivanje
+
+    @GET("/grupa")
+    suspend fun getGrupe() : ArrayList<Grupa>
+
+
+    @POST("/grupa/{gid}/student/19b70587-76b0-4444-a964-fad0a04d426b")
+    suspend fun upisiGrupuSaId(
+        @Path("gid") gid : Int,
+    ) : Response<UpisGrupeResponse>
+
+    @GET("/student/{id}/grupa")
+    suspend fun getUpisaneGrupe(
+        @Path("id") id : String
+    ) : ArrayList<Grupa>
+
+    @GET("/grupa/{id}")
+    suspend fun getGrupaById(
+        @Path("id") id : Int
+    ) : Grupa
 }
