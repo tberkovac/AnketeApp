@@ -29,7 +29,7 @@ object IstrazivanjeIGrupaRepository {
                 break
             i++
         }
-        Log.v("Istrazivanja su", svaIstrazivanja.toString())
+
         return svaIstrazivanja
     }
 
@@ -39,34 +39,27 @@ object IstrazivanjeIGrupaRepository {
             return@withContext response
         }
     }
-//ova je problem
+
     suspend fun getGrupeByIstrazivanje(idIstrazivanje: Int) : List<Grupa> {
-    if(idIstrazivanje == 0){
-        return emptyList()
-    }
-        var grupeZaVratit = getGrupe()
-    var grupeZaVratiti2 = emptyList<Grupa>()
-    Log.v("ID ISTRAZIVANJA JE" , idIstrazivanje.toString())
-
-        var trazenoIstrazivanje = ApiConfig.retrofit.getIstrazivanjaById(idIstrazivanje)
-          Log.v("Trazeno istrazivanje je ", trazenoIstrazivanje?.toString())
-        grupeZaVratit.forEach {
-            val istrazivanjaZaGrupu = ApiConfig.retrofit.getIstrazivanjaForGroupById(it.id)
-            Log.v("Istrazivanja su ", it.naziv + " " + istrazivanjaZaGrupu.toString())
-            if(  ApiConfig.retrofit.getIstrazivanjaForGroupById(it.id) == (trazenoIstrazivanje))
-                grupeZaVratiti2 = grupeZaVratiti2.plus(it)
+        if(idIstrazivanje == 0){
+            return emptyList()
         }
+        val sveGrupe = getGrupe()
+        var grupeZaVratiti = emptyList<Grupa>()
 
-        Log.v("GRUPE ZA VRATIT SU ", grupeZaVratit.toString())
-
-        return grupeZaVratiti2
+        val proslijedjenoIstrazivanje = ApiConfig.retrofit.getIstrazivanjaById(idIstrazivanje)
+        sveGrupe.forEach {
+            val istrazivanjeZaGrupu = ApiConfig.retrofit.getIstrazivanjaForGroupById(it.id)
+            if(istrazivanjeZaGrupu == proslijedjenoIstrazivanje)
+                grupeZaVratiti = grupeZaVratiti.plus(it)
+        }
+        return grupeZaVratiti
     }
 
     suspend fun upisiUGrupu(idGrupa:Int):Boolean {
         if(getUpisaneGrupe().contains(ApiConfig.retrofit.getGrupaById(idGrupa)))
             return false
         val response = ApiConfig.retrofit.upisiGrupuSaId(idGrupa)
-        Log.v("PORUKA UPISA JE", response.message())
         if(response.message() == "OK")
             return true
         return false
@@ -74,7 +67,16 @@ object IstrazivanjeIGrupaRepository {
 
     suspend fun getUpisaneGrupe():List<Grupa>{
         val response = ApiConfig.retrofit.getUpisaneGrupe("19b70587-76b0-4444-a964-fad0a04d426b")
-        Log.v("UPISANE GRUPE SU", response.toString())
+        return response
+    }
+
+    suspend fun getGrupaById(idGrupa: Int) : Grupa {
+        val response = ApiConfig.retrofit.getGrupaById(idGrupa)
+        return response
+    }
+
+    suspend fun getIstrazivanjeByGrupaId(idGrupa: Int) : Istrazivanje {
+        val response = ApiConfig.retrofit.getIstrazivanjaForGroupById(idGrupa)
         return response
     }
 }

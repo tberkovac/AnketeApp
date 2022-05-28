@@ -28,4 +28,8 @@ class IstrazivanjeIGrupaViewModel {
     suspend fun getUpisaneGrupe():List<Grupa> {
         return IstrazivanjeIGrupaRepository.getUpisaneGrupe()
     }
+
+    suspend fun getIstrazivanjeByGroupId(idGrupa: Int) : Istrazivanje {
+        return IstrazivanjeIGrupaRepository.getIstrazivanjeByGrupaId(idGrupa)
+    }
 }
