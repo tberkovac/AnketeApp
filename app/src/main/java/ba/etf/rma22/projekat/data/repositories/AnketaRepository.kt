@@ -3,6 +3,7 @@ package ba.etf.rma22.projekat.data.repositories
 import android.util.Log
 import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.Grupa
+import ba.etf.rma22.projekat.data.models.Pitanje
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -46,5 +47,9 @@ object AnketaRepository {
 
     suspend fun getGroupsForAnketa(anketaId: Int) : List<Grupa> {
         return ApiConfig.retrofit.getGroupsForAnketa(anketaId)
+    }
+
+    suspend fun getPitanjaForAnketa(anketaId: Int) : List<Pitanje> {
+        return ApiConfig.retrofit.getPitanjaForAnketa(anketaId)
     }
 }

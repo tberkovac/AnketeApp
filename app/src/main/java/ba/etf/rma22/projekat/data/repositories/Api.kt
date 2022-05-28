@@ -61,4 +61,9 @@ interface Api {
     suspend fun getGroupsForAnketa(
         @Path("id") id : Int
     ) : List<Grupa>
+
+    @GET("/anketa/{id}/pitanja")
+    suspend fun getPitanjaForAnketa(
+        @Path("id") id : Int
+    ) : List<Pitanje>
 }

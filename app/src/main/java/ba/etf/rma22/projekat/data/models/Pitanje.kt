@@ -2,13 +2,16 @@ package ba.etf.rma22.projekat.data.models
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 
 data class Pitanje (
-    val naziv: String,
-    val tekst: String,
-    val opcije: List<String>
+    @SerializedName("id") val id: Int,
+    @SerializedName("naziv") val naziv: String,
+    @SerializedName("tekstPitanja") val tekstPitanja: String,
+    @SerializedName("opcije") val opcije: List<String>
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
+        parcel.readInt(),
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.createStringArrayList()!!
@@ -16,8 +19,9 @@ data class Pitanje (
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeInt(id)
         parcel.writeString(naziv)
-        parcel.writeString(tekst)
+        parcel.writeString(tekstPitanja)
         parcel.writeStringList(opcije)
     }
 
