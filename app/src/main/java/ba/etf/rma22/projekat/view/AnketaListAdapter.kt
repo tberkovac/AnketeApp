@@ -11,6 +11,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ba.etf.rma22.projekat.R
 import ba.etf.rma22.projekat.data.models.Anketa
+import ba.etf.rma22.projekat.viewmodel.AnketeListViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.util.*
 
@@ -35,6 +40,7 @@ class AnketaListAdapter(
 
     override fun onBindViewHolder(holder: AnketaViewHolder, position: Int) {
 
+        val anketaListViewModel = AnketeListViewModel()
         val anketa = ankete[position]
 
         holder.nazivAnkete.text = anketa.naziv
@@ -72,15 +78,14 @@ class AnketaListAdapter(
         holder.statusAnkete.setImageResource(id)
 
         holder.pismeniStatus.text
-      /*
         holder.itemView.setOnClickListener {
-            if(korisnikViewModel.jeLiUpisanaAnketa(anketa))
-                withContext(Dispatchers.IO){
-                    onItemClicked(ankete[position])
-                }
-
-       */
-
+            GlobalScope.launch (Dispatchers.Main){
+                if (anketaListViewModel.jeLiUpisanaAnketa(anketa.id))
+                    withContext(Dispatchers.Main) {
+                        onItemClicked(ankete[position])
+                    }
+            }
+        }
 
     }
 

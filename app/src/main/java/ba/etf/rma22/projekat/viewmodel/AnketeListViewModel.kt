@@ -11,4 +11,11 @@ class AnketeListViewModel {
     suspend fun getAll() : List<Anketa> {
         return AnketaRepository.getAll()
     }
+
+    suspend fun jeLiUpisanaAnketa(anketaId: Int) : Boolean {
+        val grupeZaAnketu = AnketaRepository.getGroupsForAnketa(anketaId)
+        if(grupeZaAnketu.isNotEmpty())
+            return true
+        return false
+    }
 }

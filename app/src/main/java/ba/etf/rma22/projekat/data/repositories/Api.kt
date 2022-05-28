@@ -56,4 +56,9 @@ interface Api {
     suspend fun getGrupaById(
         @Path("id") id : Int
     ) : Grupa
+
+    @GET("/anketa/{id}/grupa")
+    suspend fun getGroupsForAnketa(
+        @Path("id") id : Int
+    ) : List<Grupa>
 }

@@ -2,6 +2,7 @@ package ba.etf.rma22.projekat.data.repositories
 
 import android.util.Log
 import ba.etf.rma22.projekat.data.models.Anketa
+import ba.etf.rma22.projekat.data.models.Grupa
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -43,12 +44,7 @@ object AnketaRepository {
         return sveAnkete
     }
 
-    /*
-    suspend fun getUpisane():List<Anketa> {
-        return withContext(Dispatchers.IO){
-            val response = ApiConfig.retrofit
-        }
+    suspend fun getGroupsForAnketa(anketaId: Int) : List<Grupa> {
+        return ApiConfig.retrofit.getGroupsForAnketa(anketaId)
     }
-
-     */
 }
