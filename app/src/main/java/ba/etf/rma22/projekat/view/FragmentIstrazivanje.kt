@@ -1,5 +1,6 @@
 package ba.etf.rma22.projekat.view
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,13 +16,16 @@ import ba.etf.rma22.projekat.R
 import ba.etf.rma22.projekat.data.models.Grupa
 import ba.etf.rma22.projekat.data.models.Istrazivanje
 import ba.etf.rma22.projekat.viewmodel.IstrazivanjeIGrupaViewModel
-import kotlinx.coroutines.*
 
 class FragmentIstrazivanje : Fragment() {
     private lateinit var spinerGodine : Spinner
     private lateinit var spinerIstrazivanja : Spinner
     private lateinit var spinerGrupe : Spinner
+    private lateinit var adapterGodineSpiner : ArrayAdapter<String>
+    private lateinit var adapterIstrazivanjaSpiner : ArrayAdapter<Istrazivanje>
+    private lateinit var adapterGrupeSpiner : ArrayAdapter<Grupa>
     private var istrazivanjeIGrupaViewModel = IstrazivanjeIGrupaViewModel()
+    val godine = listOf( "","1","2","3","4","5")
 
     private lateinit var dodajIstrazivanjeDugme : Button
     var companion  = Companion
@@ -40,41 +44,25 @@ class FragmentIstrazivanje : Fragment() {
         spinerIstrazivanja = view.findViewById(R.id.odabirIstrazivanja)
         spinerGrupe = view.findViewById(R.id.odabirGrupa)
         dodajIstrazivanjeDugme = view.findViewById(R.id.dodajIstrazivanjeDugme)
+        dodajIstrazivanjeDugme.isEnabled = false
 
-        val godine = listOf( "","1","2","3","4","5")
-
-        val adapterGodineSpiner : ArrayAdapter<String> = ArrayAdapter(
-            view.context,android.R.layout.simple_spinner_item,godine
-        )
-        val adapterIstrazivanjaSpiner : ArrayAdapter<Istrazivanje> = ArrayAdapter(
-            view.context, android.R.layout.simple_spinner_item, ArrayList<Istrazivanje>()
-        )
-        val adapterGrupeSpiner : ArrayAdapter<Grupa> = ArrayAdapter(
-            view.context, android.R.layout.simple_spinner_item, ArrayList<Grupa>()
-        )
-
-        spinerGodine.adapter = adapterGodineSpiner
-        spinerIstrazivanja.adapter = adapterIstrazivanjaSpiner
-        spinerGrupe.adapter = adapterGrupeSpiner
+        GodinaAdapterInicijalizacijaIDodjelaSpineru(view.context)
+        IstrazivanjeAdapterInicijalizacijaIDodijelaSpineru(view.context)
+        GrupaAdapterInicijalizacijaIDodijelaSpineru(view.context)
 
         spinerGodine.setSelection(adapterGodineSpiner.getPosition(zadnji))
 
         spinerGodine.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 zadnji = spinerGodine.selectedItem.toString()
-                if(spinerGodine.selectedItem == "") {
-                    resetujIstrazivanjeSpinerAdapter(adapterIstrazivanjaSpiner)
-                    resetujGrupeSpinerAdapter(adapterGrupeSpiner)
+                if(spinerGodine.selectedItem.toString() == "") {
+                    resetujIstrazivanjeSpinerAdapter()
+                    resetujGrupeSpinerAdapter()
                     dodajIstrazivanjeDugme.isEnabled = false
                     return
                 }
-                resetujIstrazivanjeSpinerAdapter(adapterIstrazivanjaSpiner)
-                GlobalScope.launch(Dispatchers.Main) {
-                    Log.v("Istrazivanje korutina" , "zapoceta")
-                    popuniIstrazivanja(adapterIstrazivanjaSpiner, spinerGodine.selectedItem.toString().toInt())
-                    Log.v("Istrazivanje korutina", "zavrsena")
-                }
-
+                resetujIstrazivanjeSpinerAdapter()
+                popuniIstrazivanja(spinerGodine.selectedItem.toString().toInt())
                 zadnji = godine[p2]
             }
 
@@ -85,27 +73,23 @@ class FragmentIstrazivanje : Fragment() {
 
         spinerIstrazivanja.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                if(spinerIstrazivanja.selectedItem == "") {
-                    resetujGrupeSpinerAdapter(adapterGrupeSpiner)
+                if(spinerIstrazivanja.selectedItem.toString() == "") {
+                    resetujGrupeSpinerAdapter()
                     dodajIstrazivanjeDugme.isEnabled = false
                     return
                 }
-                resetujGrupeSpinerAdapter(adapterGrupeSpiner)
-                if(spinerIstrazivanja.selectedItem != "")
-                GlobalScope.launch(Dispatchers.Main) {
-                    popuniGrupamaGrupeSpinerAdapter(adapterGrupeSpiner, (spinerIstrazivanja.selectedItem as Istrazivanje).id)
-                }
+                resetujGrupeSpinerAdapter()
+                popuniGrupamaGrupeSpinerAdapter((spinerIstrazivanja.selectedItem as Istrazivanje).id)
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
-                dodajIstrazivanjeDugme.isEnabled = false
-                adapterGrupeSpiner.clear()
+                resetujGrupeSpinerAdapter()
             }
         }
 
         spinerGrupe.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                if(spinerGrupe.selectedItem == "") {
+                if(spinerGrupe.selectedItem.toString() == "") {
                     dodajIstrazivanjeDugme.isEnabled = false
                     return
                 }
@@ -115,57 +99,41 @@ class FragmentIstrazivanje : Fragment() {
             override fun onNothingSelected(p0: AdapterView<*>?) {
                 dodajIstrazivanjeDugme.isEnabled = false
             }
-
         }
 
         dodajIstrazivanjeDugme.setOnClickListener{
             if(jeLiSveOdabrano()) {
                 val grupa = spinerGrupe.selectedItem as Grupa
-                GlobalScope.launch (Dispatchers.Main){
-                    istrazivanjeIGrupaViewModel.getUpisaneGrupe()
-
-
-                    val dalje = istrazivanjeIGrupaViewModel.upisiUGrupu(grupa.id)
-                    Log.v("VRIJEDNOST JE", dalje.toString())
-                    if(dalje)
-                        prikaziPoruku(grupa)
-
-                }
+                istrazivanjeIGrupaViewModel.upisiUGrupu(grupa.id, ::onSuccessUpisGrupe, ::onError)
             }
         }
 
         return view
     }
 
-    private fun resetujIstrazivanjeSpinerAdapter(adapterIstrazivanjaSpiner: ArrayAdapter<Istrazivanje>) {
+    private fun resetujIstrazivanjeSpinerAdapter() {
         adapterIstrazivanjaSpiner.clear()
         adapterIstrazivanjaSpiner.add(Istrazivanje(0,"",0))
+        dodajIstrazivanjeDugme.isEnabled = false
     }
 
-    private fun resetujGrupeSpinerAdapter(adapterGrupeSpiner: ArrayAdapter<Grupa>) {
+    private fun resetujGrupeSpinerAdapter() {
         adapterGrupeSpiner.clear()
         adapterGrupeSpiner.add(Grupa(-1,""))
+        dodajIstrazivanjeDugme.isEnabled = false
     }
 
-    private suspend fun popuniIstrazivanja(adapterIstrazivanjaSpiner: ArrayAdapter<Istrazivanje>, godina: Int) {
-        val istrazivanja = istrazivanjeIGrupaViewModel.getAllIstrazivanjaByGodina(godina)
-        adapterIstrazivanjaSpiner.addAll(istrazivanja)
-        Log.v("Istrzaivanja za godinu su" , istrazivanja.toString())
-        adapterIstrazivanjaSpiner.notifyDataSetChanged()
+    private fun popuniIstrazivanja(godina: Int) {
+        istrazivanjeIGrupaViewModel.getAllIstrazivanjaByGodina(godina, ::onSuccessIstrazivanje, ::onError)
     }
 
-    private suspend fun popuniGrupamaGrupeSpinerAdapter(
-        adapterGrupeSpiner: ArrayAdapter<Grupa>,
-        idIstrazivanja: Int
-    ) {
-        val grupe = istrazivanjeIGrupaViewModel.getGrupeByIstrazivanje(idIstrazivanja)
-        adapterGrupeSpiner.addAll(grupe)
-        adapterGrupeSpiner.notifyDataSetChanged()
+    private fun popuniGrupamaGrupeSpinerAdapter(idIstrazivanja: Int) {
+        istrazivanjeIGrupaViewModel.getGrupeByIstrazivanje(idIstrazivanja, ::onSuccessGrupa, ::onError)
     }
 
     private fun jeLiSveOdabrano() : Boolean{
-        if(spinerGodine.selectedItem != "" && spinerIstrazivanja.selectedItem !=""
-            && spinerGrupe.selectedItem != "") return true
+        if(spinerGodine.selectedItem.toString() != "" && spinerIstrazivanja.selectedItem.toString() !=""
+            && spinerGrupe.selectedItem.toString() != "") return true
         return false
     }
 
@@ -174,5 +142,44 @@ class FragmentIstrazivanje : Fragment() {
         MainActivity.adapter.notifyDataSetChanged()
     }
 
+    private fun onSuccessIstrazivanje(istrazivanja : List<Istrazivanje>) {
+        adapterIstrazivanjaSpiner.addAll(istrazivanja)
+        adapterIstrazivanjaSpiner.notifyDataSetChanged()
+    }
+
+    private fun onSuccessGrupa(grupe: List<Grupa>) {
+        adapterGrupeSpiner.addAll(grupe)
+        adapterGrupeSpiner.notifyDataSetChanged()
+    }
+
+    private fun onSuccessUpisGrupe(uspjelo: Boolean) {
+        if(uspjelo)
+            prikaziPoruku(spinerGrupe.selectedItem as Grupa)
+    }
+
+    private fun onError(){
+        Log.v("Greska", "greska")
+    }
+
+    private fun GodinaAdapterInicijalizacijaIDodjelaSpineru(context: Context) {
+        adapterGodineSpiner = ArrayAdapter(
+            context,android.R.layout.simple_spinner_item,godine
+        )
+        spinerGodine.adapter = adapterGodineSpiner
+    }
+
+    private fun IstrazivanjeAdapterInicijalizacijaIDodijelaSpineru(context: Context) {
+        adapterIstrazivanjaSpiner = ArrayAdapter(
+            context, android.R.layout.simple_spinner_item, ArrayList<Istrazivanje>()
+        )
+        spinerIstrazivanja.adapter = adapterIstrazivanjaSpiner
+    }
+
+    private fun GrupaAdapterInicijalizacijaIDodijelaSpineru(context: Context) {
+        adapterGrupeSpiner = ArrayAdapter(
+            context, android.R.layout.simple_spinner_item, ArrayList<Grupa>()
+        )
+        spinerGrupe.adapter = adapterGrupeSpiner
+    }
 
 }

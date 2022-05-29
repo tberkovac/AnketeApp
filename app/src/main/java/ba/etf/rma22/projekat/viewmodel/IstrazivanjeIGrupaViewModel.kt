@@ -4,29 +4,73 @@ import android.util.Log
 import ba.etf.rma22.projekat.data.models.Grupa
 import ba.etf.rma22.projekat.data.models.Istrazivanje
 import ba.etf.rma22.projekat.data.repositories.IstrazivanjeIGrupaRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class IstrazivanjeIGrupaViewModel {
-    suspend fun getAllIstrazivanja() : List<Istrazivanje> {
-        return IstrazivanjeIGrupaRepository.getIstrazivanja()
+
+    val scope = CoroutineScope(Job() + Dispatchers.Main)
+
+    fun getAllIstrazivanja(onSuccess: (istrazivanja: List<Istrazivanje>) -> Unit,
+                                   onError: () -> Unit) {
+        scope.launch {
+            val result = IstrazivanjeIGrupaRepository.getIstrazivanja()
+
+            when (result) {
+                is List<Istrazivanje> -> onSuccess.invoke(result)
+                else -> onError?.invoke()
+            }
+        }
+
     }
 
-    suspend fun getAllIstrazivanjaByGodina(godina : Int) : List<Istrazivanje> {
-        Log.v("Pozvana ", "getAllIstrazivanjaByGodina")
-        val zaVratit = IstrazivanjeIGrupaRepository.getIstrazivanja().filter { istrazivanje -> istrazivanje.godina == godina  }
-        Log.v("Istrazivanja su", zaVratit.toString())
-        return zaVratit
+     fun getAllIstrazivanjaByGodina(godina : Int, onSuccess: (istrazivanja: List<Istrazivanje>) -> Unit,
+                                           onError: () -> Unit) {
+        scope.launch{
+            val result = IstrazivanjeIGrupaRepository.getIstrazivanja()
+                            .filter { istrazivanje -> istrazivanje.godina == godina  }
+
+            when (result) {
+                is List<Istrazivanje> -> onSuccess?.invoke(result)
+                else -> onError?.invoke()
+            }
+        }
     }
 
-    suspend fun getGrupeByIstrazivanje(idIstrazivanje: Int) : List<Grupa> {
-        return IstrazivanjeIGrupaRepository.getGrupeByIstrazivanje(idIstrazivanje)
+     fun getGrupeByIstrazivanje(idIstrazivanje: Int, onSuccess: (grupe: List<Grupa>) -> Unit,
+                                            onError: () -> Unit) {
+        scope.launch{
+            val result = IstrazivanjeIGrupaRepository.getGrupeByIstrazivanje(idIstrazivanje)
+
+            when (result) {
+                is List<Grupa> -> onSuccess?.invoke(result)
+                else -> onError?.invoke()
+            }
+        }
     }
 
-    suspend fun upisiUGrupu(idGrupa:Int):Boolean {
-        return IstrazivanjeIGrupaRepository.upisiUGrupu(idGrupa)
+     fun upisiUGrupu(idGrupa:Int, onSuccess: (uspjelo: Boolean) -> Unit, onError: () -> Unit) {
+        scope.launch {
+            val result = IstrazivanjeIGrupaRepository.upisiUGrupu(idGrupa)
+
+            when (result) {
+                is Boolean -> onSuccess?.invoke(result)
+                else -> onError?.invoke()
+            }
+        }
     }
 
-    suspend fun getUpisaneGrupe():List<Grupa> {
-        return IstrazivanjeIGrupaRepository.getUpisaneGrupe()
+    suspend fun getUpisaneGrupe(onSuccess: (grupe: List<Grupa>) -> Unit, onError: () -> Unit){
+        scope.launch {
+            val result = IstrazivanjeIGrupaRepository.getUpisaneGrupe()
+
+            when (result) {
+                is List<Grupa> -> onSuccess?.invoke(result)
+                else -> onError?.invoke()
+            }
+        }
     }
 
     suspend fun getIstrazivanjeByGroupId(idGrupa: Int) : Istrazivanje {
