@@ -1,6 +1,5 @@
 package ba.etf.rma22.projekat.data.repositories
 
-import android.util.Log
 import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.Grupa
 import ba.etf.rma22.projekat.data.models.Pitanje
@@ -9,7 +8,6 @@ import kotlinx.coroutines.withContext
 
 
 object AnketaRepository {
-
 
     suspend fun getAll(offset:Int):List<Anketa> {
         return withContext(Dispatchers.IO){
@@ -31,8 +29,6 @@ object AnketaRepository {
         while(true){
             val velicina : Int
             withContext(Dispatchers.IO){
-                Log.v("Korutina", "jos jedna zapoceta")
-
                 val response = ApiConfig.retrofit.getAnkete(i)
                 velicina = response.size
                 sveAnkete = sveAnkete.plus(response)
@@ -41,7 +37,6 @@ object AnketaRepository {
                 break
             i++
         }
-        Log.v("Korutina", " zavrsena, ankete " +sveAnkete.toString() )
         return sveAnkete
     }
 

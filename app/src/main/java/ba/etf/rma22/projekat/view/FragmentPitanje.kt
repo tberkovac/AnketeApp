@@ -22,6 +22,7 @@ class FragmentPitanje : Fragment() {
     //Izbaceni iz konstruktora
     private lateinit var anketa: Anketa
     private lateinit var pitanje: Pitanje
+    private lateinit var pokusajAnkete: AnketaTaken
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,18 +37,17 @@ class FragmentPitanje : Fragment() {
 
         pitanje = arguments?.getParcelable("pitanjce")!!
         anketa = arguments?.getParcelable("anketica")!!
+        pokusajAnkete = arguments?.getParcelable("pokusaj")!!
 
         textPitanja.text = pitanje.tekstPitanja
 
         listaOdgovora.adapter = context?.let {
-            OdgovoriListAdapter(anketa, pitanje, it)
+            OdgovoriListAdapter(anketa, pitanje, it, pokusajAnkete)
         }
 
         zaustaviDugme.setOnClickListener {
             if(!anketaNijeDostupnaZaRad(anketa)) {
                 MainActivity.adapter.removeAll()
-             //   izmijeniAnketuUStaticData(anketa)
-             //   FragmentAnkete.listaAnketaAdapter.updateAnkete(AnketaStaticData.sveAnkete)
                 MainActivity.adapter.add(0, FragmentAnkete())
             }else {
                 MainActivity.adapter.removeAll()
@@ -57,18 +57,7 @@ class FragmentPitanje : Fragment() {
 
         return view
     }
-/*
-    private fun obracunajProgres() : Float {
-        val brojOdgovorenih = Korisnik.odgovorenaPitanjaAnketa
-            .filter { pitanjeAnketa -> pitanjeAnketa.anketa == anketa.naziv && pitanjeAnketa.istrazivanje == anketa.nazivIstrazivanja }
-            .size
 
-        val brojPitanja = pitanjeAnketaViewModel.getPitanja(anketa.naziv, anketa.nazivIstrazivanja).size
-
-        return brojOdgovorenih/brojPitanja.toFloat()
-    }
-
- */
     private fun anketaNijeDostupnaZaRad(anketa: Anketa) : Boolean{
         return when {
           //  anketa.datumRada != null -> true
@@ -79,12 +68,14 @@ class FragmentPitanje : Fragment() {
     }
 
     companion object {
-        fun newInstance(anketa2: Anketa, pitanje2: Pitanje): FragmentPitanje = FragmentPitanje().apply {
+        fun newInstance(anketa2: Anketa, pitanje2: Pitanje, pokusajId2: AnketaTaken): FragmentPitanje = FragmentPitanje().apply {
             arguments = Bundle().apply {
                 anketa = anketa2
                 pitanje = pitanje2
+                pokusajAnkete = pokusajId2
                 putParcelable("anketica", anketa2)
                 putParcelable("pitanjce", pitanje2)
+                putParcelable("pokusaj", pokusajId2)
             }
         }
     }

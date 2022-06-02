@@ -1,6 +1,5 @@
 package ba.etf.rma22.projekat.data.repositories
 
-import android.util.Log
 import ba.etf.rma22.projekat.data.models.Grupa
 import ba.etf.rma22.projekat.data.models.Istrazivanje
 import kotlinx.coroutines.Dispatchers
@@ -65,18 +64,15 @@ object IstrazivanjeIGrupaRepository {
         return false
     }
 
-    suspend fun getUpisaneGrupe():List<Grupa>{
-        val response = ApiConfig.retrofit.getUpisaneGrupe("19b70587-76b0-4444-a964-fad0a04d426b")
-        return response
+    suspend fun getUpisaneGrupe(): List<Grupa> {
+        return ApiConfig.retrofit.getUpisaneGrupe(AccountRepository.getHash())
     }
 
-    suspend fun getGrupaById(idGrupa: Int) : Grupa {
-        val response = ApiConfig.retrofit.getGrupaById(idGrupa)
-        return response
+    suspend fun getGrupaById(idGrupa: Int): Grupa {
+        return ApiConfig.retrofit.getGrupaById(idGrupa)
     }
 
-    suspend fun getIstrazivanjeByGrupaId(idGrupa: Int) : Istrazivanje {
-        val response = ApiConfig.retrofit.getIstrazivanjaForGroupById(idGrupa)
-        return response
+    suspend fun getIstrazivanjeByGrupaId(idGrupa: Int): Istrazivanje {
+        return ApiConfig.retrofit.getIstrazivanjaForGroupById(idGrupa)
     }
 }

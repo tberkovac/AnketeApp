@@ -12,17 +12,12 @@ import androidx.recyclerview.widget.RecyclerView
 import ba.etf.rma22.projekat.R
 import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.viewmodel.AnketeListViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.time.LocalDate
 import java.util.*
 
 
 class AnketaListAdapter(
     private var ankete : List<Anketa>,
-    private val onItemClicked: suspend (anketa : Anketa) -> Unit
+    private val onItemClicked:  (anketa : Anketa) -> Unit
 ) : RecyclerView.Adapter<AnketaListAdapter.AnketaViewHolder>(){
     inner class AnketaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nazivAnkete : TextView = itemView.findViewById(R.id.nazivAnkete)
@@ -44,49 +39,22 @@ class AnketaListAdapter(
         val anketa = ankete[position]
 
         holder.nazivAnkete.text = anketa.naziv
-      //  holder.brojIstrazivanja.text = anketa.nazivIstrazivanja
-      //  holder.progresZavrsetka.setProgress(zaokruziProgres(anketa.progres), false)
 
-
-        var cal: Calendar = Calendar.getInstance()
-        cal.set(LocalDate.now().year,LocalDate.now().monthValue,LocalDate.now().dayOfMonth)
-        var date: Date = cal.time
-
-        val boja: String
-
-     /*   if(anketa.datumRada == null){
-            if(date < anketa.datumPocetak){
-                boja = "zuta"
-                holder.pismeniStatus.text = "Vrijeme aktiviranja: " + formatirajDatum(anketa.datumPocetak)
-            }else if( date > anketa.datumKraj){
-                boja = "crvena"
-                holder.pismeniStatus.text = "Anketa zatvorena: " + formatirajDatum(anketa.datumKraj)
-            }else{
-                boja = "zelena"
-                holder.pismeniStatus.text = "Vrijeme zatvaranja: " + formatirajDatum(anketa.datumKraj)
-
-            }
-        }else{
-            holder.pismeniStatus.text = "Anketa urađena: " + formatirajDatum(anketa.datumRada!!)
-            boja = "plava"
-        }
-
-      */
 
         val context: Context = holder.statusAnkete.context
-        var id: Int = context.resources.getIdentifier("zelena", "drawable", context.packageName)
+        val id: Int = context.resources.getIdentifier("zelena", "drawable", context.packageName)
         holder.statusAnkete.setImageResource(id)
 
         holder.pismeniStatus.text
-        holder.itemView.setOnClickListener {
-            GlobalScope.launch (Dispatchers.Main){
-                if (anketaListViewModel.jeLiUpisanaAnketa(anketa.id))
-                    withContext(Dispatchers.Main) {
-                        onItemClicked(ankete[position])
-                    }
+
+        fun onSuccess(uspjelo : Boolean){
+
+            if(uspjelo)
+            holder.itemView.setOnClickListener{
+                onItemClicked(ankete[position])
             }
         }
-
+        anketaListViewModel.jeLiUpisanaAnketa(anketa.id, ::onSuccess)
     }
 
     private fun formatirajDatum(date : Date) : String {

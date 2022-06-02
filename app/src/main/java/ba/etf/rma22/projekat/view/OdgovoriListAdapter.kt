@@ -9,14 +9,20 @@ import android.widget.BaseAdapter
 import android.widget.TextView
 import ba.etf.rma22.projekat.R
 import ba.etf.rma22.projekat.data.models.Anketa
+import ba.etf.rma22.projekat.data.models.AnketaTaken
 import ba.etf.rma22.projekat.data.models.Pitanje
-import ba.etf.rma22.projekat.data.models.PitanjeAnketa
+import ba.etf.rma22.projekat.viewmodel.OdgovorViewModel
+import ba.etf.rma22.projekat.viewmodel.TakeAnketaViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
 
 class OdgovoriListAdapter(
     private var anketa: Anketa,
     private var pitanje: Pitanje,
-    private val mcontext: Context
+    private val mcontext: Context,
+    private var pokusajRjesavanja : AnketaTaken
 ) : BaseAdapter(){
 
     override fun getCount(): Int {
@@ -34,44 +40,30 @@ class OdgovoriListAdapter(
     override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
         val odgovor: TextView
         val view = LayoutInflater.from(mcontext).inflate(R.layout.odgovor_element, p2, false)
+        val odgovorViewModel = OdgovorViewModel()
         odgovor = view.findViewById(R.id.odgovor)
 
         odgovor.text = pitanje.opcije[p0]
-/*
-        if(odgovorOznacenZaPitanje(pitanje, anketa)) {
-            var index : Int
-            if(Korisnik.odgovorenaPitanjaSaOdgovorom.contains(PitanjeAnketa(pitanje.naziv, anketa.naziv, anketa.nazivIstrazivanja) to odgovor.text.toString())) {
-                index = Korisnik.odgovorenaPitanjaSaOdgovorom.indexOf(PitanjeAnketa(pitanje.naziv, anketa.naziv, anketa.nazivIstrazivanja) to odgovor.text.toString())
-                if (odgovor.text.equals(Korisnik.odgovorenaPitanjaSaOdgovorom.get(index).second)) {
-                    odgovor.setTextColor(Color.parseColor("#0000FF"))
-                }
-            }
-        }
+        oznaciOdogovreni(pokusajRjesavanja, p0, odgovor)
 
- */
+         fun onSuccessPostavljenOdgovor (promijenjenProgres : Boolean, updateovaniPokusaj : AnketaTaken) {
+            if(promijenjenProgres){
+                odgovor.setTextColor(Color.parseColor("#0000FF"))
+                pokusajRjesavanja = updateovaniPokusaj
+            }
+         }
+
         if(!anketaNijeDostupnaZaRad(anketa)) {
             odgovor.isClickable = true
             odgovor.setOnClickListener {
-              /*  var zaZapisatOdgovor = PitanjeAnketa(pitanje.naziv, anketa.naziv, anketa.nazivIstrazivanja)
-                Korisnik.odgovorenaPitanjaAnketa.add(zaZapisatOdgovor)
-                odgovor.setTextColor(Color.parseColor("#0000FF"))
-                Korisnik.odgovorenaPitanjaSaOdgovorom
-                    .add(PitanjeAnketa(pitanje.naziv, anketa.naziv, anketa.nazivIstrazivanja) to odgovor.text.toString())
-              */
+                odgovorViewModel.postaviOdgovorAnketa(pokusajRjesavanja, pitanje.id, p0, ::onSuccessPostavljenOdgovor)
             }
         }else{
             odgovor.isClickable = false
         }
         return view
     }
-/*
-    private fun odgovorOznacenZaPitanje(pitanje: Pitanje, anketa: Anketa): Boolean {
-        if(Korisnik.odgovorenaPitanjaAnketa.contains(PitanjeAnketa(pitanje.naziv, anketa.naziv, anketa.nazivIstrazivanja)))
-            return true
-        return false
-    }
 
- */
     fun anketaNijeDostupnaZaRad(anketa: Anketa) : Boolean{
         return when {
        //     anketa.datumRada != null -> true
@@ -79,6 +71,19 @@ class OdgovoriListAdapter(
             anketa.datumPocetak > Calendar.getInstance().time -> true
             else -> false
         }
+    }
+
+    fun oznaciOdogovreni(pokusaj: AnketaTaken, p0: Int, odgovor: TextView){
+        GlobalScope.launch (Dispatchers.Main){
+            val odgovorViewModel = OdgovorViewModel()
+            val odgovori = odgovorViewModel.getOdgovorResponseAnkete(pokusaj.anketumId)
+            for(x in odgovori){
+                if(x.pitanjeId == pitanje.id && x.odgovoreno == p0){
+                    odgovor.setTextColor(Color.parseColor("#0000FF"))
+                }
+            }
+        }
+
     }
 
 }

@@ -1,6 +1,5 @@
 package ba.etf.rma22.projekat.view
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -17,9 +16,11 @@ import androidx.recyclerview.widget.RecyclerView
 import ba.etf.rma22.projekat.MainActivity
 import ba.etf.rma22.projekat.R
 import ba.etf.rma22.projekat.data.models.Anketa
+import ba.etf.rma22.projekat.data.models.AnketaTaken
 import ba.etf.rma22.projekat.data.models.Pitanje
-import ba.etf.rma22.projekat.data.repositories.PitanjeAnketaRepository
 import ba.etf.rma22.projekat.viewmodel.AnketeListViewModel
+import ba.etf.rma22.projekat.viewmodel.PitanjeAnketaViewModel
+import ba.etf.rma22.projekat.viewmodel.TakeAnketaViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -29,16 +30,32 @@ class FragmentAnkete : Fragment() {
     private var anketeListViewModel = AnketeListViewModel()
     private lateinit var spinerFilter : Spinner
     private lateinit var listaAnketa : RecyclerView
+    private val takeAnketaViewModel = TakeAnketaViewModel()
+    private val pitanjeAnketaViewModel = PitanjeAnketaViewModel()
+    private var pitanja : List<Pitanje> = listOf()
 
     companion object{
         lateinit var listaAnketaAdapter : AnketaListAdapter
     }
 
-    private suspend fun prikaziAnketu(anketa: Anketa) {
+    private fun onSuccessGetPitanaja(anketa: Anketa, vracenaPitanja : List<Pitanje>){
+        var pokusaj : AnketaTaken
+        GlobalScope.launch (Dispatchers.Main) {
+            pokusaj =  takeAnketaViewModel.zapocniAnketu(anketa.id)
+            pitanja = vracenaPitanja
+            pitanja.forEach { pitanje -> MainActivity.adapter.addOnLastPosition(FragmentPitanje.newInstance(anketa, pitanje, pokusaj)) }
+            MainActivity.adapter.addOnLastPosition(FragmentPredaj.newInstance(anketa))
+        }
+
+    }
+
+
+
+    private fun prikaziAnketu(anketa: Anketa) {
+        Log.v("POZOVE SE", "OTVORIT ANKETU ${anketa.id}")
         MainActivity.adapter.removeAll()
-        var pitanja : List<Pitanje> = PitanjeAnketaRepository.getPitanja(anketa.id)
-        pitanja.forEach { pitanje -> MainActivity.adapter.addOnLastPosition(FragmentPitanje.newInstance(anketa, pitanje)) }
-        MainActivity.adapter.addOnLastPosition(FragmentPredaj.newInstance(anketa))
+        pitanjeAnketaViewModel.getPitanja(anketa, ::onSuccessGetPitanaja)
+
     }
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,12 +74,7 @@ class FragmentAnkete : Fragment() {
         }
 
         listaAnketa.adapter = listaAnketaAdapter
-        activity?.runOnUiThread {
-            GlobalScope.launch(Dispatchers.Main) {
-                Log.v("Korutina", " zapoceta")
-                listaAnketaAdapter.updateAnkete(anketeListViewModel.getAll())
-            }
-        }
+        anketeListViewModel.getAll(::onSuccessGetAllAnkete, ::onError)
 
         val podaciZaSpinner = arrayOf(
             "Sve moje ankete",
@@ -81,40 +93,15 @@ class FragmentAnkete : Fragment() {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 val vrijednost: String = podaciZaSpinner[p2]
                 if (vrijednost == podaciZaSpinner[0])
-                    activity?.runOnUiThread {
-                        GlobalScope.launch(Dispatchers.Main) {
-                            Log.v("Korutina", " zapoceta")
-                            listaAnketaAdapter.updateAnkete(anketeListViewModel.getAll())
-                        }
-                    }
+                    anketeListViewModel.getAll(::onSuccessGetAllAnkete, ::onError)
                 else if (vrijednost == podaciZaSpinner[1])
-                    activity?.runOnUiThread {
-                        GlobalScope.launch(Dispatchers.Main) {
-                            Log.v("Korutina", " zapoceta")
-                            listaAnketaAdapter.updateAnkete(anketeListViewModel.getAll())
-                        }
-                    }
+                    anketeListViewModel.getAll(::onSuccessGetAllAnkete, ::onError)
                 else if (vrijednost == podaciZaSpinner[2])
-                    activity?.runOnUiThread {
-                        GlobalScope.launch(Dispatchers.Main) {
-                            Log.v("Korutina", " zapoceta")
-                            listaAnketaAdapter.updateAnkete(anketeListViewModel.getAll())
-                        }
-                    }
+                    anketeListViewModel.getAll(::onSuccessGetAllAnkete, ::onError)
                 else if (vrijednost == podaciZaSpinner[3])
-                    activity?.runOnUiThread {
-                        GlobalScope.launch(Dispatchers.Main) {
-                            Log.v("Korutina", " zapoceta")
-                            listaAnketaAdapter.updateAnkete(anketeListViewModel.getAll())
-                        }
-                    }
+                    anketeListViewModel.getAll(::onSuccessGetAllAnkete, ::onError)
                 else if (vrijednost == podaciZaSpinner[4])
-                    activity?.runOnUiThread {
-                        GlobalScope.launch(Dispatchers.Main) {
-                            Log.v("Korutina", " zapoceta")
-                            listaAnketaAdapter.updateAnkete(anketeListViewModel.getAll())
-                        }
-                    }
+                    anketeListViewModel.getAll(::onSuccessGetAllAnkete, ::onError)
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {}
@@ -129,12 +116,15 @@ class FragmentAnkete : Fragment() {
             MainActivity.adapter.refreshFragment(1, FragmentIstrazivanje())
         }
         spinerFilter.setSelection(0)
-        activity?.runOnUiThread {
-            GlobalScope.launch(Dispatchers.Main){
-                Log.v("Korutina", " zapoceta")
-                listaAnketaAdapter.updateAnkete(anketeListViewModel.getAll())
-            }
-        }
+        anketeListViewModel.getAll(::onSuccessGetAllAnkete, ::onError)
+    }
 
+    private fun onSuccessGetAllAnkete(ankete: List<Anketa>) {
+        listaAnketaAdapter.updateAnkete(ankete)
+        listaAnketaAdapter.notifyDataSetChanged()
+    }
+
+    private fun onError(){
+        Log.v("Greska", "greska")
     }
 }

@@ -1,10 +1,22 @@
 package ba.etf.rma22.projekat.viewmodel
 
+import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.Pitanje
 import ba.etf.rma22.projekat.data.repositories.PitanjeAnketaRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 class PitanjeAnketaViewModel {
-    suspend fun getPitanja(idAnkete: Int): List<Pitanje> {
-        return PitanjeAnketaRepository.getPitanja(idAnkete)
+
+    val scope = CoroutineScope(Job() + Dispatchers.Main)
+
+     fun getPitanja(anketa: Anketa, onSuccess: (anketa: Anketa,pitanja : List<Pitanje>)->Unit){
+        scope.launch {
+            val result = PitanjeAnketaRepository.getPitanja(anketa.id)
+            onSuccess.invoke(anketa,result)
+        }
+
     }
 }

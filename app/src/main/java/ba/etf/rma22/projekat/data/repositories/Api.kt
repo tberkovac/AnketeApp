@@ -2,16 +2,9 @@ package ba.etf.rma22.projekat.data.repositories
 
 import ba.etf.rma22.projekat.data.models.*
 import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface Api {
-    @GET("/anketa/{idAnkete}/pitanja")
-    suspend fun getPitanja(
-        @Path("idAnkete") id : Int
-    ): ArrayList<Pitanje>
 
     @GET("/anketa")
     suspend fun getAnkete(
@@ -66,4 +59,33 @@ interface Api {
     suspend fun getPitanjaForAnketa(
         @Path("id") id : Int
     ) : List<Pitanje>
+
+    @POST("/student/{id}/anketa/{kid}")
+    suspend fun takeAnketa(
+        @Path("id") id : String,
+        @Path("kid") kid: Int,
+    ) : Response<AnketaTaken>
+
+    @GET("/student/{id}/anketataken")
+    suspend fun getTakenAnkete(
+        @Path("id") id : String
+    ) : List<AnketaTaken>
+
+    @GET("/student/{id}/anketataken/{ktid}/odgovori")
+    suspend fun getOdgovoriAnketa(
+        @Path("id") id: String,
+        @Path("ktid") ktid: Int
+    ) : List<OdgovorResponse>
+
+    @POST("/student/{id}/anketataken/{ktid}/odgovor")
+    suspend fun postaviOdgovorAnketa(
+        @Path("id") id: String,
+        @Path("ktid") ktid: Int,
+        @Body odgovor: SendOdgovor
+    ) : Response<Odgovor>
+
+    @DELETE("/student/{id}/upisugrupeipokusaji")
+    suspend fun obrisiPodatke(
+        @Path("id") id : String
+    )
 }
