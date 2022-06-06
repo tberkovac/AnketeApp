@@ -11,7 +11,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ba.etf.rma22.projekat.R
 import ba.etf.rma22.projekat.data.models.Anketa
+import ba.etf.rma22.projekat.data.models.AnketaTaken
+import ba.etf.rma22.projekat.data.models.Istrazivanje
 import ba.etf.rma22.projekat.viewmodel.AnketeListViewModel
+import ba.etf.rma22.projekat.viewmodel.IstrazivanjeIGrupaViewModel
+import ba.etf.rma22.projekat.viewmodel.OdgovorViewModel
+import ba.etf.rma22.projekat.viewmodel.TakeAnketaViewModel
 import java.util.*
 
 
@@ -19,6 +24,8 @@ class AnketaListAdapter(
     private var ankete : List<Anketa>,
     private val onItemClicked:  (anketa : Anketa) -> Unit
 ) : RecyclerView.Adapter<AnketaListAdapter.AnketaViewHolder>(){
+
+    var postotakPravi = 0
     inner class AnketaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nazivAnkete : TextView = itemView.findViewById(R.id.nazivAnkete)
         val statusAnkete : ImageView = itemView.findViewById(R.id.statusAnkete)
@@ -36,14 +43,30 @@ class AnketaListAdapter(
     override fun onBindViewHolder(holder: AnketaViewHolder, position: Int) {
 
         val anketaListViewModel = AnketeListViewModel()
+        val istrazivanjeIGrupaViewModel = IstrazivanjeIGrupaViewModel()
+        val takeAnketaViewModel = TakeAnketaViewModel()
         val anketa = ankete[position]
+        var pokusaj : AnketaTaken? = null
+
+        fun pocetaSuccess(anketaTaken: AnketaTaken?) {
+            pokusaj = anketaTaken
+            jeLiSveOdgovoreno(anketa,holder, pokusaj)
+        }
+        takeAnketaViewModel.getPocetaAnketa(anketa.id,::pocetaSuccess)
 
         holder.nazivAnkete.text = anketa.naziv
 
+        fun popuniIstrazivanja( listIstrazivanje: List<Istrazivanje> ){
+            popuniIstrazivanjeTextView(listIstrazivanje.toSet(), holder)
+        }
+        istrazivanjeIGrupaViewModel.getIstrazivanjaZaAnketu(anketa, ::popuniIstrazivanja)
 
-        val context: Context = holder.statusAnkete.context
-        val id: Int = context.resources.getIdentifier("zelena", "drawable", context.packageName)
-        holder.statusAnkete.setImageResource(id)
+        fun popuniPokusaje (listaPokusaja: List<AnketaTaken>){
+            postaviProgres(anketa, listaPokusaja, holder)
+        }
+
+
+        takeAnketaViewModel.getPoceteAnkete(::popuniPokusaje)
 
         holder.pismeniStatus.text
 
@@ -54,19 +77,51 @@ class AnketaListAdapter(
                 onItemClicked(ankete[position])
             }
         }
+
+
         anketaListViewModel.jeLiUpisanaAnketa(anketa.id, ::onSuccess)
+    }
+
+    private fun jeLiSveOdgovoreno(anketa: Anketa, holder: AnketaViewHolder, pokusaj: AnketaTaken?) {
+        val odgovorViewModel = OdgovorViewModel()
+        odgovorViewModel.postotakOdgovorenih(anketa, ::postaviStatusIPoruku, holder, pokusaj)
+    }
+
+    private fun postaviStatusIPoruku(int : Int, holder: AnketaViewHolder, anketa: Anketa, pokusaj: AnketaTaken?) {
+        val date = Calendar.getInstance().time
+        postotakPravi = int
+        val context: Context = holder.statusAnkete.context
+        var id : Int
+        if(int == 100){
+            id = context.resources.getIdentifier("plava", "drawable", context.packageName)
+          //  val pokusaj = TakeAnketaRepository.getPoceteAnkete()
+            holder.pismeniStatus.text = "Anketa urađena: " + if(pokusaj != null)formatirajDatum(pokusaj.datumRada) else ""
+        }
+        else if(date < anketa.datumPocetak){
+            id = context.resources.getIdentifier("zuta", "drawable", context.packageName)
+            holder.pismeniStatus.text = "Vrijeme aktiviranja: " + formatirajDatum(anketa.datumPocetak)
+        }
+        else if( anketa.datumKraj!= null && date > anketa.datumKraj){
+            id = context.resources.getIdentifier("crvena", "drawable", context.packageName)
+            holder.pismeniStatus.text = "Anketa zatvorena: " + formatirajDatum(anketa.datumKraj)
+        }
+        else{
+            id = context.resources.getIdentifier("zelena", "drawable", context.packageName)
+
+            holder.pismeniStatus.text = "Vrijeme zatvaranja: " + if(anketa.datumKraj!=null)
+                formatirajDatum(anketa.datumKraj) else
+                    "nepoznato"
+
+        }
+
+        holder.statusAnkete.setImageResource(id)
+        postotakPravi = 0
     }
 
     private fun formatirajDatum(date : Date) : String {
         return SimpleDateFormat("dd.MM.yyyy").format(date)
     }
 
-    private fun zaokruziProgres(progres: Float): Int {
-        var rez : Int = (progres*10).toInt()
-        if(rez % 2 != 0) rez += 1
-        rez *= 10
-        return rez
-    }
 
     override fun getItemCount(): Int {
         return ankete.size
@@ -75,6 +130,33 @@ class AnketaListAdapter(
     fun updateAnkete(ankete: List<Anketa>){
         this.ankete = ankete
         notifyDataSetChanged()
+    }
+
+    fun popuniIstrazivanjeTextView(setIstrazivanja: Set<Istrazivanje>, holder: AnketaViewHolder){
+        val istrazivanja = setIstrazivanja.toList()
+        if(istrazivanja.size == 1){
+            holder.brojIstrazivanja.text = istrazivanja[0].naziv
+            return
+        }
+        var tekst = ""
+        for ((i, istrazivanje) in istrazivanja.withIndex()) {
+            tekst += if(i != istrazivanja.size-1)
+                istrazivanje.naziv + ","
+            else
+                istrazivanje.naziv
+
+            holder.brojIstrazivanja.text = tekst
+        }
+    }
+
+    fun postaviProgres (anketa: Anketa, listaPokusaja: List<AnketaTaken>, holder: AnketaViewHolder) {
+        for (anketaTaken in listaPokusaja) {
+            if(anketaTaken.AnketumId == anketa.id){
+                holder.progresZavrsetka.progress = anketaTaken.progres
+                return
+            }
+        }
+        holder.progresZavrsetka.progress = 0
     }
 }
 

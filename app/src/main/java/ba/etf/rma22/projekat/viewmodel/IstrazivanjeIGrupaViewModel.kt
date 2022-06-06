@@ -1,8 +1,9 @@
 package ba.etf.rma22.projekat.viewmodel
 
-import android.util.Log
+import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.Grupa
 import ba.etf.rma22.projekat.data.models.Istrazivanje
+import ba.etf.rma22.projekat.data.repositories.AnketaRepository
 import ba.etf.rma22.projekat.data.repositories.IstrazivanjeIGrupaRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -42,7 +43,7 @@ class IstrazivanjeIGrupaViewModel {
      fun getGrupeByIstrazivanje(idIstrazivanje: Int, onSuccess: (grupe: List<Grupa>) -> Unit,
                                             onError: () -> Unit) {
         scope.launch{
-            val result = IstrazivanjeIGrupaRepository.getGrupeByIstrazivanje(idIstrazivanje)
+            val result = IstrazivanjeIGrupaRepository.getGrupeZaIstrazivanje(idIstrazivanje)
 
             when (result) {
                 is List<Grupa> -> onSuccess?.invoke(result)
@@ -75,5 +76,30 @@ class IstrazivanjeIGrupaViewModel {
 
     suspend fun getIstrazivanjeByGroupId(idGrupa: Int) : Istrazivanje {
         return IstrazivanjeIGrupaRepository.getIstrazivanjeByGrupaId(idGrupa)
+    }
+
+     fun getGrupeZaAnketu(
+        anketa: Anketa,
+        onSuccess: (grupe: List<Grupa>) -> Unit
+    ) {
+        scope.launch {
+            val result = AnketaRepository.getGroupsForAnketa(anketa.id)
+            onSuccess.invoke(result)
+        }
+    }
+
+    fun getIstrazivanjaZaAnketu(
+        anketa: Anketa,
+        onSuccess: (istrazivanja: List<Istrazivanje>) -> Unit
+    ) {
+        scope.launch {
+            val grupeZaAnketu = AnketaRepository.getGroupsForAnketa(anketa.id)
+            var zaVratitIstrazivanaja = mutableListOf<Istrazivanje>()
+
+            for (grupa in grupeZaAnketu) {
+                zaVratitIstrazivanaja.add(getIstrazivanjeByGroupId(grupa.id))
+            }
+            onSuccess.invoke(zaVratitIstrazivanaja)
+        }
     }
 }

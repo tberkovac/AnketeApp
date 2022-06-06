@@ -39,7 +39,7 @@ object IstrazivanjeIGrupaRepository {
         }
     }
 
-    suspend fun getGrupeByIstrazivanje(idIstrazivanje: Int) : List<Grupa> {
+    suspend fun getGrupeZaIstrazivanje(idIstrazivanje: Int) : List<Grupa> {
         if(idIstrazivanje == 0){
             return emptyList()
         }

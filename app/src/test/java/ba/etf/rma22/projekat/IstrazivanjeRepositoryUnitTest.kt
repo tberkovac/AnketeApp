@@ -1,4 +1,4 @@
-package ba.etf.rma22.projekat
+/*package ba.etf.rma22.projekat
 
 import ba.etf.rma22.projekat.data.repositories.GrupaRepository
 import ba.etf.rma22.projekat.data.repositories.IstrazivanjeRepository
@@ -33,3 +33,5 @@ class IstrazivanjeRepositoryUnitTest {
     }
 
 }
+
+ */

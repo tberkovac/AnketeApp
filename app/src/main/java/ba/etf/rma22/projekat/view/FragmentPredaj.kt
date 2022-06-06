@@ -7,11 +7,12 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import ba.etf.rma22.projekat.MainActivity
 import ba.etf.rma22.projekat.R
-import ba.etf.rma22.projekat.data.AnketaStaticData.sveAnkete
 import ba.etf.rma22.projekat.data.models.*
+import ba.etf.rma22.projekat.data.repositories.OdgovorRepository
 import ba.etf.rma22.projekat.viewmodel.PitanjeAnketaViewModel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
 
 class FragmentPredaj : Fragment() {
@@ -20,6 +21,7 @@ class FragmentPredaj : Fragment() {
     private var pitanjeAnketaViewModel = PitanjeAnketaViewModel()
     private lateinit var anketa: Anketa
     private lateinit var istrazivanje: Istrazivanje
+    private var progres = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,65 +36,18 @@ class FragmentPredaj : Fragment() {
 
         anketa = arguments?.getParcelable("anketica")!!
 
-        val postotak : Float
 
-        val brojOdgovorenih = Korisnik.odgovorenaPitanjaAnketa
-                            .filter { pitanjeAnketa -> pitanjeAnketa.anketa == anketa.naziv && pitanjeAnketa.istrazivanje == anketa.nazivIstrazivanja }.size
-
-        val brojPitanja = pitanjeAnketaViewModel.getPitanja(anketa.naziv, anketa.nazivIstrazivanja).size
-
-        postotak = brojOdgovorenih/brojPitanja.toFloat()
-
-        anketa.progres = postotak
-
-         fun zaokruziProgres(progres: Float): Int {
-            var rez : Int = (progres*10).toInt()
-            if(rez % 2 != 0) rez += 1
-            rez *= 10
-            return rez
-        }
-
-        postotakUradjenosti.text = zaokruziProgres(postotak).toString() + "%"
-
+        odrediProgres(postotakUradjenosti, anketa.id)
+/*
         if(anketaNijeDostupnaZaRad(anketa)) {
             predajDugme.isEnabled = false
         } else {
             predajDugme.setOnClickListener {
-                val danasnjiDatum = Calendar.getInstance()
-
-                MainActivity.adapter.removeAll()
-                MainActivity.adapter.add(0, FragmentAnkete())
-                val istrazivanje =
-                    Korisnik.upisanaIstrazivanja.filter { istrazivanje -> istrazivanje.naziv == anketa.nazivIstrazivanja }
-                var index =
-                    sveAnkete.indexOf(sveAnkete.find { anketa2 -> anketa2.naziv == anketa.naziv })
-
-                sveAnkete[index].progres = postotak
-                sveAnkete[index].datumRada = danasnjiDatum.time
-
-                FragmentAnkete.listaAnketaAdapter.updateAnkete(sveAnkete)
-
-                MainActivity.adapter.add(
-                    1,
-                    FragmentPoruka.newInstance(anketa, istrazivanje[0], "fragmentPredaj")
-                )
-                MainActivity.viewPager2.currentItem = 1
             }
         }
+ */
+        predajDugme.isEnabled = false
         return view
-    }
-
-    override fun onResume() {
-        super.onResume()
-        var postotak : Float
-
-        var brojOdgovorenih = Korisnik.odgovorenaPitanjaAnketa
-            .filter { pitanjeAnketa -> pitanjeAnketa.anketa == anketa.naziv }.size
-
-        var brojPitanja = pitanjeAnketaViewModel.getPitanja(anketa.naziv, anketa.nazivIstrazivanja).size
-        postotak = brojOdgovorenih/brojPitanja.toFloat()
-        anketa.progres = postotak
-        postotakUradjenosti.text = zaokruziProgres(postotak).toString() + "%"
     }
 
     companion object{
@@ -105,8 +60,8 @@ class FragmentPredaj : Fragment() {
 
     fun anketaNijeDostupnaZaRad(anketa: Anketa) : Boolean{
         return when {
-            anketa.datumRada != null -> true
-            anketa.datumKraj < Calendar.getInstance().time -> true
+           // anketa.datumRada != null -> true
+          //  anketa.datumKraj < Calendar.getInstance().time -> true
             anketa.datumPocetak > Calendar.getInstance().time -> true
             else -> false
         }
@@ -117,5 +72,12 @@ class FragmentPredaj : Fragment() {
         if(rez % 2 != 0) rez += 1
         rez *= 10
         return rez
+    }
+
+    fun odrediProgres(postotakUradjenosti: TextView, anketaId: Int) {
+        GlobalScope.launch {
+            progres = OdgovorRepository.obracunajProgresZaAnketuZaokruzeni(anketaId).toString()
+            postotakUradjenosti.text = "$progres%"
+        }
     }
 }

@@ -10,7 +10,7 @@ data class AnketaTaken (
     @SerializedName("student") val student: String,
     @SerializedName("progres") var progres : Int,
     @SerializedName("datumRada") val datumRada : Date,
-    @SerializedName("AnketumId") var anketumId : Int
+    @SerializedName("AnketumId") var AnketumId : Int
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
@@ -26,7 +26,7 @@ data class AnketaTaken (
         parcel.writeString(student)
         parcel.writeInt(progres)
         parcel.writeDate(datumRada)
-        parcel.writeInt(anketumId)
+        parcel.writeInt(AnketumId)
     }
 
     override fun describeContents(): Int {

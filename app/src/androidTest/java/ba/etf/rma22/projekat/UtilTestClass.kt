@@ -1,4 +1,4 @@
-package ba.etf.rma22.projekat
+/*package ba.etf.rma22.projekat
 
 import android.graphics.drawable.ColorDrawable
 import android.view.View
@@ -69,3 +69,5 @@ class UtilTestClass {
         }
     }
 }
+
+ */

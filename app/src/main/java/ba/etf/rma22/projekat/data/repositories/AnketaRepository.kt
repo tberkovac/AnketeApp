@@ -16,9 +16,13 @@ object AnketaRepository {
         }
     }
 
-    suspend fun getById(id:Int):Anketa {
+    suspend fun getById(id:Int):Anketa? {
         return withContext(Dispatchers.IO){
             val response = ApiConfig.retrofit.getAnketaById(id)
+
+            if(response == null)
+                return@withContext  null
+
             return@withContext response
         }
     }
@@ -44,7 +48,20 @@ object AnketaRepository {
         return ApiConfig.retrofit.getGroupsForAnketa(anketaId)
     }
 
-    suspend fun getPitanjaForAnketa(anketaId: Int) : List<Pitanje> {
-        return ApiConfig.retrofit.getPitanjaForAnketa(anketaId)
+    suspend fun getUpisane(): List<Anketa> {
+        val upisaneGrupe = IstrazivanjeIGrupaRepository.getUpisaneGrupe()
+        val sveAnkete = getAll()
+        var grupeZaAnketu : List<Grupa>
+        val listaUpisanihAnketa = mutableListOf<Anketa>()
+        sveAnkete.forEach {
+            grupeZaAnketu = AnketaRepository.getGroupsForAnketa(it.id)
+            for (grupa in grupeZaAnketu) {
+                if(upisaneGrupe.contains(grupa)){
+                    listaUpisanihAnketa.add(it)
+                    break
+                }
+            }
+        }
+        return listaUpisanihAnketa
     }
 }

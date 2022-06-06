@@ -1,16 +1,27 @@
 package ba.etf.rma22.projekat.data.repositories
 
 import ba.etf.rma22.projekat.data.models.AnketaTaken
-import retrofit2.Response
 
 object TakeAnketaRepository {
-    val idStudent = "19b70587-76b0-4444-a964-fad0a04d426b"
 
-    suspend fun zapocniAnketu(idAnkete: Int): Response<AnketaTaken> {
-        return ApiConfig.retrofit.takeAnketa(idStudent, idAnkete)
+    suspend fun zapocniAnketu(idAnkete: Int): AnketaTaken? {
+        val result =  ApiConfig.retrofit.takeAnketa(AccountRepository.getHash(), idAnkete)
+
+        if(result.body()== null)
+            return null
+        return result.body()
     }
 
-    suspend fun getPoceteAnkete() : List<AnketaTaken> {
-        return ApiConfig.retrofit.getTakenAnkete(idStudent)
+    suspend fun getPoceteAnkete() : List<AnketaTaken>? {
+        val result = ApiConfig.retrofit.getTakenAnkete(AccountRepository.getHash())
+        if(result.isEmpty())
+            return null
+        return result
+    }
+
+    suspend fun getPokusaj(idAnketaTaken: Int) : AnketaTaken {
+        var sviPokusaji = ApiConfig.retrofit.getTakenAnkete(AccountRepository.getHash())
+        sviPokusaji = sviPokusaji.filter { it.id == idAnketaTaken }
+        return sviPokusaji[0]
     }
 }

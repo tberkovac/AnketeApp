@@ -14,7 +14,7 @@ interface Api {
     @GET("/anketa/{id}")
     suspend fun getAnketaById(
         @Path("id") id: Int
-    ) : Anketa
+    ) : Anketa?
 
     @GET("/istrazivanje")
     suspend fun getIstrazivanja(

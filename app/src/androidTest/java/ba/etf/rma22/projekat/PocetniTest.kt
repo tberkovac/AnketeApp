@@ -1,4 +1,4 @@
-package ba.etf.rma22.projekat
+/*package ba.etf.rma22.projekat
 
 import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
@@ -63,3 +63,5 @@ class PocetniTest {
     }
 
 }
+
+ */

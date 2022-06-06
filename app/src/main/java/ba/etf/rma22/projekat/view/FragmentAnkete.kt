@@ -93,15 +93,15 @@ class FragmentAnkete : Fragment() {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 val vrijednost: String = podaciZaSpinner[p2]
                 if (vrijednost == podaciZaSpinner[0])
-                    anketeListViewModel.getAll(::onSuccessGetAllAnkete, ::onError)
+                    anketeListViewModel.getUpisaneAnkete(::popuniAdapter)
                 else if (vrijednost == podaciZaSpinner[1])
-                    anketeListViewModel.getAll(::onSuccessGetAllAnkete, ::onError)
+                    anketeListViewModel.getAll(::popuniAdapter, ::onError)
                 else if (vrijednost == podaciZaSpinner[2])
-                    anketeListViewModel.getAll(::onSuccessGetAllAnkete, ::onError)
+                    anketeListViewModel.getUradjeneAnkete(::popuniAdapter)
                 else if (vrijednost == podaciZaSpinner[3])
-                    anketeListViewModel.getAll(::onSuccessGetAllAnkete, ::onError)
+                    anketeListViewModel.getFutureAnkete(::popuniAdapter)
                 else if (vrijednost == podaciZaSpinner[4])
-                    anketeListViewModel.getAll(::onSuccessGetAllAnkete, ::onError)
+                    anketeListViewModel.getExpiredAnkete(::popuniAdapter)
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {}
@@ -123,6 +123,12 @@ class FragmentAnkete : Fragment() {
         listaAnketaAdapter.updateAnkete(ankete)
         listaAnketaAdapter.notifyDataSetChanged()
     }
+
+    private fun popuniAdapter(ankete: List<Anketa>) {
+        listaAnketaAdapter.updateAnkete(ankete)
+        listaAnketaAdapter.notifyDataSetChanged()
+    }
+
 
     private fun onError(){
         Log.v("Greska", "greska")

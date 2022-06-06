@@ -12,18 +12,13 @@ data class Anketa(
     @SerializedName("datumPocetak") val datumPocetak: Date,
     @SerializedName("datumKraj") val datumKraj: Date,
     @SerializedName("trajanje") val trajanje : Int,
-    @SerializedName("createdAt") val createdAt : String,
-    @SerializedName("updatedAt") val updatedAt : String
-
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readString()!!,
         parcel.readValue(Date::class.java.classLoader) as Date,
         parcel.readValue(Date::class.java.classLoader) as Date,
-        parcel.readInt(),
-        parcel.readString()!!,
-        parcel.readString()!!
+        parcel.readInt()
     ) {
     }
 
@@ -33,8 +28,6 @@ data class Anketa(
         parcel.writeDate(datumPocetak)
         parcel.writeDate(datumKraj)
         parcel.writeInt(trajanje)
-        parcel.writeString(createdAt)
-        parcel.writeString(updatedAt)
     }
 
     override fun describeContents(): Int {

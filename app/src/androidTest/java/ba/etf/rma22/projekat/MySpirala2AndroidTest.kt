@@ -1,26 +1,20 @@
-package ba.etf.rma22.projekat
+/*package ba.etf.rma22.projekat
 
-import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
-import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import ba.etf.rma22.projekat.data.models.Anketa
-import ba.etf.rma22.projekat.data.models.Korisnik
 import ba.etf.rma22.projekat.data.repositories.AnketaRepository
 import ba.etf.rma22.projekat.data.repositories.PitanjeAnketaRepository
 import org.hamcrest.Matchers.*
 
 
-import ba.etf.rma22.projekat.viewmodel.KorisnikViewModel
 import org.hamcrest.CoreMatchers
 import org.hamcrest.core.AllOf
 import org.junit.Rule
@@ -114,7 +108,7 @@ class MySpirala2AndroidTest {
         val pitanja = PitanjeAnketaRepository.getPitanja(anketa[4].naziv, anketa[4].nazivIstrazivanja)
 
         pitanja.forEach { pitanje ->
-            onView(AllOf.allOf(isDisplayed(), withId(R.id.tekstPitanja))).check(matches(withText(pitanje.tekst)))
+            onView(AllOf.allOf(isDisplayed(), withId(R.id.tekstPitanja))).check(matches(withText(pitanje.tekstPitanja)))
             onData(anything()).inAdapterView(withId(R.id.odgovoriLista)).atPosition(0).perform(click())
             onView(withId(R.id.pager)).perform(swipeLeft())
 
@@ -143,7 +137,7 @@ class MySpirala2AndroidTest {
 
         sleep(900)
         pitanja2.forEach { pitanje ->
-            onView(AllOf.allOf(isDisplayed(), withId(R.id.tekstPitanja))).check(matches(withText(pitanje.tekst)))
+            onView(AllOf.allOf(isDisplayed(), withId(R.id.tekstPitanja))).check(matches(withText(pitanje.tekstPitanja)))
             onData(anything()).inAdapterView(withId(R.id.odgovoriLista)).atPosition(1).perform(click())
             onView(withId(R.id.pager)).perform(swipeLeft())
 
@@ -162,3 +156,5 @@ class MySpirala2AndroidTest {
     }
 
 }
+
+ */
