@@ -10,7 +10,7 @@ data class Anketa(
     @SerializedName("id") val id : Int,
     @SerializedName("naziv") val naziv: String,
     @SerializedName("datumPocetak") val datumPocetak: Date,
-    @SerializedName("datumKraj") val datumKraj: Date,
+    @SerializedName("datumKraj") val datumKraj: Date?,
     @SerializedName("trajanje") val trajanje : Int,
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
@@ -51,5 +51,20 @@ data class Anketa(
     fun Parcel.readDate(): Date? {
         val long = readLong()
         return if (long != -1L) Date(long) else null
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Anketa
+
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return id
     }
 }

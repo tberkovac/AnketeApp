@@ -13,6 +13,7 @@ import ba.etf.rma22.projekat.R
 import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.AnketaTaken
 import ba.etf.rma22.projekat.data.models.Istrazivanje
+import ba.etf.rma22.projekat.data.repositories.OdgovorRepository
 import ba.etf.rma22.projekat.viewmodel.AnketeListViewModel
 import ba.etf.rma22.projekat.viewmodel.IstrazivanjeIGrupaViewModel
 import ba.etf.rma22.projekat.viewmodel.OdgovorViewModel
@@ -92,7 +93,7 @@ class AnketaListAdapter(
         postotakPravi = int
         val context: Context = holder.statusAnkete.context
         var id : Int
-        if(int == 100){
+        if(int == 100 && anketa.datumKraj!= null && date > anketa.datumKraj){
             id = context.resources.getIdentifier("plava", "drawable", context.packageName)
           //  val pokusaj = TakeAnketaRepository.getPoceteAnkete()
             holder.pismeniStatus.text = "Anketa urađena: " + if(pokusaj != null)formatirajDatum(pokusaj.datumRada) else ""
@@ -101,7 +102,7 @@ class AnketaListAdapter(
             id = context.resources.getIdentifier("zuta", "drawable", context.packageName)
             holder.pismeniStatus.text = "Vrijeme aktiviranja: " + formatirajDatum(anketa.datumPocetak)
         }
-        else if( anketa.datumKraj!= null && date > anketa.datumKraj){
+        else if( anketa.datumKraj!= null && date > anketa.datumKraj && int == 0){
             id = context.resources.getIdentifier("crvena", "drawable", context.packageName)
             holder.pismeniStatus.text = "Anketa zatvorena: " + formatirajDatum(anketa.datumKraj)
         }

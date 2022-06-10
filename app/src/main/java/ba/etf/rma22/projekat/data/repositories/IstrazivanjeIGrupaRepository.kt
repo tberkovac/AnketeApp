@@ -58,10 +58,21 @@ object IstrazivanjeIGrupaRepository {
     suspend fun upisiUGrupu(idGrupa:Int):Boolean {
         if(getUpisaneGrupe().contains(ApiConfig.retrofit.getGrupaById(idGrupa)))
             return false
+        if(getUpisanaIstrazivanja().contains(getIstrazivanjeByGrupaId(idGrupa)))
+            return false
         val response = ApiConfig.retrofit.upisiGrupuSaId(idGrupa)
         if(response.message() == "OK")
             return true
         return false
+    }
+
+    private suspend fun getUpisanaIstrazivanja(): List<Istrazivanje> {
+        var upisanaIstrazivanja = mutableListOf<Istrazivanje>()
+        val upisaneGrupe = getUpisaneGrupe()
+        upisaneGrupe.forEach {
+            upisanaIstrazivanja.add(getIstrazivanjeByGrupaId(it.id))
+        }
+        return upisanaIstrazivanja
     }
 
     suspend fun getUpisaneGrupe(): List<Grupa> {
