@@ -1,5 +1,9 @@
 package ba.etf.rma22.projekat.viewmodel
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.util.Log
 import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.Grupa
 import ba.etf.rma22.projekat.data.repositories.AnketaRepository
@@ -20,13 +24,63 @@ class AnketeListViewModel {
         return AnketaRepository.getAll(offset)
     }
 
-     fun getAll(onSuccess : (ankete: List<Anketa>)-> Unit, onError : ()-> Unit) {
-        scope.launch {
-            val result = AnketaRepository.getAll()
-            when (result ) {
-                is List<Anketa> -> onSuccess.invoke(result)
-                else -> onError?.invoke()
+    fun fetchDB(context: Context, onSuccess: (ankete: List<Anketa>) -> Unit,
+                onError: (s: String) -> Unit){
+        scope.launch{
+            val result = AnketaRepository.getAllDB(context)
+            when (result) {
+                is List<Anketa> -> onSuccess?.invoke(result)
+                else-> onError?.invoke("greska u povlacenju sa baze")
             }
+        }
+    }
+
+
+    fun writeDB(context: Context, anketa:List<Anketa>, onSuccess: (ankete: String) -> Unit,
+                onError: (s: String) -> Unit){
+        scope.launch{
+            val result = AnketaRepository.writeAnkete(context, anketa)
+            when (result) {
+                is String -> onSuccess?.invoke(result)
+                else-> onError?.invoke("greska u zapisu za bazu")
+            }
+        }
+    }
+    fun isOnline(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (connectivityManager != null) {
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            if (capabilities != null) {
+                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+     fun getAll(context: Context, onSuccess : (context: Context, ankete: List<Anketa>)-> Unit, onError : (s: String)-> Unit) {
+        scope.launch {
+            val result : List<Anketa>
+            if(isOnline(context)) {
+                result = AnketaRepository.getAll()
+            }else{
+                result = AnketaRepository.getAllDB(context)
+            }
+                when (result ) {
+                    is List<Anketa> -> onSuccess.invoke(context, result)
+                    else -> onError?.invoke("greska u pozivanju getall")
+                }
+
         }
     }
 

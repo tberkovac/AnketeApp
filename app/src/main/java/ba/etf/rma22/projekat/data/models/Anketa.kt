@@ -2,16 +2,20 @@ package ba.etf.rma22.projekat.data.models
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.annotation.NonNull
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import java.util.*
 
+@Entity
 data class Anketa(
-
-    @SerializedName("id") val id : Int,
-    @SerializedName("naziv") val naziv: String,
-    @SerializedName("datumPocetak") val datumPocetak: Date,
-    @SerializedName("datumKraj") val datumKraj: Date?,
-    @SerializedName("trajanje") val trajanje : Int,
+    @PrimaryKey @SerializedName("id") val id : Int,
+    @ColumnInfo(name = "naziv") @SerializedName("naziv") val naziv: String,
+    @NonNull @ColumnInfo(name = "datumPocetak") @SerializedName("datumPocetak") val datumPocetak: Date,
+    @ColumnInfo(name = "datumKraj") @SerializedName("datumKraj") val datumKraj: Date?,
+    @ColumnInfo(name = "trajanje") @SerializedName("trajanje") val trajanje : Int,
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),

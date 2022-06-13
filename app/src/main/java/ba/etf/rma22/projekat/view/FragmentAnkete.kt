@@ -1,5 +1,9 @@
 package ba.etf.rma22.projekat.view
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -74,7 +78,11 @@ class FragmentAnkete : Fragment() {
         }
 
         listaAnketa.adapter = listaAnketaAdapter
-        anketeListViewModel.getAll(::onSuccessGetAllAnkete, ::onError)
+        context?.let {
+            anketeListViewModel.getAll(
+                it,onSuccess = ::onSuccessGetAllAnkete,
+                onError = ::onError)
+        }
 
         val podaciZaSpinner = arrayOf(
             "Sve moje ankete",
@@ -92,10 +100,19 @@ class FragmentAnkete : Fragment() {
         spinerFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 val vrijednost: String = podaciZaSpinner[p2]
-                if (vrijednost == podaciZaSpinner[0])
-                    anketeListViewModel.getUpisaneAnkete(::popuniAdapter)
+                if (vrijednost == podaciZaSpinner[0]) {
+                    context?.let {
+                        anketeListViewModel.getAll(
+                            it,onSuccess = ::onSuccessGetAllAnkete,
+                            onError = ::onError)
+                    }
+                }
                 else if (vrijednost == podaciZaSpinner[1])
-                    anketeListViewModel.getAll(::popuniAdapter, ::onError)
+                    context?.let {
+                        anketeListViewModel.getAll(
+                            it,onSuccess = ::onSuccessGetAllAnkete,
+                            onError = ::onError)
+                    }
                 else if (vrijednost == podaciZaSpinner[2])
                     anketeListViewModel.getUradjeneAnkete(::popuniAdapter)
                 else if (vrijednost == podaciZaSpinner[3])
@@ -115,12 +132,15 @@ class FragmentAnkete : Fragment() {
             MainActivity.adapter.notifyDataSetChanged()
             MainActivity.adapter.refreshFragment(1, FragmentIstrazivanje())
         }
-        spinerFilter.setSelection(0)
-        anketeListViewModel.getAll(::onSuccessGetAllAnkete, ::onError)
+       // spinerFilter.setSelection(0)
+      //  anketeListViewModel.getAll(::onSuccessGetAllAnkete, ::onError)
     }
 
-    private fun onSuccessGetAllAnkete(ankete: List<Anketa>) {
+    @SuppressLint("NotifyDataSetChanged")
+    private fun onSuccessGetAllAnkete(context : Context, ankete: List<Anketa>) {
         listaAnketaAdapter.updateAnkete(ankete)
+        if(isOnline(context))
+            anketeListViewModel.writeDB(context,ankete,::ispravnaPoruka,::onError)
         listaAnketaAdapter.notifyDataSetChanged()
     }
 
@@ -130,7 +150,35 @@ class FragmentAnkete : Fragment() {
     }
 
 
-    private fun onError(){
-        Log.v("Greska", "greska")
+    private fun onError(s: String){
+        Log.v("Greska", s)
     }
+    fun ispravnaPoruka(s: String) {
+
+    }
+
+    fun isOnline(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (connectivityManager != null) {
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            if (capabilities != null) {
+                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
 }
+
+

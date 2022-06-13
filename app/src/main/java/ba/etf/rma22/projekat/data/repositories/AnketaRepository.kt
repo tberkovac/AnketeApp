@@ -1,13 +1,42 @@
 package ba.etf.rma22.projekat.data.repositories
 
+import android.content.Context
+import ba.etf.rma22.projekat.data.RMA22DB
 import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.Grupa
 import ba.etf.rma22.projekat.data.models.Pitanje
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 object AnketaRepository {
+
+
+    suspend fun getAnkete(context: Context) : List<Anketa> {
+        return withContext(Dispatchers.IO) {
+            var db = RMA22DB.getInstance(context)
+            var ankete = db!!.anketaDao().getAll()
+            return@withContext ankete
+        }
+    }
+    suspend fun writeAnketa(context: Context,ankete: Anketa) : String?{
+        return withContext(Dispatchers.IO) {
+            try{
+                var db = RMA22DB.getInstance(context)
+                db!!.anketaDao().insertOne(ankete)
+                return@withContext "success"
+            }
+            catch(error:Exception){
+                return@withContext null
+            }
+        }
+    }
+
+
+
 
     suspend fun getAll(offset:Int):List<Anketa> {
         return withContext(Dispatchers.IO){
@@ -63,5 +92,31 @@ object AnketaRepository {
             }
         }
         return listaUpisanihAnketa
+    }
+
+    suspend fun getAllDB(context: Context) : List<Anketa> {
+        return withContext(Dispatchers.IO) {
+                var db = RMA22DB.getInstance(context)
+                val ankete = db.anketaDao().getAll()
+                //   db!!.anketaDao().insertAll(ankete)
+                return@withContext ankete
+
+        }
+    }
+
+    suspend fun writeAnkete(context: Context,ankete: List<Anketa>) : String?{
+        return withContext(Dispatchers.IO) {
+            try{
+                var db = RMA22DB.getInstance(context)
+                ankete.forEach {
+                    db!!.anketaDao().insertOne(it)
+                }
+             //   db!!.anketaDao().insertAll(ankete)
+                return@withContext "success"
+            }
+            catch(error:Exception){
+                return@withContext null
+            }
+        }
     }
 }
