@@ -178,7 +178,6 @@ class FragmentAnkete : Fragment() {
         }
         return false
     }
-
 }
 
 

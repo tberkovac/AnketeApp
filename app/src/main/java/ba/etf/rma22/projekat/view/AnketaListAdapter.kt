@@ -48,7 +48,7 @@ class AnketaListAdapter(
         val takeAnketaViewModel = TakeAnketaViewModel()
         val anketa = ankete[position]
         var pokusaj : AnketaTaken? = null
-
+/*
         fun pocetaSuccess(anketaTaken: AnketaTaken?) {
             pokusaj = anketaTaken
             jeLiSveOdgovoreno(anketa,holder, pokusaj)
@@ -81,6 +81,8 @@ class AnketaListAdapter(
 
 
         anketaListViewModel.jeLiUpisanaAnketa(anketa.id, ::onSuccess)
+
+ */
     }
 
     private fun jeLiSveOdgovoreno(anketa: Anketa, holder: AnketaViewHolder, pokusaj: AnketaTaken?) {

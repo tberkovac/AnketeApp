@@ -35,9 +35,6 @@ object AnketaRepository {
         }
     }
 
-
-
-
     suspend fun getAll(offset:Int):List<Anketa> {
         return withContext(Dispatchers.IO){
             val response = ApiConfig.retrofit.getAnkete(offset)
@@ -111,7 +108,6 @@ object AnketaRepository {
                 ankete.forEach {
                     db!!.anketaDao().insertOne(it)
                 }
-             //   db!!.anketaDao().insertAll(ankete)
                 return@withContext "success"
             }
             catch(error:Exception){

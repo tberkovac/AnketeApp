@@ -1,5 +1,11 @@
 package ba.etf.rma22.projekat.data.repositories
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.util.Log
+import ba.etf.rma22.projekat.data.RMA22DB
+import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.Grupa
 import ba.etf.rma22.projekat.data.models.Istrazivanje
 import kotlinx.coroutines.Dispatchers
@@ -32,27 +38,60 @@ object IstrazivanjeIGrupaRepository {
         return svaIstrazivanja
     }
 
-    suspend fun getGrupe() : List<Grupa> {
+    suspend fun getGrupe(context: Context) : List<Grupa> {
         return withContext(Dispatchers.IO) {
             val response = ApiConfig.retrofit.getGrupe()
+            writeGrupe(context, response)
             return@withContext response
         }
     }
 
-    suspend fun getGrupeZaIstrazivanje(idIstrazivanje: Int) : List<Grupa> {
+    suspend fun getAllGrupeDB(context: Context) : List<Grupa> {
+        return withContext(Dispatchers.IO) {
+            var db = RMA22DB.getInstance(context)
+            val grupe = db.grupaDao().getAll()
+            //   db!!.anketaDao().insertAll(ankete)
+            return@withContext grupe
+        }
+    }
+
+    suspend fun getGrupeZaIstrazivanje(context: Context, idIstrazivanje: Int) : List<Grupa> {
         if(idIstrazivanje == 0){
             return emptyList()
         }
-        val sveGrupe = getGrupe()
+        val sveGrupe : List<Grupa> = if(isOnline(context)){
+            getGrupe(context)
+        } else {
+            getAllGrupeDB(context)
+        }
         var grupeZaVratiti = emptyList<Grupa>()
 
-        val proslijedjenoIstrazivanje = ApiConfig.retrofit.getIstrazivanjaById(idIstrazivanje)
+        val proslijedjenoIstrazivanje = if(isOnline(context)){
+            ApiConfig.retrofit.getIstrazivanjaById(idIstrazivanje)
+        }else {
+            getAllIstrazivanjaDB(context).find { it.id == idIstrazivanje }
+        }
         sveGrupe.forEach {
-            val istrazivanjeZaGrupu = ApiConfig.retrofit.getIstrazivanjaForGroupById(it.id)
+            val istrazivanjeZaGrupu : Istrazivanje
+            if(isOnline(context)){
+                istrazivanjeZaGrupu = ApiConfig.retrofit.getIstrazivanjaForGroupById(it.id)
+            }else{
+                istrazivanjeZaGrupu = getAllIstrazivanjaDB(context).find { istrazivanje -> it.IstrazivanjeId == istrazivanje.id }!!
+            }
+
             if(istrazivanjeZaGrupu == proslijedjenoIstrazivanje)
                 grupeZaVratiti = grupeZaVratiti.plus(it)
         }
         return grupeZaVratiti
+    }
+
+    suspend fun getAllIstrazivanjaDB(context: Context): List<Istrazivanje> {
+        return withContext(Dispatchers.IO) {
+            var db = RMA22DB.getInstance(context)
+            val istrazivanja = db.istrazivanjeDao().getAll()
+            //   db!!.anketaDao().insertAll(ankete)
+            return@withContext istrazivanja
+        }
     }
 
     suspend fun upisiUGrupu(idGrupa:Int):Boolean {
@@ -85,5 +124,58 @@ object IstrazivanjeIGrupaRepository {
 
     suspend fun getIstrazivanjeByGrupaId(idGrupa: Int): Istrazivanje {
         return ApiConfig.retrofit.getIstrazivanjaForGroupById(idGrupa)
+    }
+
+    suspend fun writeIstrazivanja(context: Context, istrazivanja: List<Istrazivanje>) : String?{
+        return withContext(Dispatchers.IO) {
+            try{
+                var db = RMA22DB.getInstance(context)
+                istrazivanja.forEach {
+                    db!!.istrazivanjeDao().insertOne(it)
+                }
+                return@withContext "success"
+            }
+            catch(error:Exception){
+                return@withContext null
+            }
+        }
+    }
+
+    suspend fun writeGrupe(context: Context, grupe: List<Grupa>) : String?{
+        return withContext(Dispatchers.IO) {
+            try{
+                var db = RMA22DB.getInstance(context)
+                grupe.forEach {
+                    db!!.grupaDao().insertOne(it)
+                }
+                return@withContext "success"
+            }
+            catch(error:Exception){
+                return@withContext null
+            }
+        }
+    }
+
+
+    fun isOnline(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (connectivityManager != null) {
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            if (capabilities != null) {
+                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
+                    return true
+                }
+            }
+        }
+        return false
     }
 }

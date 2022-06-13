@@ -1,6 +1,8 @@
 package ba.etf.rma22.projekat.view
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -62,7 +64,7 @@ class FragmentIstrazivanje : Fragment() {
                     return
                 }
                 resetujIstrazivanjeSpinerAdapter()
-                popuniIstrazivanja(spinerGodine.selectedItem.toString().toInt())
+                popuniIstrazivanja(context!!, spinerGodine.selectedItem.toString().toInt())
                 zadnji = godine[p2]
             }
 
@@ -70,6 +72,8 @@ class FragmentIstrazivanje : Fragment() {
                 spinerGodine.setSelection(zadnji.toInt())
             }
         }
+
+
 
         spinerIstrazivanja.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
@@ -79,7 +83,7 @@ class FragmentIstrazivanje : Fragment() {
                     return
                 }
                 resetujGrupeSpinerAdapter()
-                popuniGrupamaGrupeSpinerAdapter((spinerIstrazivanja.selectedItem as Istrazivanje).id)
+                popuniGrupamaGrupeSpinerAdapter(context!!, (spinerIstrazivanja.selectedItem as Istrazivanje).id)
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -87,13 +91,15 @@ class FragmentIstrazivanje : Fragment() {
             }
         }
 
+
         spinerGrupe.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 if(spinerGrupe.selectedItem.toString() == "") {
                     dodajIstrazivanjeDugme.isEnabled = false
                     return
                 }
-                dodajIstrazivanjeDugme.isEnabled = true
+                if(isOnline(context!!))
+                    dodajIstrazivanjeDugme.isEnabled = true
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -101,8 +107,9 @@ class FragmentIstrazivanje : Fragment() {
             }
         }
 
+
         dodajIstrazivanjeDugme.setOnClickListener{
-            if(jeLiSveOdabrano()) {
+            if(jeLiSveOdabrano() && isOnline(requireContext())) {
                 val grupa = spinerGrupe.selectedItem as Grupa
                 istrazivanjeIGrupaViewModel.upisiUGrupu(grupa.id, ::onSuccessUpisGrupe, ::onError)
             }
@@ -119,16 +126,16 @@ class FragmentIstrazivanje : Fragment() {
 
     private fun resetujGrupeSpinerAdapter() {
         adapterGrupeSpiner.clear()
-        adapterGrupeSpiner.add(Grupa(-1,""))
+        adapterGrupeSpiner.add(Grupa(-1,"",-1))
         dodajIstrazivanjeDugme.isEnabled = false
     }
 
-    private fun popuniIstrazivanja(godina: Int) {
-        istrazivanjeIGrupaViewModel.getAllIstrazivanjaByGodina(godina, ::onSuccessIstrazivanje, ::onError)
+    private fun popuniIstrazivanja(context: Context, godina: Int) {
+        istrazivanjeIGrupaViewModel.getAllIstrazivanjaByGodina(context, godina, ::onSuccessIstrazivanje, ::onError)
     }
 
-    private fun popuniGrupamaGrupeSpinerAdapter(idIstrazivanja: Int) {
-        istrazivanjeIGrupaViewModel.getGrupeByIstrazivanje(idIstrazivanja, ::onSuccessGrupa, ::onError)
+    private fun popuniGrupamaGrupeSpinerAdapter(context: Context, idIstrazivanja: Int) {
+        istrazivanjeIGrupaViewModel.getGrupeByIstrazivanje(context,idIstrazivanja, ::onSuccessGrupa, ::onError)
     }
 
     private fun jeLiSveOdabrano() : Boolean{
@@ -142,8 +149,10 @@ class FragmentIstrazivanje : Fragment() {
         MainActivity.adapter.notifyDataSetChanged()
     }
 
-    private fun onSuccessIstrazivanje(istrazivanja : List<Istrazivanje>) {
+    private fun onSuccessIstrazivanje(context: Context, istrazivanja : List<Istrazivanje>) {
         adapterIstrazivanjaSpiner.addAll(istrazivanja)
+        if(isOnline(context))
+            istrazivanjeIGrupaViewModel.writeDB(context, istrazivanja, ::onSuccess2, ::onError2)
         adapterIstrazivanjaSpiner.notifyDataSetChanged()
     }
 
@@ -157,8 +166,16 @@ class FragmentIstrazivanje : Fragment() {
             prikaziPoruku(spinerGrupe.selectedItem as Grupa)
     }
 
+    private fun onSuccess2(s: String?){
+
+    }
+
     private fun onError(){
         Log.v("Greska", "greska")
+    }
+
+    private fun onError2(s: String?){
+        Log.v("Greska", s!!)
     }
 
     private fun GodinaAdapterInicijalizacijaIDodjelaSpineru(context: Context) {
@@ -180,6 +197,29 @@ class FragmentIstrazivanje : Fragment() {
             context, android.R.layout.simple_spinner_item, ArrayList<Grupa>()
         )
         spinerGrupe.adapter = adapterGrupeSpiner
+    }
+
+
+    fun isOnline(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (connectivityManager != null) {
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            if (capabilities != null) {
+                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
+                    return true
+                }
+            }
+        }
+        return false
     }
 
 }
