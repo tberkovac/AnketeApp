@@ -6,13 +6,17 @@ import android.net.NetworkCapabilities
 import android.util.Log
 import ba.etf.rma22.projekat.data.RMA22DB
 import ba.etf.rma22.projekat.data.models.Anketa
+import ba.etf.rma22.projekat.data.models.AnketaiGrupe2
 import ba.etf.rma22.projekat.data.models.Grupa
 import ba.etf.rma22.projekat.data.models.Istrazivanje
+import ba.etf.rma22.projekat.viewmodel.IstrazivanjeIGrupaViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.hamcrest.core.Is
 
 object IstrazivanjeIGrupaRepository {
 
+    val istrazivanjeIGrupaViewModel = IstrazivanjeIGrupaViewModel()
     suspend fun getIstrazivanja(offset:Int) : List<Istrazivanje> {
         return withContext(Dispatchers.IO){
             val response = ApiConfig.retrofit.getIstrazivanja(offset)
@@ -20,7 +24,7 @@ object IstrazivanjeIGrupaRepository {
         }
     }
 
-    suspend fun getIstrazivanja() : List<Istrazivanje> {
+    suspend fun getIstrazivanja(context: Context) : List<Istrazivanje> {
         var svaIstrazivanja = listOf<Istrazivanje>()
         var i = 1
         while(true){
@@ -34,11 +38,12 @@ object IstrazivanjeIGrupaRepository {
                 break
             i++
         }
-
+        writeIstrazivanja(context, svaIstrazivanja)
         return svaIstrazivanja
     }
 
     suspend fun getGrupe(context: Context) : List<Grupa> {
+        Log.v("GRUPE!", "POZVANOOO")
         return withContext(Dispatchers.IO) {
             val response = ApiConfig.retrofit.getGrupe()
             writeGrupe(context, response)
@@ -89,15 +94,14 @@ object IstrazivanjeIGrupaRepository {
         return withContext(Dispatchers.IO) {
             var db = RMA22DB.getInstance(context)
             val istrazivanja = db.istrazivanjeDao().getAll()
-            //   db!!.anketaDao().insertAll(ankete)
             return@withContext istrazivanja
         }
     }
 
-    suspend fun upisiUGrupu(idGrupa:Int):Boolean {
+    suspend fun upisiUGrupu(context: Context, idGrupa:Int):Boolean {
         if(getUpisaneGrupe().contains(ApiConfig.retrofit.getGrupaById(idGrupa)))
             return false
-        if(getUpisanaIstrazivanja().contains(getIstrazivanjeByGrupaId(idGrupa)))
+        if(getUpisanaIstrazivanja(context).contains(getIstrazivanjeByGrupaId(context, idGrupa)))
             return false
         val response = ApiConfig.retrofit.upisiGrupuSaId(idGrupa)
         if(response.message() == "OK")
@@ -105,11 +109,11 @@ object IstrazivanjeIGrupaRepository {
         return false
     }
 
-    private suspend fun getUpisanaIstrazivanja(): List<Istrazivanje> {
+    private suspend fun getUpisanaIstrazivanja(context: Context): List<Istrazivanje> {
         var upisanaIstrazivanja = mutableListOf<Istrazivanje>()
         val upisaneGrupe = getUpisaneGrupe()
         upisaneGrupe.forEach {
-            upisanaIstrazivanja.add(getIstrazivanjeByGrupaId(it.id))
+            upisanaIstrazivanja.add(getIstrazivanjeByGrupaId(context, it.id))
         }
         return upisanaIstrazivanja
     }
@@ -118,12 +122,29 @@ object IstrazivanjeIGrupaRepository {
         return ApiConfig.retrofit.getUpisaneGrupe(AccountRepository.getHash())
     }
 
-    suspend fun getGrupaById(idGrupa: Int): Grupa {
-        return ApiConfig.retrofit.getGrupaById(idGrupa)
+
+    suspend fun getGrupaById(context: Context, idGrupa: Int): Grupa {
+        val result = if(isOnline(context)) {
+            ApiConfig.retrofit.getGrupaById(idGrupa)
+        } else{
+            var db = RMA22DB.getInstance(context)
+            db.grupaDao().getAll().filter { grupa -> grupa.id == idGrupa }.first()
+        }
+        return result
     }
 
-    suspend fun getIstrazivanjeByGrupaId(idGrupa: Int): Istrazivanje {
-        return ApiConfig.retrofit.getIstrazivanjaForGroupById(idGrupa)
+    suspend fun getIstrazivanjeByGrupaId(context: Context, idGrupa: Int): Istrazivanje {
+
+        val istrazivanje = if(isOnline(context)){
+            getIstrazivanja(context)
+            ApiConfig.retrofit.getIstrazivanjaForGroupById(idGrupa)
+        }else{
+            var grupe = getAllGrupeDB(context)
+            var trazenaGrupa = grupe.find { grupa -> grupa.id == idGrupa }
+            var result  = istrazivanjeIGrupaViewModel.getAllIstrazivanja(context)
+            result.filter { istrazivanje -> istrazivanje.id == trazenaGrupa!!.IstrazivanjeId }.first()
+        }
+        return istrazivanje
     }
 
     suspend fun writeIstrazivanja(context: Context, istrazivanja: List<Istrazivanje>) : String?{
@@ -131,11 +152,12 @@ object IstrazivanjeIGrupaRepository {
             try{
                 var db = RMA22DB.getInstance(context)
                 istrazivanja.forEach {
-                    db!!.istrazivanjeDao().insertOne(it)
+                    db.istrazivanjeDao().insertOne(it)
                 }
                 return@withContext "success"
             }
             catch(error:Exception){
+                error.printStackTrace()
                 return@withContext null
             }
         }
@@ -143,14 +165,17 @@ object IstrazivanjeIGrupaRepository {
 
     suspend fun writeGrupe(context: Context, grupe: List<Grupa>) : String?{
         return withContext(Dispatchers.IO) {
+            Log.v("PROSLIJEDJENEGRUPE", grupe.toString())
             try{
                 var db = RMA22DB.getInstance(context)
                 grupe.forEach {
+                    Log.v("UPISANAGRUPA", it.toString())
                     db!!.grupaDao().insertOne(it)
                 }
                 return@withContext "success"
             }
             catch(error:Exception){
+                error.printStackTrace()
                 return@withContext null
             }
         }

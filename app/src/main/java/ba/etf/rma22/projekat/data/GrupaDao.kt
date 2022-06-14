@@ -1,9 +1,6 @@
 package ba.etf.rma22.projekat.data
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Transaction
+import androidx.room.*
 import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.Grupa
 
@@ -13,6 +10,8 @@ interface GrupaDao {
     @Query("SELECT * FROM grupa")
     fun getAll(): List<Grupa>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOne(vararg grupa: Grupa)
+
+
 }

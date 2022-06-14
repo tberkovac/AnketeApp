@@ -42,7 +42,7 @@ class AnketeListViewModel {
             val result = AnketaRepository.writeAnkete(context, anketa)
             when (result) {
                 is String -> onSuccess?.invoke(result)
-                else-> onError?.invoke("greska u zapisu za bazu")
+                else-> onError?.invoke("greska u zapisu anketa u bazu ")
             }
         }
     }
@@ -84,14 +84,14 @@ class AnketeListViewModel {
         }
     }
 
-    fun getUpisaneAnkete(onSuccess : (ankete: List<Anketa>) -> Unit) {
+    fun getUpisaneAnkete(context: Context, onSuccess : (ankete: List<Anketa>) -> Unit) {
         scope.launch {
             val upisaneGrupe = IstrazivanjeIGrupaRepository.getUpisaneGrupe()
             val sveAnkete = AnketaRepository.getAll()
             var grupeZaAnketu : List<Grupa>
             val listaUpisanihAnketa = mutableListOf<Anketa>()
             sveAnkete.forEach {
-                grupeZaAnketu = AnketaRepository.getGroupsForAnketa(it.id)
+                grupeZaAnketu = AnketaRepository.getGroupsForAnketa(context, it.id)
                 for (grupa in grupeZaAnketu) {
                     if(upisaneGrupe.contains(grupa)){
                         listaUpisanihAnketa.add(it)
@@ -104,13 +104,13 @@ class AnketeListViewModel {
         }
     }
 
-    suspend fun getUpisaneAnkete() : List<Anketa> {
+    suspend fun getUpisaneAnkete(context: Context) : List<Anketa> {
             val upisaneGrupe = IstrazivanjeIGrupaRepository.getUpisaneGrupe()
             val sveAnkete = AnketaRepository.getAll()
             var grupeZaAnketu : List<Grupa>
             val listaUpisanihAnketa = mutableListOf<Anketa>()
             sveAnkete.forEach {
-                grupeZaAnketu = AnketaRepository.getGroupsForAnketa(it.id)
+                grupeZaAnketu = AnketaRepository.getGroupsForAnketa(context, it.id)
                 for (grupa in grupeZaAnketu) {
                     if(upisaneGrupe.contains(grupa)){
                         listaUpisanihAnketa.add(it)
@@ -121,15 +121,15 @@ class AnketeListViewModel {
             return listaUpisanihAnketa
         }
 
-
-    fun getUradjeneAnkete(onSuccess: (ankete: List<Anketa>) -> Unit){
+/*
+    fun getUradjeneAnkete(context: Context, onSuccess: (ankete: List<Anketa>) -> Unit){
         scope.launch {
             val upisaneGrupe = IstrazivanjeIGrupaRepository.getUpisaneGrupe()
-            val sveAnkete = getUpisaneAnkete()
+            val sveAnkete = getUpisaneAnkete(context)
             var grupeZaAnketu : List<Grupa>
             val listaUpisanihAnketa = mutableListOf<Anketa>()
             sveAnkete.forEach {
-                grupeZaAnketu = AnketaRepository.getGroupsForAnketa(it.id)
+                grupeZaAnketu = AnketaRepository.getGroupsForAnketa(context, it.id)
                 for (grupa in grupeZaAnketu) {
                     if(upisaneGrupe.contains(grupa)){
                         if(OdgovorRepository.obracunajProgresZaAnketu(it.id) == 100)
@@ -142,23 +142,27 @@ class AnketeListViewModel {
         }
     }
 
-    fun getFutureAnkete(onSuccess: (ankete: List<Anketa>) -> Unit){
+ */
+
+
+
+    fun getFutureAnkete(context: Context, onSuccess: (ankete: List<Anketa>) -> Unit){
         scope.launch {
-            var result = getUpisaneAnkete()
+            var result = getUpisaneAnkete(context)
             val date = Calendar.getInstance().time
             result =  result.filter { it.datumPocetak > date}
             onSuccess.invoke(result)
         }
     }
 
-    fun getExpiredAnkete(onSuccess: (ankete: List<Anketa>) -> Unit){
+    fun getExpiredAnkete(context: Context, onSuccess: (ankete: List<Anketa>) -> Unit){
         scope.launch {
-            val result = getUpisaneAnkete()
+            val result = getUpisaneAnkete(context)
             val date = Calendar.getInstance().time
             val zaVratit = mutableListOf<Anketa>()
             for (anketa in result) {
                 if(anketa.datumKraj != null && anketa.datumKraj < date){
-                    var pokusajiSvi = TakeAnketaRepository.getPoceteAnkete()
+                    var pokusajiSvi = TakeAnketaRepository.getPoceteAnkete(context)
                     pokusajiSvi = pokusajiSvi?.filter { it.AnketumId == anketa.id }
                     if(pokusajiSvi?.isNotEmpty() == true)
                         zaVratit.add(anketa)
@@ -170,9 +174,9 @@ class AnketeListViewModel {
 
 
 
-     fun jeLiUpisanaAnketa(anketaId: Int, onSuccess: (jeLiUpisana: Boolean) -> Unit) {
+     fun jeLiUpisanaAnketa(context: Context, anketaId: Int, onSuccess: (jeLiUpisana: Boolean) -> Unit) {
         scope.launch {
-            val grupeZaAnketu = AnketaRepository.getGroupsForAnketa(anketaId)
+            val grupeZaAnketu = AnketaRepository.getGroupsForAnketa(context, anketaId)
             val upisaneGrupe = IstrazivanjeIGrupaRepository.getUpisaneGrupe()
             var upisana = false
 
@@ -187,8 +191,8 @@ class AnketeListViewModel {
     }
 
 
-    suspend fun jeLiUpisanaAnketa(anketaId: Int) : Boolean{
-        val grupeZaAnketu = AnketaRepository.getGroupsForAnketa(anketaId)
+    suspend fun jeLiUpisanaAnketa(context: Context, anketaId: Int) : Boolean{
+        val grupeZaAnketu = AnketaRepository.getGroupsForAnketa(context, anketaId)
         return grupeZaAnketu.isNotEmpty()
     }
 }

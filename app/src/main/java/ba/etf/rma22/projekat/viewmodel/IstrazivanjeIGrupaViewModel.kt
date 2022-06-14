@@ -4,10 +4,12 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
+import ba.etf.rma22.projekat.data.RMA22DB
 import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.Grupa
 import ba.etf.rma22.projekat.data.models.Istrazivanje
 import ba.etf.rma22.projekat.data.repositories.AnketaRepository
+import ba.etf.rma22.projekat.data.repositories.ApiConfig
 import ba.etf.rma22.projekat.data.repositories.IstrazivanjeIGrupaRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,8 +23,9 @@ class IstrazivanjeIGrupaViewModel {
     suspend fun getAllIstrazivanja(context : Context) : List<Istrazivanje> {
         val result : List<Istrazivanje>
         if(isOnline(context)) {
-            result = IstrazivanjeIGrupaRepository.getIstrazivanja()
+            result = IstrazivanjeIGrupaRepository.getIstrazivanja(context)
             IstrazivanjeIGrupaRepository.writeIstrazivanja(context, result)
+            Log.v("ZAPISE SE", "DA")
         }else{
             result = IstrazivanjeIGrupaRepository.getAllIstrazivanjaDB(context)
         }
@@ -63,9 +66,9 @@ class IstrazivanjeIGrupaViewModel {
         }
     }
 
-     fun upisiUGrupu(idGrupa:Int, onSuccess: (uspjelo: Boolean) -> Unit, onError: () -> Unit) {
+     fun upisiUGrupu(context: Context, idGrupa:Int, onSuccess: (uspjelo: Boolean) -> Unit, onError: () -> Unit) {
         scope.launch {
-            val result = IstrazivanjeIGrupaRepository.upisiUGrupu(idGrupa)
+            val result = IstrazivanjeIGrupaRepository.upisiUGrupu(context, idGrupa)
 
             when (result) {
                 is Boolean -> onSuccess?.invoke(result)
@@ -85,30 +88,26 @@ class IstrazivanjeIGrupaViewModel {
         }
     }
 
-    suspend fun getIstrazivanjeByGroupId(idGrupa: Int) : Istrazivanje {
-        return IstrazivanjeIGrupaRepository.getIstrazivanjeByGrupaId(idGrupa)
-    }
-
-     fun getGrupeZaAnketu(
-        anketa: Anketa,
-        onSuccess: (grupe: List<Grupa>) -> Unit
-    ) {
-        scope.launch {
-            val result = AnketaRepository.getGroupsForAnketa(anketa.id)
-            onSuccess.invoke(result)
-        }
+    suspend fun getIstrazivanjeByGroupId(context: Context, grupaId: Int): Istrazivanje {
+        return IstrazivanjeIGrupaRepository.getIstrazivanjeByGrupaId(context, grupaId)
     }
 
     fun getIstrazivanjaZaAnketu(
+        context: Context,
         anketa: Anketa,
-        onSuccess: (istrazivanja: List<Istrazivanje>) -> Unit
+        onSuccess: ( istrazivanja: List<Istrazivanje>) -> Unit
     ) {
+        var zaVratitIstrazivanaja = mutableListOf<Istrazivanje>()
         scope.launch {
-            val grupeZaAnketu = AnketaRepository.getGroupsForAnketa(anketa.id)
-            var zaVratitIstrazivanaja = mutableListOf<Istrazivanje>()
-
+            if(isOnline(context)){
+                Log.v("ONLINE JE","DAAAA")
+            }
+            var grupeZaAnketu : List<Grupa> = listOf()
+            grupeZaAnketu = AnketaRepository.getGroupsForAnketa(context, anketa.id)
+            Log.v("GRUPE SU!",grupeZaAnketu.toString()+" za " +anketa.id.toString())
             for (grupa in grupeZaAnketu) {
-                zaVratitIstrazivanaja.add(getIstrazivanjeByGroupId(grupa.id))
+                var istrazivanjeDodatno = IstrazivanjeIGrupaRepository.getIstrazivanjeByGrupaId(context, grupa.id)
+                zaVratitIstrazivanaja.add(istrazivanjeDodatno)
             }
             onSuccess.invoke(zaVratitIstrazivanaja)
         }

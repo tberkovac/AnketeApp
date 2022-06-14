@@ -15,6 +15,8 @@ import android.widget.Spinner
 import androidx.fragment.app.Fragment
 import ba.etf.rma22.projekat.MainActivity
 import ba.etf.rma22.projekat.R
+import ba.etf.rma22.projekat.data.models.AccountIGrupa
+import ba.etf.rma22.projekat.data.models.AnketaiGrupe2
 import ba.etf.rma22.projekat.data.models.Grupa
 import ba.etf.rma22.projekat.data.models.Istrazivanje
 import ba.etf.rma22.projekat.viewmodel.IstrazivanjeIGrupaViewModel
@@ -111,7 +113,7 @@ class FragmentIstrazivanje : Fragment() {
         dodajIstrazivanjeDugme.setOnClickListener{
             if(jeLiSveOdabrano() && isOnline(requireContext())) {
                 val grupa = spinerGrupe.selectedItem as Grupa
-                istrazivanjeIGrupaViewModel.upisiUGrupu(grupa.id, ::onSuccessUpisGrupe, ::onError)
+                context?.let { it1 -> istrazivanjeIGrupaViewModel.upisiUGrupu(it1, grupa.id, ::onSuccessUpisGrupe, ::onError) }
             }
         }
 
@@ -126,7 +128,7 @@ class FragmentIstrazivanje : Fragment() {
 
     private fun resetujGrupeSpinerAdapter() {
         adapterGrupeSpiner.clear()
-        adapterGrupeSpiner.add(Grupa(-1,"",-1))
+        adapterGrupeSpiner.add(Grupa(-1,"",-1, AnketaiGrupe2(0,0), AccountIGrupa(0,0)))
         dodajIstrazivanjeDugme.isEnabled = false
     }
 

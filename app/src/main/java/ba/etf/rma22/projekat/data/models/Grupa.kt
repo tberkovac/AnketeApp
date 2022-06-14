@@ -11,12 +11,16 @@ import com.google.gson.annotations.SerializedName
 data class Grupa (
     @PrimaryKey @SerializedName("id") val id: Int,
     @ColumnInfo(name = "naziv") @SerializedName("naziv") val naziv: String,
-    @ColumnInfo(name = "IstrazivanjeId") @SerializedName("IstrazivanjeId") val IstrazivanjeId: Int
+    @ColumnInfo(name = "IstrazivanjeId") @SerializedName("IstrazivanjeId") val IstrazivanjeId: Int,
+    @ColumnInfo(name = "AnketaiGrupe") @SerializedName("AnketaiGrupe") val AnketaiGrupe2 : AnketaiGrupe2?,
+    @ColumnInfo(name = "UpisaneGrupe") @SerializedName("UpisaneGrupe") val UpisaneGrupe : AccountIGrupa?
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readString()!!,
-        parcel.readInt()
+        parcel.readInt(),
+        parcel.readParcelable<AnketaiGrupe2>(ClassLoader.getSystemClassLoader()),
+        parcel.readParcelable<AccountIGrupa>(ClassLoader.getSystemClassLoader())
     ) {
     }
 
@@ -28,6 +32,8 @@ data class Grupa (
         parcel.writeInt(id)
         parcel.writeString(naziv)
         parcel.writeInt(IstrazivanjeId)
+        parcel.writeParcelable(AnketaiGrupe2, 1)
+        parcel.writeParcelable(UpisaneGrupe, 1)
     }
 
     override fun describeContents(): Int {

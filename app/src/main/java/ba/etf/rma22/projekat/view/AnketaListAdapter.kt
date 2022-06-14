@@ -13,7 +13,6 @@ import ba.etf.rma22.projekat.R
 import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.AnketaTaken
 import ba.etf.rma22.projekat.data.models.Istrazivanje
-import ba.etf.rma22.projekat.data.repositories.OdgovorRepository
 import ba.etf.rma22.projekat.viewmodel.AnketeListViewModel
 import ba.etf.rma22.projekat.viewmodel.IstrazivanjeIGrupaViewModel
 import ba.etf.rma22.projekat.viewmodel.OdgovorViewModel
@@ -23,6 +22,7 @@ import java.util.*
 
 class AnketaListAdapter(
     private var ankete : List<Anketa>,
+    private val mContext : Context,
     private val onItemClicked:  (anketa : Anketa) -> Unit
 ) : RecyclerView.Adapter<AnketaListAdapter.AnketaViewHolder>(){
 
@@ -48,47 +48,50 @@ class AnketaListAdapter(
         val takeAnketaViewModel = TakeAnketaViewModel()
         val anketa = ankete[position]
         var pokusaj : AnketaTaken? = null
-/*
-        fun pocetaSuccess(anketaTaken: AnketaTaken?) {
-            pokusaj = anketaTaken
-            jeLiSveOdgovoreno(anketa,holder, pokusaj)
-        }
-        takeAnketaViewModel.getPocetaAnketa(anketa.id,::pocetaSuccess)
 
         holder.nazivAnkete.text = anketa.naziv
 
-        fun popuniIstrazivanja( listIstrazivanje: List<Istrazivanje> ){
+        //popunjava nazive istrazivanja
+        fun popuniIstrazivanja(listIstrazivanje: List<Istrazivanje> ){
             popuniIstrazivanjeTextView(listIstrazivanje.toSet(), holder)
         }
-        istrazivanjeIGrupaViewModel.getIstrazivanjaZaAnketu(anketa, ::popuniIstrazivanja)
+        istrazivanjeIGrupaViewModel.getIstrazivanjaZaAnketu(mContext, anketa, ::popuniIstrazivanja)
 
+        //popunjava progres
         fun popuniPokusaje (listaPokusaja: List<AnketaTaken>){
             postaviProgres(anketa, listaPokusaja, holder)
         }
+        takeAnketaViewModel.getPoceteAnkete(mContext, ::popuniPokusaje)
+
+        fun pocetaSuccess(anketaTaken: AnketaTaken?) {
+            pokusaj = anketaTaken
+            jeLiSveOdgovoreno(mContext, anketa,holder, pokusaj)
+        }
+        takeAnketaViewModel.getPocetaAnketa(mContext, anketa.id,::pocetaSuccess)
+
+/*
 
 
-        takeAnketaViewModel.getPoceteAnkete(::popuniPokusaje)
 
         holder.pismeniStatus.text
 
         fun onSuccess(uspjelo : Boolean){
-
             if(uspjelo)
             holder.itemView.setOnClickListener{
                 onItemClicked(ankete[position])
             }
         }
-
-
         anketaListViewModel.jeLiUpisanaAnketa(anketa.id, ::onSuccess)
 
  */
     }
 
-    private fun jeLiSveOdgovoreno(anketa: Anketa, holder: AnketaViewHolder, pokusaj: AnketaTaken?) {
-        val odgovorViewModel = OdgovorViewModel()
+    private fun jeLiSveOdgovoreno(context: Context, anketa: Anketa, holder: AnketaViewHolder, pokusaj: AnketaTaken?) {
+        val odgovorViewModel = OdgovorViewModel(context)
         odgovorViewModel.postotakOdgovorenih(anketa, ::postaviStatusIPoruku, holder, pokusaj)
     }
+
+
 
     private fun postaviStatusIPoruku(int : Int, holder: AnketaViewHolder, anketa: Anketa, pokusaj: AnketaTaken?) {
         val date = Calendar.getInstance().time

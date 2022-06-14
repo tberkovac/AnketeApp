@@ -41,7 +41,7 @@ class FragmentAnkete : Fragment() {
     companion object{
         lateinit var listaAnketaAdapter : AnketaListAdapter
     }
-
+/*
     private fun onSuccessGetPitanaja(anketa: Anketa, vracenaPitanja : List<Pitanje>){
         var pokusaj : AnketaTaken
         GlobalScope.launch (Dispatchers.Main) {
@@ -50,17 +50,17 @@ class FragmentAnkete : Fragment() {
             pitanja.forEach { pitanje -> MainActivity.adapter.addOnLastPosition(FragmentPitanje.newInstance(anketa, pitanje, pokusaj)) }
             MainActivity.adapter.addOnLastPosition(FragmentPredaj.newInstance(anketa))
         }
-
     }
+ */
 
-
-
+/*
     private fun prikaziAnketu(anketa: Anketa) {
         Log.v("POZOVE SE", "OTVORIT ANKETU ${anketa.id}")
         MainActivity.adapter.removeAll()
         pitanjeAnketaViewModel.getPitanja(anketa, ::onSuccessGetPitanaja)
-
     }
+
+ */
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -73,8 +73,9 @@ class FragmentAnkete : Fragment() {
         listaAnketa.layoutManager = GridLayoutManager(
             view.context, 2, GridLayoutManager.VERTICAL, false
         )
-        listaAnketaAdapter = AnketaListAdapter(arrayListOf()) {
-            prikaziAnketu(it)
+        listaAnketaAdapter = AnketaListAdapter(arrayListOf(), requireContext()) {
+         //   prikaziAnketu(it)
+            null
         }
 
         listaAnketa.adapter = listaAnketaAdapter
@@ -114,11 +115,11 @@ class FragmentAnkete : Fragment() {
                             onError = ::onError)
                     }
                 else if (vrijednost == podaciZaSpinner[2])
-                    anketeListViewModel.getUradjeneAnkete(::popuniAdapter)
+                 //   anketeListViewModel.getUradjeneAnkete(context!!,::popuniAdapter)
                 else if (vrijednost == podaciZaSpinner[3])
-                    anketeListViewModel.getFutureAnkete(::popuniAdapter)
+                    anketeListViewModel.getFutureAnkete(context!!, ::popuniAdapter)
                 else if (vrijednost == podaciZaSpinner[4])
-                    anketeListViewModel.getExpiredAnkete(::popuniAdapter)
+                    anketeListViewModel.getExpiredAnkete(context!!, ::popuniAdapter)
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {}

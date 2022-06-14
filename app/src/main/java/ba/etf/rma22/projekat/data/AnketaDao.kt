@@ -10,7 +10,7 @@ interface AnketaDao {
     @Query("SELECT * FROM anketa")
     fun getAll() : List<Anketa>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOne(vararg ankete: Anketa)
 /*
     @Insert(onConflict = OnConflictStrategy.REPLACE)
