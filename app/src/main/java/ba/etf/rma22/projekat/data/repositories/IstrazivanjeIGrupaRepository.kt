@@ -43,7 +43,6 @@ object IstrazivanjeIGrupaRepository {
     }
 
     suspend fun getGrupe(context: Context) : List<Grupa> {
-        Log.v("GRUPE!", "POZVANOOO")
         return withContext(Dispatchers.IO) {
             val response = ApiConfig.retrofit.getGrupe()
             writeGrupe(context, response)
@@ -55,7 +54,6 @@ object IstrazivanjeIGrupaRepository {
         return withContext(Dispatchers.IO) {
             var db = RMA22DB.getInstance(context)
             val grupe = db.grupaDao().getAll()
-            //   db!!.anketaDao().insertAll(ankete)
             return@withContext grupe
         }
     }

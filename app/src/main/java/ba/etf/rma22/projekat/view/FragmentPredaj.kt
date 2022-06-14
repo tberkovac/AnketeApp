@@ -1,5 +1,6 @@
 package ba.etf.rma22.projekat.view
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -37,7 +38,7 @@ class FragmentPredaj : Fragment() {
         anketa = arguments?.getParcelable("anketica")!!
 
 
-        odrediProgres(postotakUradjenosti, anketa.id)
+        odrediProgres(requireContext(), postotakUradjenosti, anketa.id)
 /*
         if(anketaNijeDostupnaZaRad(anketa)) {
             predajDugme.isEnabled = false
@@ -74,10 +75,11 @@ class FragmentPredaj : Fragment() {
         return rez
     }
 
-    fun odrediProgres(postotakUradjenosti: TextView, anketaId: Int) {
+    fun odrediProgres(context: Context, postotakUradjenosti: TextView, anketaId: Int) {
         GlobalScope.launch {
-            progres = OdgovorRepository.obracunajProgresZaAnketuZaokruzeni(anketaId).toString()
+            progres = OdgovorRepository.obracunajProgresZaAnketuZaokruzeni(context, anketaId).toString()
             postotakUradjenosti.text = "$progres%"
         }
     }
+
 }

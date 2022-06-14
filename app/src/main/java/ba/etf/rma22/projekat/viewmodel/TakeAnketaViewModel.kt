@@ -1,5 +1,6 @@
 package ba.etf.rma22.projekat.viewmodel
 
+import android.content.Context
 import ba.etf.rma22.projekat.data.models.AnketaTaken
 import ba.etf.rma22.projekat.data.repositories.TakeAnketaRepository
 import kotlinx.coroutines.CoroutineScope
@@ -12,17 +13,17 @@ class TakeAnketaViewModel  {
 
     val scope = CoroutineScope(Job() + Dispatchers.Main)
 
-    suspend fun zapocniAnketu(idAnkete:Int ) : AnketaTaken {
-          val mozdaZapocetaAnketa = getPocetaAnketa(idAnkete)
+    suspend fun zapocniAnketu(context: Context, idAnkete:Int ) : AnketaTaken {
+          val mozdaZapocetaAnketa = getPocetaAnketa(context, idAnkete)
         if(mozdaZapocetaAnketa == null)
             return  TakeAnketaRepository.zapocniAnketu(idAnkete)!!
         else
             return mozdaZapocetaAnketa
     }
 
-    fun getPoceteAnkete(onSuccess: KFunction1<List<AnketaTaken>, Unit>){
+    fun getPoceteAnkete(context: Context, onSuccess: KFunction1<List<AnketaTaken>, Unit>){
          scope.launch {
-             val result =  TakeAnketaRepository.getPoceteAnkete()
+             val result =  TakeAnketaRepository.getPoceteAnkete(context)
              //OBRATIT PAZNJU
              if (result != null) {
                  onSuccess.invoke(result)
@@ -30,12 +31,12 @@ class TakeAnketaViewModel  {
          }
     }
 
-    suspend fun getPoceteAnkete() : List<AnketaTaken>?{
-        return TakeAnketaRepository.getPoceteAnkete()
+    suspend fun getPoceteAnkete(context: Context) : List<AnketaTaken>?{
+        return TakeAnketaRepository.getPoceteAnkete(context)
     }
 
-    suspend fun getPocetaAnketa(idAnkete : Int) : AnketaTaken? {
-        val pocete = getPoceteAnkete() ?: return null
+    suspend fun getPocetaAnketa(context: Context, idAnkete : Int) : AnketaTaken? {
+        val pocete = getPoceteAnkete(context) ?: return null
         for (anketaTaken in pocete) {
             if(anketaTaken.AnketumId == idAnkete)
                 return anketaTaken
@@ -43,10 +44,11 @@ class TakeAnketaViewModel  {
         return null
     }
 
-    fun getPocetaAnketa(idAnkete : Int, onSuccess: (AnketaTaken?) -> Unit) {
+    fun getPocetaAnketa(context: Context, idAnkete : Int, onSuccess: (AnketaTaken?) -> Unit) {
         scope.launch {
-            val pocete = getPoceteAnkete()
+            val pocete = getPoceteAnkete(context)
             var trazena : AnketaTaken? = null
+            if(pocete == null) onSuccess.invoke(trazena)
             for (anketaTaken in pocete!!) {
                 if(anketaTaken.AnketumId == idAnkete){
                     trazena =  anketaTaken

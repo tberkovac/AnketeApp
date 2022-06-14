@@ -1,5 +1,6 @@
 package ba.etf.rma22.projekat.viewmodel
 
+import android.content.Context
 import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.Pitanje
 import ba.etf.rma22.projekat.data.repositories.PitanjeAnketaRepository
@@ -12,9 +13,9 @@ class PitanjeAnketaViewModel {
 
     val scope = CoroutineScope(Job() + Dispatchers.Main)
 
-     fun getPitanja(anketa: Anketa, onSuccess: (anketa: Anketa,pitanja : List<Pitanje>)->Unit){
+     fun getPitanja(context:Context, anketa: Anketa, onSuccess: (anketa: Anketa,pitanja : List<Pitanje>)->Unit){
         scope.launch {
-            val result = PitanjeAnketaRepository.getPitanja(anketa.id)
+            val result = PitanjeAnketaRepository.getPitanja(context, anketa.id)
             onSuccess.invoke(anketa,result)
         }
 

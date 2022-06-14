@@ -1,4 +1,4 @@
-package ba.etf.rma22.projekat
+/*package ba.etf.rma22.projekat
 
 
 import ba.etf.rma22.projekat.data.models.*
@@ -42,7 +42,6 @@ class RepositoryUnitTest {
         var istrazivanja = IstrazivanjeIGrupaRepository.getIstrazivanja()
         assertThat(istrazivanja,CoreMatchers.notNullValue())
         assertThat(istrazivanja?.size,CoreMatchers.equalTo(6))
-
     }
 
     @Test
@@ -158,3 +157,6 @@ class RepositoryUnitTest {
     }
 
 }
+
+
+ */

@@ -8,11 +8,10 @@ import androidx.room.TypeConverters
 import ba.etf.rma22.projekat.data.models.*
 
 
-@Database(entities = arrayOf(Anketa::class, Istrazivanje::class, Grupa::class, AnketaiGrupe2::class, AccountIGrupa::class
-   , AnketaTaken::class// , AnketaTaken::class, Grupa::class, Istrazivanje::class, Odgovor::class, OdgovorResponse::class
-//,Pitanje::class, UpisGrupeResponse::class)
-), version = 12)
-@TypeConverters(ConvertDate::class, ConverterAnketaIGrupe::class, ConverterAccountIGrupa::class, ConvertPitanjeAnketa::class, ConverterOpcije::class)
+@Database(entities = arrayOf(Anketa::class, Istrazivanje::class, Grupa::class, AnketaiGrupe2::class,
+    AccountIGrupa::class, AnketaTaken::class, OdgovorResponse::class, Pitanje::class), version = 13)
+@TypeConverters(ConvertDate::class, ConverterAnketaIGrupe::class, ConverterAccountIGrupa::class,
+    ConvertPitanjeAnketa::class, ConverterOpcije::class)
 abstract class RMA22DB : RoomDatabase() {
     abstract fun anketaDao(): AnketaDao
     abstract fun istrazivanjeDao(): IstrazivanjeDao
@@ -20,6 +19,9 @@ abstract class RMA22DB : RoomDatabase() {
     abstract fun anketaiGRUPEDAO2() : AnketaIGrupeDao2
     abstract fun accountIGrupaDAO() : AccountIGrupaDAO
     abstract fun anketaTakenDAO() : AnketaTakenDAO
+    abstract fun odgovorDAO(): OdgovorResponseDAO
+    abstract fun pitanjeDAO(): PitanjeDAO
+
     companion object {
         private var INSTANCE: RMA22DB? = null
         fun getInstance(context: Context): RMA22DB {

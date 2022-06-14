@@ -69,21 +69,14 @@ class AnketaListAdapter(
         }
         takeAnketaViewModel.getPocetaAnketa(mContext, anketa.id,::pocetaSuccess)
 
-/*
-
-
-
-        holder.pismeniStatus.text
-
         fun onSuccess(uspjelo : Boolean){
             if(uspjelo)
             holder.itemView.setOnClickListener{
                 onItemClicked(ankete[position])
             }
         }
-        anketaListViewModel.jeLiUpisanaAnketa(anketa.id, ::onSuccess)
+        anketaListViewModel.jeLiUpisanaAnketa(mContext, anketa.id, ::onSuccess)
 
- */
     }
 
     private fun jeLiSveOdgovoreno(context: Context, anketa: Anketa, holder: AnketaViewHolder, pokusaj: AnketaTaken?) {

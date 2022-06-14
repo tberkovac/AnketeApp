@@ -39,7 +39,7 @@ class OdgovoriListAdapter(
     override fun getView(p0: Int, p1: View?, p2: ViewGroup?): View {
         val odgovor: TextView
         val view = LayoutInflater.from(mcontext).inflate(R.layout.odgovor_element, p2, false)
-        val odgovorViewModel = OdgovorViewModel()
+        val odgovorViewModel = OdgovorViewModel(mcontext)
         odgovor = view.findViewById(R.id.odgovor)
 
         odgovor.text = pitanje.opcije[p0]
@@ -74,7 +74,7 @@ class OdgovoriListAdapter(
 
     fun oznaciOdogovreni(pokusaj: AnketaTaken, p0: Int, odgovor: TextView){
         GlobalScope.launch (Dispatchers.Main){
-            val odgovorViewModel = OdgovorViewModel()
+            val odgovorViewModel = OdgovorViewModel(mcontext)
             val odgovori = odgovorViewModel.getOdgovorResponseAnkete(pokusaj.AnketumId)
             for(x in odgovori){
                 if(x.pitanjeId == pitanje.id && x.odgovoreno == p0){

@@ -59,8 +59,8 @@ class FragmentAnkete : Fragment() {
         MainActivity.adapter.removeAll()
         pitanjeAnketaViewModel.getPitanja(anketa, ::onSuccessGetPitanaja)
     }
+*/
 
- */
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
