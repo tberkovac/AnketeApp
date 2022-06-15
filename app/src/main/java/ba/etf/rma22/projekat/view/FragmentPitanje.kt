@@ -48,10 +48,10 @@ class FragmentPitanje : Fragment() {
         zaustaviDugme.setOnClickListener {
             if(!anketaNijeDostupnaZaRad(anketa)) {
                 MainActivity.adapter.removeAll()
-                MainActivity.adapter.add(0, FragmentAnkete())
+                MainActivity.adapter.add(0, FragmentAnkete(requireContext()))
             }else {
                 MainActivity.adapter.removeAll()
-                MainActivity.adapter.add(0, FragmentAnkete())
+                MainActivity.adapter.add(0, FragmentAnkete(requireContext()))
             }
         }
 

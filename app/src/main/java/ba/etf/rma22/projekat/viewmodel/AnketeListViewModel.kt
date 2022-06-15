@@ -86,7 +86,7 @@ class AnketeListViewModel {
 
     fun getUpisaneAnkete(context: Context, onSuccess : (ankete: List<Anketa>) -> Unit) {
         scope.launch {
-            val upisaneGrupe = IstrazivanjeIGrupaRepository.getUpisaneGrupe()
+            val upisaneGrupe = IstrazivanjeIGrupaRepository.getUpisaneGrupe(context)
             val sveAnkete = AnketaRepository.getAll()
             var grupeZaAnketu : List<Grupa>
             val listaUpisanihAnketa = mutableListOf<Anketa>()
@@ -105,7 +105,7 @@ class AnketeListViewModel {
     }
 
     suspend fun getUpisaneAnkete(context: Context) : List<Anketa> {
-            val upisaneGrupe = IstrazivanjeIGrupaRepository.getUpisaneGrupe()
+            val upisaneGrupe = IstrazivanjeIGrupaRepository.getUpisaneGrupe(context)
             val sveAnkete = AnketaRepository.getAll()
             var grupeZaAnketu : List<Grupa>
             val listaUpisanihAnketa = mutableListOf<Anketa>()
@@ -177,7 +177,7 @@ class AnketeListViewModel {
      fun jeLiUpisanaAnketa(context: Context, anketaId: Int, onSuccess: (jeLiUpisana: Boolean) -> Unit) {
         scope.launch {
             val grupeZaAnketu = AnketaRepository.getGroupsForAnketa(context, anketaId)
-            val upisaneGrupe = IstrazivanjeIGrupaRepository.getUpisaneGrupe()
+            val upisaneGrupe = IstrazivanjeIGrupaRepository.getUpisaneGrupe(context)
             var upisana = false
 
             for (grupa in grupeZaAnketu) {

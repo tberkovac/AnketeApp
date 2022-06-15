@@ -29,7 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class FragmentAnkete : Fragment() {
+class FragmentAnkete(private  val mContext : Context) : Fragment() {
 
     private var anketeListViewModel = AnketeListViewModel()
     private lateinit var spinerFilter : Spinner
@@ -41,25 +41,24 @@ class FragmentAnkete : Fragment() {
     companion object{
         lateinit var listaAnketaAdapter : AnketaListAdapter
     }
-/*
+
     private fun onSuccessGetPitanaja(anketa: Anketa, vracenaPitanja : List<Pitanje>){
         var pokusaj : AnketaTaken
         GlobalScope.launch (Dispatchers.Main) {
-            pokusaj =  takeAnketaViewModel.zapocniAnketu(anketa.id)
+            pokusaj =  takeAnketaViewModel.zapocniAnketu(mContext, anketa.id)
             pitanja = vracenaPitanja
             pitanja.forEach { pitanje -> MainActivity.adapter.addOnLastPosition(FragmentPitanje.newInstance(anketa, pitanje, pokusaj)) }
             MainActivity.adapter.addOnLastPosition(FragmentPredaj.newInstance(anketa))
         }
     }
- */
 
-/*
+
     private fun prikaziAnketu(anketa: Anketa) {
         Log.v("POZOVE SE", "OTVORIT ANKETU ${anketa.id}")
         MainActivity.adapter.removeAll()
-        pitanjeAnketaViewModel.getPitanja(anketa, ::onSuccessGetPitanaja)
+        pitanjeAnketaViewModel.getPitanja(mContext, anketa, ::onSuccessGetPitanaja)
     }
-*/
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,8 +73,7 @@ class FragmentAnkete : Fragment() {
             view.context, 2, GridLayoutManager.VERTICAL, false
         )
         listaAnketaAdapter = AnketaListAdapter(arrayListOf(), requireContext()) {
-         //   prikaziAnketu(it)
-            null
+           prikaziAnketu(it)
         }
 
         listaAnketa.adapter = listaAnketaAdapter

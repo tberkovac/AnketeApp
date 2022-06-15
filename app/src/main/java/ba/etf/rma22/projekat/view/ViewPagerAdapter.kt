@@ -1,13 +1,14 @@
 package ba.etf.rma22.projekat.view
 
+import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
 
-class ViewPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
+class ViewPagerAdapter(context: Context, activity: FragmentActivity) : FragmentStateAdapter(activity) {
 
-    private var fragments = mutableListOf(FragmentAnkete(), FragmentIstrazivanje())
+    private var fragments = mutableListOf(FragmentAnkete(context), FragmentIstrazivanje())
 
     fun add(index: Int, fragment: Fragment) {
         fragments.add(index, fragment)

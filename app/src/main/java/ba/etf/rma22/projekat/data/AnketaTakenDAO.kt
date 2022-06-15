@@ -12,6 +12,6 @@ interface AnketaTakenDAO {
     fun getAll(): List<AnketaTaken>
 
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOne(vararg anketaTaken: AnketaTaken)
 }

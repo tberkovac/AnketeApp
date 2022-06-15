@@ -9,14 +9,18 @@ import ba.etf.rma22.projekat.data.models.AnketaTaken
 import ba.etf.rma22.projekat.data.models.Grupa
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import retrofit2.Response
 
 object TakeAnketaRepository {
 
-    suspend fun zapocniAnketu(idAnkete: Int): AnketaTaken? {
-        val result =  ApiConfig.retrofit.takeAnketa(AccountRepository.getHash(), idAnkete)
+    suspend fun zapocniAnketu(context: Context, idAnkete: Int): AnketaTaken? {
+        var result : Response<AnketaTaken>
+        result = ApiConfig.retrofit.takeAnketa(AccountRepository.getHash(), idAnkete)
 
         if(result.body()== null)
             return null
+        //zapisi u bazu novi pokusaj
+        writePokusaj(context, result.body()!!)
         return result.body()
     }
 
@@ -41,6 +45,21 @@ object TakeAnketaRepository {
         }
     }
 
+    suspend fun writePokusaj(context: Context, pokusaj: AnketaTaken) : String? {
+        return withContext(Dispatchers.IO) {
+            try{
+                var db = RMA22DB.getInstance(context)
+                db.anketaTakenDAO().insertOne(pokusaj)
+
+                return@withContext "success"
+            }
+            catch(error:Exception){
+                error.printStackTrace()
+                return@withContext null
+            }
+        }
+    }
+
     suspend fun writePokusaji(context: Context, pokusaji: List<AnketaTaken>) : String? {
         return withContext(Dispatchers.IO) {
             try{
@@ -55,7 +74,6 @@ object TakeAnketaRepository {
                 return@withContext null
             }
         }
-
     }
 
     suspend fun getPokusaj(idAnketaTaken: Int) : AnketaTaken {

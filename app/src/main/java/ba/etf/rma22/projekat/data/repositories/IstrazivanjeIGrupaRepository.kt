@@ -97,7 +97,7 @@ object IstrazivanjeIGrupaRepository {
     }
 
     suspend fun upisiUGrupu(context: Context, idGrupa:Int):Boolean {
-        if(getUpisaneGrupe().contains(ApiConfig.retrofit.getGrupaById(idGrupa)))
+        if(getUpisaneGrupe(context).contains(ApiConfig.retrofit.getGrupaById(idGrupa)))
             return false
         if(getUpisanaIstrazivanja(context).contains(getIstrazivanjeByGrupaId(context, idGrupa)))
             return false
@@ -109,15 +109,23 @@ object IstrazivanjeIGrupaRepository {
 
     private suspend fun getUpisanaIstrazivanja(context: Context): List<Istrazivanje> {
         var upisanaIstrazivanja = mutableListOf<Istrazivanje>()
-        val upisaneGrupe = getUpisaneGrupe()
+        val upisaneGrupe = getUpisaneGrupe(context)
         upisaneGrupe.forEach {
             upisanaIstrazivanja.add(getIstrazivanjeByGrupaId(context, it.id))
         }
         return upisanaIstrazivanja
     }
 
-    suspend fun getUpisaneGrupe(): List<Grupa> {
-        return ApiConfig.retrofit.getUpisaneGrupe(AccountRepository.getHash())
+    suspend fun getUpisaneGrupe(context: Context): List<Grupa> {
+        var upisaneGrupe: List<Grupa>
+        if(isOnline(context)){
+            upisaneGrupe = ApiConfig.retrofit.getUpisaneGrupe(AccountRepository.getHash())
+            writeGrupe(context, upisaneGrupe)
+        }else{
+            upisaneGrupe = getAllGrupeDB(context)
+            upisaneGrupe = upisaneGrupe.filter { it.UpisaneGrupe != null }
+        }
+        return upisaneGrupe
     }
 
 

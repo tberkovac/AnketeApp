@@ -20,9 +20,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-        adapter = ViewPagerAdapter(this)
         viewPager2 = findViewById(R.id.pager)
+        adapter = ViewPagerAdapter(viewPager2.context, this)
 
         viewPager2.adapter = adapter
 

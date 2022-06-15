@@ -77,9 +77,9 @@ class IstrazivanjeIGrupaViewModel {
         }
     }
 
-    suspend fun getUpisaneGrupe(onSuccess: (grupe: List<Grupa>) -> Unit, onError: () -> Unit){
+    suspend fun getUpisaneGrupe(context: Context, onSuccess: (grupe: List<Grupa>) -> Unit, onError: () -> Unit){
         scope.launch {
-            val result = IstrazivanjeIGrupaRepository.getUpisaneGrupe()
+            val result = IstrazivanjeIGrupaRepository.getUpisaneGrupe(context)
 
             when (result) {
                 is List<Grupa> -> onSuccess?.invoke(result)

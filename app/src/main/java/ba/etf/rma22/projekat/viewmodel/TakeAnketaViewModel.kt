@@ -14,11 +14,12 @@ class TakeAnketaViewModel  {
     val scope = CoroutineScope(Job() + Dispatchers.Main)
 
     suspend fun zapocniAnketu(context: Context, idAnkete:Int ) : AnketaTaken {
-          val mozdaZapocetaAnketa = getPocetaAnketa(context, idAnkete)
-        if(mozdaZapocetaAnketa == null)
-            return  TakeAnketaRepository.zapocniAnketu(idAnkete)!!
+        var mozdaZapocetaAnketa : AnketaTaken?
+        mozdaZapocetaAnketa= getPocetaAnketa(context, idAnkete)
+        if(mozdaZapocetaAnketa == null && TakeAnketaRepository.isOnline(context))
+            return  TakeAnketaRepository.zapocniAnketu(context, idAnkete)!!
         else
-            return mozdaZapocetaAnketa
+            return mozdaZapocetaAnketa!!
     }
 
     fun getPoceteAnkete(context: Context, onSuccess: KFunction1<List<AnketaTaken>, Unit>){

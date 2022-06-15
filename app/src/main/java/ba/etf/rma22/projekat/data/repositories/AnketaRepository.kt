@@ -93,7 +93,7 @@ object AnketaRepository {
 
 
     suspend fun getUpisane(context: Context): List<Anketa> {
-        val upisaneGrupe = IstrazivanjeIGrupaRepository.getUpisaneGrupe()
+        val upisaneGrupe = IstrazivanjeIGrupaRepository.getUpisaneGrupe(context)
         val sveAnkete = getAll()
         var grupeZaAnketu : List<Grupa>
         val listaUpisanihAnketa = mutableListOf<Anketa>()
