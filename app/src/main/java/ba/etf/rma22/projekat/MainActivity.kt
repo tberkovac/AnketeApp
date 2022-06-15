@@ -24,9 +24,5 @@ class MainActivity : AppCompatActivity() {
         adapter = ViewPagerAdapter(viewPager2.context, this)
 
         viewPager2.adapter = adapter
-
     }
-
-
-
 }

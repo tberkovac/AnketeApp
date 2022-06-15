@@ -131,8 +131,8 @@ class FragmentAnkete(private  val mContext : Context) : Fragment() {
             MainActivity.adapter.notifyDataSetChanged()
             MainActivity.adapter.refreshFragment(1, FragmentIstrazivanje())
         }
-       // spinerFilter.setSelection(0)
-      //  anketeListViewModel.getAll(::onSuccessGetAllAnkete, ::onError)
+        spinerFilter.setSelection(0)
+        anketeListViewModel.getAll(mContext, ::onSuccessGetAllAnkete, ::onError)
     }
 
     @SuppressLint("NotifyDataSetChanged")

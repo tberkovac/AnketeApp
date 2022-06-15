@@ -13,7 +13,7 @@ data class Pitanje (
     @ColumnInfo(name = "naziv") @SerializedName("naziv") val naziv: String,
     @ColumnInfo(name = "tekstPitanja") @SerializedName("tekstPitanja") val tekstPitanja: String,
     @ColumnInfo(name = "opcije") @SerializedName("opcije") val opcije: List<String>,
-    @ColumnInfo(name = "PitanjeAnketa") @SerializedName("PitanjeAnketa") val PitanjeAnketa: PitanjeAnketa,
+    @ColumnInfo(name = "PitanjeAnketa") @SerializedName("PitanjeAnketa") val PitanjeAnketa: PitanjeAnketa
 ) : Parcelable {
     @PrimaryKey(autoGenerate = true) var UNIQUEID : Int = 0
 

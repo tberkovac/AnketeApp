@@ -95,9 +95,8 @@ class AnketaListAdapter(
         postotakPravi = int
         val context: Context = holder.statusAnkete.context
         var id : Int
-        if(int == 100 && anketa.datumKraj!= null && date > anketa.datumKraj){
+        if(int == 100 || anketa.datumKraj!= null && date > anketa.datumKraj){
             id = context.resources.getIdentifier("plava", "drawable", context.packageName)
-          //  val pokusaj = TakeAnketaRepository.getPoceteAnkete()
             holder.pismeniStatus.text = "Anketa urađena: " + if(pokusaj != null)formatirajDatum(pokusaj.datumRada) else ""
         }
         else if(date < anketa.datumPocetak){

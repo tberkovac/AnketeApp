@@ -2,6 +2,9 @@ package ba.etf.rma22.projekat.view
 
 import android.content.Context
 import android.graphics.Color
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,7 +55,7 @@ class OdgovoriListAdapter(
             }
          }
 
-        if(!anketaNijeDostupnaZaRad(anketa)) {
+        if(!anketaNijeDostupnaZaRad(anketa) && isOnline(mcontext)) {
             odgovor.isClickable = true
             odgovor.setOnClickListener {
                 odgovorViewModel.postaviOdgovorAnketa(pokusajRjesavanja, pitanje.id, p0, ::onSuccessPostavljenOdgovor)
@@ -82,6 +85,29 @@ class OdgovoriListAdapter(
                 }
             }
         }
+    }
+
+
+    fun isOnline(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (connectivityManager != null) {
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            if (capabilities != null) {
+                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
+                    return true
+                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
+                    return true
+                }
+            }
+        }
+        return false
     }
 
 }
