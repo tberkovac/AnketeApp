@@ -9,6 +9,6 @@ interface PitanjeDAO {
     @Query("SELECT * FROM pitanje")
     fun getAll(): List<Pitanje>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOne(vararg pitanje: Pitanje)
 }

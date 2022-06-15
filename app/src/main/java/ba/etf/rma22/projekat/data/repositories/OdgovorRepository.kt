@@ -27,6 +27,7 @@ object OdgovorRepository {
                 writeOdgovori(context, listaUnesenihOdgovora)
             }else{
                 listaUnesenihOdgovora = getAllOdgovoriDB(context)
+                listaUnesenihOdgovora = listaUnesenihOdgovora.toSet().toList()
                 listaUnesenihOdgovora = listaUnesenihOdgovora.filter { it.anketaTakenId==pokusajRjesavanja.id }
             }
         }

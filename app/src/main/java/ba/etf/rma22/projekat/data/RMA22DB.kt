@@ -9,7 +9,7 @@ import ba.etf.rma22.projekat.data.models.*
 
 
 @Database(entities = arrayOf(Anketa::class, Istrazivanje::class, Grupa::class, AnketaiGrupe2::class,
-    AccountIGrupa::class, AnketaTaken::class, OdgovorResponse::class, Pitanje::class), version = 13)
+    AccountIGrupa::class, AnketaTaken::class, OdgovorResponse::class, Pitanje::class), version = 14)
 @TypeConverters(ConvertDate::class, ConverterAnketaIGrupe::class, ConverterAccountIGrupa::class,
     ConvertPitanjeAnketa::class, ConverterOpcije::class)
 abstract class RMA22DB : RoomDatabase() {

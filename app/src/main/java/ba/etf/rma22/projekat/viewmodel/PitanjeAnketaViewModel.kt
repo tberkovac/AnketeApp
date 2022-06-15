@@ -1,6 +1,7 @@
 package ba.etf.rma22.projekat.viewmodel
 
 import android.content.Context
+import android.util.Log
 import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.Pitanje
 import ba.etf.rma22.projekat.data.repositories.PitanjeAnketaRepository
@@ -15,8 +16,12 @@ class PitanjeAnketaViewModel {
 
      fun getPitanja(context:Context, anketa: Anketa, onSuccess: (anketa: Anketa,pitanja : List<Pitanje>)->Unit){
         scope.launch {
-            val result = PitanjeAnketaRepository.getPitanja(context, anketa.id)
-            onSuccess.invoke(anketa,result)
+            Log.v("ANKETAID", anketa.toString())
+            var result = PitanjeAnketaRepository.getPitanja(context, anketa.id)
+            Log.v("NEFILTRIRANAPITANJA", result.toString())
+            var uniquePitanja = result.toSet().toList()
+            Log.v("filtriranapitanja", uniquePitanja.toString())
+            onSuccess.invoke(anketa,uniquePitanja)
         }
 
     }

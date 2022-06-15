@@ -13,10 +13,8 @@ import ba.etf.rma22.projekat.R
 import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.AnketaTaken
 import ba.etf.rma22.projekat.data.models.Istrazivanje
-import ba.etf.rma22.projekat.viewmodel.AnketeListViewModel
-import ba.etf.rma22.projekat.viewmodel.IstrazivanjeIGrupaViewModel
-import ba.etf.rma22.projekat.viewmodel.OdgovorViewModel
-import ba.etf.rma22.projekat.viewmodel.TakeAnketaViewModel
+import ba.etf.rma22.projekat.data.models.Pitanje
+import ba.etf.rma22.projekat.viewmodel.*
 import java.util.*
 
 
@@ -46,11 +44,17 @@ class AnketaListAdapter(
         val anketaListViewModel = AnketeListViewModel()
         val istrazivanjeIGrupaViewModel = IstrazivanjeIGrupaViewModel()
         val takeAnketaViewModel = TakeAnketaViewModel()
+        val pitanjeAnketaViewModel = PitanjeAnketaViewModel()
         val anketa = ankete[position]
         var pokusaj : AnketaTaken? = null
 
         holder.nazivAnkete.text = anketa.naziv
 
+
+        fun nista(anketa: Anketa, list: List<Pitanje>) {
+
+        }
+        pitanjeAnketaViewModel.getPitanja(mContext,anketa,::nista)
         //popunjava nazive istrazivanja
         fun popuniIstrazivanja(listIstrazivanje: List<Istrazivanje> ){
             popuniIstrazivanjeTextView(listIstrazivanje.toSet(), holder)

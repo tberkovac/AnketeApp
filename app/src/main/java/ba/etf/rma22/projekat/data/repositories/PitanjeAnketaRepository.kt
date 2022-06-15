@@ -18,7 +18,11 @@ object PitanjeAnketaRepository {
             writePitanjaDB(context, pitanja)
         }else{
             pitanja = getPitanjaDB(context)
-            pitanja = pitanja.filter { pitanje -> pitanje.PitanjeAnketa.AnketumId == idAnkete }
+            for (pitanje in pitanja) {
+                Log.v("PITANJEZAUPISATJE", pitanje.toString())
+            }
+            pitanja = pitanja.filter { pitanje -> pitanje.PitanjeAnketa?.AnketumId == idAnkete }
+            pitanja = pitanja.toSet().toList()
         }
         return pitanja
     }
