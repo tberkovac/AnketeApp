@@ -171,11 +171,9 @@ object IstrazivanjeIGrupaRepository {
 
     suspend fun writeGrupe(context: Context, grupe: List<Grupa>) : String?{
         return withContext(Dispatchers.IO) {
-            Log.v("PROSLIJEDJENEGRUPE", grupe.toString())
             try{
                 var db = RMA22DB.getInstance(context)
                 grupe.forEach {
-                    Log.v("UPISANAGRUPA", it.toString())
                     db!!.grupaDao().insertOne(it)
                 }
                 return@withContext "success"
