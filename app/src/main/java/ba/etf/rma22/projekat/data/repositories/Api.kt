@@ -75,14 +75,14 @@ interface Api {
     suspend fun getOdgovoriAnketa(
         @Path("id") id: String,
         @Path("ktid") ktid: Int
-    ) : List<OdgovorResponse>
+    ) : List<Odgovor>
 
     @POST("/student/{id}/anketataken/{ktid}/odgovor")
     suspend fun postaviOdgovorAnketa(
         @Path("id") id: String,
         @Path("ktid") ktid: Int,
         @Body odgovor: SendOdgovor
-    ) : Response<Odgovor>
+    ) : Response<Odgovor2>
 
     @DELETE("/student/{id}/upisugrupeipokusaji")
     suspend fun obrisiPodatke(

@@ -10,9 +10,9 @@ import kotlinx.coroutines.launch
 class AccountViewModel {
     val scope = CoroutineScope(Job() + Dispatchers.Main)
 
-    fun postaviHash(context: Context, acHash:String){
+    fun postaviHash(acHash:String){
         scope.launch {
-            AccountRepository.postaviHash(context, acHash)
+            AccountRepository.postaviHash(acHash)
         }
     }
 }

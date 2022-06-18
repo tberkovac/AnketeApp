@@ -16,11 +16,8 @@ class PitanjeAnketaViewModel {
 
      fun getPitanja(context:Context, anketa: Anketa, onSuccess: (anketa: Anketa,pitanja : List<Pitanje>)->Unit){
         scope.launch {
-            Log.v("ANKETAID", anketa.toString())
-            var result = PitanjeAnketaRepository.getPitanja(context, anketa.id)
-            Log.v("NEFILTRIRANAPITANJA", result.toString())
+            var result = PitanjeAnketaRepository.getPitanja(anketa.id)
             var uniquePitanja = result.toSet().toList()
-            Log.v("filtriranapitanja", uniquePitanja.toString())
             onSuccess.invoke(anketa,uniquePitanja)
         }
 

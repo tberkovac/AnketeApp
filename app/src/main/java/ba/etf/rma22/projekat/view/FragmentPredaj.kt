@@ -18,10 +18,7 @@ import java.util.*
 
 class FragmentPredaj : Fragment() {
     private lateinit var postotakUradjenosti : TextView
-
-    private var pitanjeAnketaViewModel = PitanjeAnketaViewModel()
     private lateinit var anketa: Anketa
-    private lateinit var istrazivanje: Istrazivanje
     private var progres = ""
 
     override fun onCreateView(
@@ -38,7 +35,7 @@ class FragmentPredaj : Fragment() {
         anketa = arguments?.getParcelable("anketica")!!
 
 
-        odrediProgres(requireContext(), postotakUradjenosti, anketa.id)
+        odrediProgres(postotakUradjenosti, anketa.id)
 /*
         if(anketaNijeDostupnaZaRad(anketa)) {
             predajDugme.isEnabled = false
@@ -75,9 +72,9 @@ class FragmentPredaj : Fragment() {
         return rez
     }
 
-    fun odrediProgres(context: Context, postotakUradjenosti: TextView, anketaId: Int) {
+    fun odrediProgres(postotakUradjenosti: TextView, anketaId: Int) {
         GlobalScope.launch {
-            progres = OdgovorRepository.obracunajProgresZaAnketuZaokruzeni(context, anketaId).toString()
+            progres = OdgovorRepository.obracunajProgresZaAnketuZaokruzeni(anketaId).toString()
             postotakUradjenosti.text = "$progres%"
         }
     }

@@ -19,6 +19,7 @@ import ba.etf.rma22.projekat.data.models.AccountIGrupa
 import ba.etf.rma22.projekat.data.models.AnketaiGrupe2
 import ba.etf.rma22.projekat.data.models.Grupa
 import ba.etf.rma22.projekat.data.models.Istrazivanje
+import ba.etf.rma22.projekat.data.repositories.IstrazivanjeIGrupaRepository
 import ba.etf.rma22.projekat.viewmodel.IstrazivanjeIGrupaViewModel
 
 class FragmentIstrazivanje : Fragment() {
@@ -66,7 +67,7 @@ class FragmentIstrazivanje : Fragment() {
                     return
                 }
                 resetujIstrazivanjeSpinerAdapter()
-                popuniIstrazivanja(context!!, spinerGodine.selectedItem.toString().toInt())
+                popuniIstrazivanja(spinerGodine.selectedItem.toString().toInt())
                 zadnji = godine[p2]
             }
 
@@ -85,7 +86,7 @@ class FragmentIstrazivanje : Fragment() {
                     return
                 }
                 resetujGrupeSpinerAdapter()
-                popuniGrupamaGrupeSpinerAdapter(context!!, (spinerIstrazivanja.selectedItem as Istrazivanje).id)
+                popuniGrupamaGrupeSpinerAdapter((spinerIstrazivanja.selectedItem as Istrazivanje).id)
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -113,7 +114,7 @@ class FragmentIstrazivanje : Fragment() {
         dodajIstrazivanjeDugme.setOnClickListener{
             if(jeLiSveOdabrano() && isOnline(requireContext())) {
                 val grupa = spinerGrupe.selectedItem as Grupa
-                context?.let { it1 -> istrazivanjeIGrupaViewModel.upisiUGrupu(it1, grupa.id, ::onSuccessUpisGrupe, ::onError) }
+                istrazivanjeIGrupaViewModel.upisiUGrupu(grupa.id, ::onSuccessUpisGrupe, ::onError)
             }
         }
 
@@ -132,12 +133,12 @@ class FragmentIstrazivanje : Fragment() {
         dodajIstrazivanjeDugme.isEnabled = false
     }
 
-    private fun popuniIstrazivanja(context: Context, godina: Int) {
-        istrazivanjeIGrupaViewModel.getAllIstrazivanjaByGodina(context, godina, ::onSuccessIstrazivanje, ::onError)
+    private fun popuniIstrazivanja( godina: Int) {
+        istrazivanjeIGrupaViewModel.getAllIstrazivanjaByGodina(godina, ::onSuccessIstrazivanje, ::onError)
     }
 
-    private fun popuniGrupamaGrupeSpinerAdapter(context: Context, idIstrazivanja: Int) {
-        istrazivanjeIGrupaViewModel.getGrupeByIstrazivanje(context,idIstrazivanja, ::onSuccessGrupa, ::onError)
+    private fun popuniGrupamaGrupeSpinerAdapter( idIstrazivanja: Int) {
+        istrazivanjeIGrupaViewModel.getGrupeByIstrazivanje(idIstrazivanja, ::onSuccessGrupa, ::onError)
     }
 
     private fun jeLiSveOdabrano() : Boolean{
@@ -151,10 +152,10 @@ class FragmentIstrazivanje : Fragment() {
         MainActivity.adapter.notifyDataSetChanged()
     }
 
-    private fun onSuccessIstrazivanje(context: Context, istrazivanja : List<Istrazivanje>) {
+    private fun onSuccessIstrazivanje( istrazivanja : List<Istrazivanje>) {
         adapterIstrazivanjaSpiner.addAll(istrazivanja)
-        if(isOnline(context))
-            istrazivanjeIGrupaViewModel.writeDB(context, istrazivanja, ::onSuccess2, ::onError2)
+        if(IstrazivanjeIGrupaRepository.isOnline())
+            istrazivanjeIGrupaViewModel.writeDB(istrazivanja, ::onSuccess2, ::onError2)
         adapterIstrazivanjaSpiner.notifyDataSetChanged()
     }
 

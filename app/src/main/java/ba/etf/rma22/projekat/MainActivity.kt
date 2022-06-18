@@ -5,10 +5,14 @@ import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
-import ba.etf.rma22.projekat.data.repositories.AccountRepository
+import ba.etf.rma22.projekat.data.OnlineProvjera
+import ba.etf.rma22.projekat.data.repositories.*
 import ba.etf.rma22.projekat.view.FragmentIstrazivanje
 import ba.etf.rma22.projekat.view.ViewPagerAdapter
 import ba.etf.rma22.projekat.viewmodel.AccountViewModel
+import ba.etf.rma22.projekat.viewmodel.IstrazivanjeIGrupaViewModel
+import ba.etf.rma22.projekat.viewmodel.OdgovorViewModel
+import ba.etf.rma22.projekat.viewmodel.PitanjeAnketaViewModel
 
 
 class MainActivity : AppCompatActivity() {
@@ -23,11 +27,25 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val accountViewModel = AccountViewModel()
+        val odgovorViewModel = OdgovorViewModel()
+        val istrazivanjaIGrupaViewModel = IstrazivanjeIGrupaViewModel()
+
+        AccountRepository.setContext(this.applicationContext)
+        AnketaRepository.setContext(this.applicationContext)
+        IstrazivanjeIGrupaRepository.setContext(this.applicationContext)
+        OdgovorRepository.setContext(this.applicationContext)
+        PitanjeAnketaRepository.setContext(this.applicationContext)
+        TakeAnketaRepository.setContext(this.applicationContext)
+
+        if(OnlineProvjera.isOnline(this.applicationContext)) {
+            odgovorViewModel.obrisiSve()
+            istrazivanjaIGrupaViewModel.obrisiIstrazivanjaDB()
+        }
 
         val hash = intent?.getStringExtra("payload")
 
         if(hash != null)
-        accountViewModel.postaviHash(viewPager2.context, hash!!)
+        accountViewModel.postaviHash( hash!!)
 
         viewPager2 = findViewById(R.id.pager)
         adapter = ViewPagerAdapter(viewPager2.context, this)

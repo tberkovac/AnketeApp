@@ -7,11 +7,15 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
+@Entity
 data class Odgovor (
-    @SerializedName("id") val id : Int,
-    @SerializedName("odgovoreno") val odgovoreno : Int,
-    @SerializedName("AnketaTakenId") val AnketaTakenId: Int
+    @ColumnInfo(name = "odgovoreno") @SerializedName("odgovoreno") val odgovoreno :Int,
+    @ColumnInfo(name = "AnketaTakenId") @SerializedName ("AnketaTakenId") val anketaTakenId : Int,
+    @ColumnInfo(name = "PitanjeId") @SerializedName("PitanjeId") val pitanjeId : Int
 ) : Parcelable {
+
+    @PrimaryKey(autoGenerate = true) var id : Int = 0
+
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readInt(),
@@ -20,28 +24,13 @@ data class Odgovor (
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeInt(id)
         parcel.writeInt(odgovoreno)
-        parcel.writeInt(AnketaTakenId)
+        parcel.writeInt(anketaTakenId)
+        parcel.writeInt(pitanjeId)
     }
 
     override fun describeContents(): Int {
         return 0
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as Odgovor
-
-        if (id != other.id) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        return id
     }
 
     companion object CREATOR : Parcelable.Creator<Odgovor> {

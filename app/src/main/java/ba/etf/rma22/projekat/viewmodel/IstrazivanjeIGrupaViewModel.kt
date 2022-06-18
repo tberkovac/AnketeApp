@@ -20,44 +20,43 @@ class IstrazivanjeIGrupaViewModel {
 
     val scope = CoroutineScope(Job() + Dispatchers.Main)
 
-    suspend fun getAllIstrazivanja(context : Context) : List<Istrazivanje> {
+    suspend fun getAllIstrazivanja() : List<Istrazivanje> {
         val result : List<Istrazivanje>
-        if(isOnline(context)) {
-            result = IstrazivanjeIGrupaRepository.getIstrazivanja(context)
-            IstrazivanjeIGrupaRepository.writeIstrazivanja(context, result)
-            Log.v("ZAPISE SE", "DA")
+        if(IstrazivanjeIGrupaRepository.isOnline()) {
+            result = IstrazivanjeIGrupaRepository.getIstrazivanja()
+            IstrazivanjeIGrupaRepository.writeIstrazivanja(result)
         }else{
-            result = IstrazivanjeIGrupaRepository.getAllIstrazivanjaDB(context)
+            result = IstrazivanjeIGrupaRepository.getAllIstrazivanjaDB()
         }
         return result
     }
 
-    suspend fun getAllGrupe(context : Context) : List<Grupa> {
-        val result = IstrazivanjeIGrupaRepository.getGrupe(context)
-        IstrazivanjeIGrupaRepository.writeGrupe(context, result)
+    suspend fun getAllGrupe() : List<Grupa> {
+        val result = IstrazivanjeIGrupaRepository.getGrupe()
+        IstrazivanjeIGrupaRepository.writeGrupe(result)
         return result
     }
 
-     fun getAllIstrazivanjaByGodina(context: Context, godina : Int, onSuccess: (context: Context, istrazivanja: List<Istrazivanje>) -> Unit,
+     fun getAllIstrazivanjaByGodina( godina : Int, onSuccess: (istrazivanja: List<Istrazivanje>) -> Unit,
                                            onError: () -> Unit) {
         scope.launch{
-            val result = getAllIstrazivanja(context).filter { istrazivanje -> istrazivanje.godina == godina  }
+            val result = getAllIstrazivanja().filter { istrazivanje -> istrazivanje.godina == godina  }
 
             when (result) {
-                is List<Istrazivanje> -> onSuccess?.invoke(context, result)
+                is List<Istrazivanje> -> onSuccess?.invoke(result)
                 else -> onError?.invoke()
             }
         }
     }
 
-     fun getGrupeByIstrazivanje(context: Context,idIstrazivanje: Int, onSuccess: (grupe: List<Grupa>) -> Unit,
+     fun getGrupeByIstrazivanje(idIstrazivanje: Int, onSuccess: (grupe: List<Grupa>) -> Unit,
                                             onError: () -> Unit) {
         scope.launch{
             val result : List<Grupa>
-            if(isOnline(context)) {
-                result = IstrazivanjeIGrupaRepository.getGrupeZaIstrazivanje(context, idIstrazivanje)
+            if(IstrazivanjeIGrupaRepository.isOnline()) {
+                result = IstrazivanjeIGrupaRepository.getGrupeZaIstrazivanje(idIstrazivanje)
             }else{
-                result = IstrazivanjeIGrupaRepository.getAllGrupeDB(context).filter { grupa -> grupa.IstrazivanjeId == idIstrazivanje }
+                result = IstrazivanjeIGrupaRepository.getAllGrupeDB().filter { grupa -> grupa.IstrazivanjeId == idIstrazivanje }
             }
             when (result) {
                 is List<Grupa> -> onSuccess?.invoke(result)
@@ -66,9 +65,9 @@ class IstrazivanjeIGrupaViewModel {
         }
     }
 
-     fun upisiUGrupu(context: Context, idGrupa:Int, onSuccess: (uspjelo: Boolean) -> Unit, onError: () -> Unit) {
+     fun upisiUGrupu(idGrupa:Int, onSuccess: (uspjelo: Boolean) -> Unit, onError: () -> Unit) {
         scope.launch {
-            val result = IstrazivanjeIGrupaRepository.upisiUGrupu(context, idGrupa)
+            val result = IstrazivanjeIGrupaRepository.upisiUGrupu(idGrupa)
 
             when (result) {
                 is Boolean -> onSuccess?.invoke(result)
@@ -77,9 +76,9 @@ class IstrazivanjeIGrupaViewModel {
         }
     }
 
-    suspend fun getUpisaneGrupe(context: Context, onSuccess: (grupe: List<Grupa>) -> Unit, onError: () -> Unit){
+    suspend fun getUpisaneGrupe(onSuccess: (grupe: List<Grupa>) -> Unit, onError: () -> Unit){
         scope.launch {
-            val result = IstrazivanjeIGrupaRepository.getUpisaneGrupe(context)
+            val result = IstrazivanjeIGrupaRepository.getUpisaneGrupe()
 
             when (result) {
                 is List<Grupa> -> onSuccess?.invoke(result)
@@ -88,25 +87,20 @@ class IstrazivanjeIGrupaViewModel {
         }
     }
 
-    suspend fun getIstrazivanjeByGroupId(context: Context, grupaId: Int): Istrazivanje {
-        return IstrazivanjeIGrupaRepository.getIstrazivanjeByGrupaId(context, grupaId)
+    suspend fun getIstrazivanjeByGroupId(grupaId: Int): Istrazivanje {
+        return IstrazivanjeIGrupaRepository.getIstrazivanjeByGrupaId(grupaId)
     }
 
     fun getIstrazivanjaZaAnketu(
-        context: Context,
         anketa: Anketa,
         onSuccess: ( istrazivanja: List<Istrazivanje>) -> Unit
     ) {
         var zaVratitIstrazivanaja = mutableListOf<Istrazivanje>()
         scope.launch {
-            if(isOnline(context)){
-                Log.v("ONLINE JE","DAAAA")
-            }
             var grupeZaAnketu : List<Grupa> = listOf()
-            grupeZaAnketu = AnketaRepository.getGroupsForAnketa(context, anketa.id)
-            Log.v("GRUPE SU!",grupeZaAnketu.toString()+" za " +anketa.id.toString())
+            grupeZaAnketu = AnketaRepository.getGroupsForAnketa(anketa.id)
             for (grupa in grupeZaAnketu) {
-                var istrazivanjeDodatno = IstrazivanjeIGrupaRepository.getIstrazivanjeByGrupaId(context, grupa.id)
+                var istrazivanjeDodatno = IstrazivanjeIGrupaRepository.getIstrazivanjeByGrupaId(grupa.id)
                 zaVratitIstrazivanaja.add(istrazivanjeDodatno)
             }
             onSuccess.invoke(zaVratitIstrazivanaja)
@@ -114,14 +108,20 @@ class IstrazivanjeIGrupaViewModel {
     }
 
 
-    fun writeDB(context: Context, istrazivanja: List<Istrazivanje>, onSuccess: (ankete: String) -> Unit,
+    fun writeDB(istrazivanja: List<Istrazivanje>, onSuccess: (ankete: String) -> Unit,
                 onError: (s: String) -> Unit){
         scope.launch {
-            val result = IstrazivanjeIGrupaRepository.writeIstrazivanja(context, istrazivanja)
+            val result = IstrazivanjeIGrupaRepository.writeIstrazivanja(istrazivanja)
             when (result) {
                 is String -> onSuccess?.invoke(result)
                 else -> onError?.invoke("greska u zapisu istrazivanja")
             }
+        }
+    }
+
+    fun obrisiIstrazivanjaDB(){
+        scope.launch {
+            IstrazivanjeIGrupaRepository.obrisiIstrazivanjaDB()
         }
     }
 

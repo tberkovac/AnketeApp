@@ -59,19 +59,19 @@ class AnketaListAdapter(
         fun popuniIstrazivanja(listIstrazivanje: List<Istrazivanje> ){
             popuniIstrazivanjeTextView(listIstrazivanje.toSet(), holder)
         }
-        istrazivanjeIGrupaViewModel.getIstrazivanjaZaAnketu(mContext, anketa, ::popuniIstrazivanja)
+        istrazivanjeIGrupaViewModel.getIstrazivanjaZaAnketu( anketa, ::popuniIstrazivanja)
 
         //popunjava progres
         fun popuniPokusaje (listaPokusaja: List<AnketaTaken>){
             postaviProgres(anketa, listaPokusaja, holder)
         }
-        takeAnketaViewModel.getPoceteAnkete(mContext, ::popuniPokusaje)
+        takeAnketaViewModel.getPoceteAnkete(::popuniPokusaje)
 
         fun pocetaSuccess(anketaTaken: AnketaTaken?) {
             pokusaj = anketaTaken
-            jeLiSveOdgovoreno(mContext, anketa,holder, pokusaj)
+            jeLiSveOdgovoreno( anketa,holder, pokusaj)
         }
-        takeAnketaViewModel.getPocetaAnketa(mContext, anketa.id,::pocetaSuccess)
+        takeAnketaViewModel.getPocetaAnketa( anketa.id,::pocetaSuccess)
 
         fun onSuccess(uspjelo : Boolean){
             if(uspjelo)
@@ -79,12 +79,12 @@ class AnketaListAdapter(
                 onItemClicked(ankete[position])
             }
         }
-        anketaListViewModel.jeLiUpisanaAnketa(mContext, anketa.id, ::onSuccess)
+        anketaListViewModel.jeLiUpisanaAnketa( anketa.id, ::onSuccess)
 
     }
 
-    private fun jeLiSveOdgovoreno(context: Context, anketa: Anketa, holder: AnketaViewHolder, pokusaj: AnketaTaken?) {
-        val odgovorViewModel = OdgovorViewModel(context)
+    private fun jeLiSveOdgovoreno(anketa: Anketa, holder: AnketaViewHolder, pokusaj: AnketaTaken?) {
+        val odgovorViewModel = OdgovorViewModel()
         odgovorViewModel.postotakOdgovorenih(anketa, ::postaviStatusIPoruku, holder, pokusaj)
     }
 

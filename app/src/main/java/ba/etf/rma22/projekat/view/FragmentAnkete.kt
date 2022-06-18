@@ -1,6 +1,5 @@
 package ba.etf.rma22.projekat.view
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -22,6 +21,8 @@ import ba.etf.rma22.projekat.R
 import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.AnketaTaken
 import ba.etf.rma22.projekat.data.models.Pitanje
+import ba.etf.rma22.projekat.data.repositories.AnketaRepository
+import ba.etf.rma22.projekat.data.repositories.IstrazivanjeIGrupaRepository
 import ba.etf.rma22.projekat.viewmodel.AnketeListViewModel
 import ba.etf.rma22.projekat.viewmodel.PitanjeAnketaViewModel
 import ba.etf.rma22.projekat.viewmodel.TakeAnketaViewModel
@@ -77,11 +78,11 @@ class FragmentAnkete(private  val mContext : Context) : Fragment() {
         }
 
         listaAnketa.adapter = listaAnketaAdapter
-        context?.let {
+
             anketeListViewModel.getAll(
-                it,onSuccess = ::onSuccessGetAllAnkete,
+                onSuccess = ::onSuccessGetAllAnkete,
                 onError = ::onError)
-        }
+
 
         val podaciZaSpinner = arrayOf(
             "Sve moje ankete",
@@ -100,24 +101,22 @@ class FragmentAnkete(private  val mContext : Context) : Fragment() {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 val vrijednost: String = podaciZaSpinner[p2]
                 if (vrijednost == podaciZaSpinner[0]) {
-                    context?.let {
                         anketeListViewModel.getAll(
-                            it,onSuccess = ::onSuccessGetAllAnkete,
+                            onSuccess = ::onSuccessGetAllAnkete,
                             onError = ::onError)
-                    }
+
                 }
                 else if (vrijednost == podaciZaSpinner[1])
-                    context?.let {
                         anketeListViewModel.getAll(
-                            it,onSuccess = ::onSuccessGetAllAnkete,
+                            onSuccess = ::onSuccessGetAllAnkete,
                             onError = ::onError)
-                    }
+
                 else if (vrijednost == podaciZaSpinner[2])
                  //   anketeListViewModel.getUradjeneAnkete(context!!,::popuniAdapter)
                 else if (vrijednost == podaciZaSpinner[3])
-                    anketeListViewModel.getFutureAnkete(context!!, ::popuniAdapter)
+                    anketeListViewModel.getFutureAnkete(::popuniAdapter)
                 else if (vrijednost == podaciZaSpinner[4])
-                    anketeListViewModel.getExpiredAnkete(context!!, ::popuniAdapter)
+                    anketeListViewModel.getExpiredAnkete( ::popuniAdapter)
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {}
@@ -132,14 +131,13 @@ class FragmentAnkete(private  val mContext : Context) : Fragment() {
             MainActivity.adapter.refreshFragment(1, FragmentIstrazivanje())
         }
         spinerFilter.setSelection(0)
-        anketeListViewModel.getAll(mContext, ::onSuccessGetAllAnkete, ::onError)
+        anketeListViewModel.getAll(::onSuccessGetAllAnkete, ::onError)
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun onSuccessGetAllAnkete(context : Context, ankete: List<Anketa>) {
+    private fun onSuccessGetAllAnkete(ankete: List<Anketa>) {
         listaAnketaAdapter.updateAnkete(ankete)
-        if(isOnline(context))
-            anketeListViewModel.writeDB(context,ankete,::ispravnaPoruka,::onError)
+        if(IstrazivanjeIGrupaRepository.isOnline())
+            anketeListViewModel.writeDB(ankete,::ispravnaPoruka,::onError)
         listaAnketaAdapter.notifyDataSetChanged()
     }
 

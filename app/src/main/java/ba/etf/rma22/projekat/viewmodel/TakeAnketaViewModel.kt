@@ -15,29 +15,28 @@ class TakeAnketaViewModel  {
 
     suspend fun zapocniAnketu(context: Context, idAnkete:Int ) : AnketaTaken {
         var mozdaZapocetaAnketa : AnketaTaken?
-        mozdaZapocetaAnketa= getPocetaAnketa(context, idAnkete)
-        if(mozdaZapocetaAnketa == null && TakeAnketaRepository.isOnline(context))
-            return  TakeAnketaRepository.zapocniAnketu(context, idAnkete)!!
+        mozdaZapocetaAnketa= getPocetaAnketa(idAnkete)
+        if(mozdaZapocetaAnketa == null && TakeAnketaRepository.isOnline())
+            return  TakeAnketaRepository.zapocniAnketu(idAnkete)!!
         else
             return mozdaZapocetaAnketa!!
     }
 
-    fun getPoceteAnkete(context: Context, onSuccess: KFunction1<List<AnketaTaken>, Unit>){
+    fun getPoceteAnkete(onSuccess: KFunction1<List<AnketaTaken>, Unit>){
          scope.launch {
-             val result =  TakeAnketaRepository.getPoceteAnkete(context)
-             //OBRATIT PAZNJU
+             val result =  TakeAnketaRepository.getPoceteAnkete()
              if (result != null) {
                  onSuccess.invoke(result)
              }
          }
     }
 
-    suspend fun getPoceteAnkete(context: Context) : List<AnketaTaken>?{
-        return TakeAnketaRepository.getPoceteAnkete(context)
+    suspend fun getPoceteAnkete() : List<AnketaTaken>?{
+        return TakeAnketaRepository.getPoceteAnkete()
     }
 
-    suspend fun getPocetaAnketa(context: Context, idAnkete : Int) : AnketaTaken? {
-        val pocete = getPoceteAnkete(context) ?: return null
+    suspend fun getPocetaAnketa(idAnkete : Int) : AnketaTaken? {
+        val pocete = getPoceteAnkete() ?: return null
         for (anketaTaken in pocete) {
             if(anketaTaken.AnketumId == idAnkete)
                 return anketaTaken
@@ -45,17 +44,20 @@ class TakeAnketaViewModel  {
         return null
     }
 
-    fun getPocetaAnketa(context: Context, idAnkete : Int, onSuccess: (AnketaTaken?) -> Unit) {
+    fun getPocetaAnketa( idAnkete : Int, onSuccess: (AnketaTaken?) -> Unit) {
         scope.launch {
-            val pocete = getPoceteAnkete(context)
+            val pocete = getPoceteAnkete()
             var trazena : AnketaTaken? = null
-            if(pocete == null) onSuccess.invoke(trazena)
-            for (anketaTaken in pocete!!) {
-                if(anketaTaken.AnketumId == idAnkete){
-                    trazena =  anketaTaken
+            if(pocete == null || pocete.isEmpty()) {
+                onSuccess.invoke(trazena)
+            }else {
+                for (anketaTaken in pocete!!) {
+                    if (anketaTaken.AnketumId == idAnkete) {
+                        trazena = anketaTaken
+                    }
                 }
+                onSuccess.invoke(trazena)
             }
-            onSuccess.invoke(trazena)
         }
 
     }

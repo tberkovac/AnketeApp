@@ -10,67 +10,72 @@ import ba.etf.rma22.projekat.data.models.Pitanje
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-object PitanjeAnketaRepository {
-    suspend fun getPitanja(context: Context, idAnkete:Int): List<Pitanje> {
-        var pitanja : List<Pitanje>
-        if(isOnline(context)){
-            pitanja = ApiConfig.retrofit.getPitanjaForAnketa(idAnkete)
-            writePitanjaDB(context, pitanja)
-        }else{
-            pitanja = getPitanjaDB(context)
-            for (pitanje in pitanja) {
-                Log.v("PITANJEZAUPISATJE", pitanje.toString())
-            }
-            pitanja = pitanja.filter { pitanje -> pitanje.PitanjeAnketa?.AnketumId == idAnkete }
-            pitanja = pitanja.toSet().toList()
+class PitanjeAnketaRepository {
+    companion object {
+
+        private lateinit var mcontext: Context
+
+        public fun setContext(context: Context) {
+            mcontext = context
         }
-        return pitanja
-    }
 
-
-    suspend fun getPitanjaDB(context: Context) : List<Pitanje> {
-        return withContext(Dispatchers.IO) {
-            var db = RMA22DB.getInstance(context)
-            val pitanja = db.pitanjeDAO().getAll()
-            return@withContext pitanja
-        }
-    }
-
-    suspend fun writePitanjaDB(context: Context, pitanja: List<Pitanje>) : String?{
-        return withContext(Dispatchers.IO) {
-            try{
-                var db = RMA22DB.getInstance(context)
-                pitanja.forEach {
-                    db!!.pitanjeDAO().insertOne(it)
-                }
-                return@withContext "success"
+        suspend fun getPitanja(idAnkete: Int): List<Pitanje> {
+            var pitanja: List<Pitanje>
+            if (isOnline()) {
+                pitanja = ApiConfig.retrofit.getPitanjaForAnketa(idAnkete)
+                writePitanjaDB(pitanja)
+            } else {
+                pitanja = getPitanjaDB()
+                pitanja = pitanja.filter { pitanje -> pitanje.PitanjeAnketa?.AnketumId == idAnkete }
+                pitanja = pitanja.toSet().toList()
             }
-            catch(error:Exception){
-                error.printStackTrace()
-                return@withContext null
+            return pitanja
+        }
+
+
+        suspend fun getPitanjaDB(): List<Pitanje> {
+            return withContext(Dispatchers.IO) {
+                var db = RMA22DB.getInstance(mcontext)
+                val pitanja = db.pitanjeDAO().getAll()
+                return@withContext pitanja
             }
         }
-    }
 
-    fun isOnline(context: Context): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (connectivityManager != null) {
-            val capabilities =
-                connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-            if (capabilities != null) {
-                if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
-                    return true
-                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
-                    return true
-                } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
-                    Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
-                    return true
+        suspend fun writePitanjaDB(pitanja: List<Pitanje>): String? {
+            return withContext(Dispatchers.IO) {
+                try {
+                    var db = RMA22DB.getInstance(mcontext)
+                    pitanja.forEach {
+                        db!!.pitanjeDAO().insertOne(it)
+                    }
+                    return@withContext "success"
+                } catch (error: Exception) {
+                    error.printStackTrace()
+                    return@withContext null
                 }
             }
         }
-        return false
+
+        fun isOnline(): Boolean {
+            val connectivityManager =
+                mcontext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            if (connectivityManager != null) {
+                val capabilities =
+                    connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+                if (capabilities != null) {
+                    if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
+                        Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
+                        return true
+                    } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                        Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
+                        return true
+                    } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
+                        Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
+                        return true
+                    }
+                }
+            }
+            return false
+        }
     }
 }

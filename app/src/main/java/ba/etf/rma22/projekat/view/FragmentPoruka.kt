@@ -44,7 +44,7 @@ class FragmentPoruka: Fragment() {
             grupa = arguments?.getParcelable("grupica")!!
             GlobalScope.launch(Dispatchers.Main) {
                 istrazivanje =
-                    context?.let { istrazivanjeIGrupaViewModel.getIstrazivanjeByGroupId(it, grupa.id) }!!
+                    istrazivanjeIGrupaViewModel.getIstrazivanjeByGroupId(grupa.id)
                 textPoruka.text = "Uspješno ste upisani u grupu ${grupa.naziv} istraživanja ${istrazivanje.naziv}!"
             }
         }

@@ -12,4 +12,7 @@ interface IstrazivanjeDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOne(vararg istrazivanje: Istrazivanje)
+
+    @Query("DELETE FROM Istrazivanje")
+    suspend fun deleteAll()
 }
