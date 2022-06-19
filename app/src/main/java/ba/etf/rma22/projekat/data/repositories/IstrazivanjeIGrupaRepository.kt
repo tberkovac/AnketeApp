@@ -5,16 +5,11 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
 import ba.etf.rma22.projekat.data.RMA22DB
-import ba.etf.rma22.projekat.data.models.Anketa
-import ba.etf.rma22.projekat.data.models.AnketaiGrupe2
 import ba.etf.rma22.projekat.data.models.Grupa
 import ba.etf.rma22.projekat.data.models.Istrazivanje
 import ba.etf.rma22.projekat.viewmodel.IstrazivanjeIGrupaViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.withContext
-import org.hamcrest.core.Is
-import java.lang.Thread.sleep
+import kotlinx.coroutines.*
+
 
 class IstrazivanjeIGrupaRepository {
     companion object {
@@ -27,13 +22,12 @@ class IstrazivanjeIGrupaRepository {
 
         val istrazivanjeIGrupaViewModel = IstrazivanjeIGrupaViewModel()
         suspend fun getIstrazivanja(offset: Int): List<Istrazivanje> {
-
             return withContext(Dispatchers.IO) {
-
-                sleep(200)
                 val response = ApiConfig.retrofit.getIstrazivanja(offset)
-                async {obrisiIstrazivanjaDB() }.join()
+                if(response.isEmpty()) return@withContext listOf()
 
+                val db = RMA22DB.getInstance(mcontext)
+                db.istrazivanjeDao().deleteAll()
                 writeIstrazivanja(response)
 
                 return@withContext response
