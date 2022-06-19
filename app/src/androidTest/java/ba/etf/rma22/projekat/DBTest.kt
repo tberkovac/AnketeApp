@@ -133,6 +133,8 @@ class DBTest {
         assertThat(istrazivanja, CoreMatchers.notNullValue())
         assertThat(istrazivanja?.size,CoreMatchers.equalTo(5))
         executeCountAndCheck(countIstrazivanje,"broj_istrazivanja",5)
+
+
     }
 
     @Test
