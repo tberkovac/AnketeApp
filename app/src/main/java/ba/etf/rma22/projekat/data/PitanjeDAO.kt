@@ -11,4 +11,7 @@ interface PitanjeDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOne(vararg pitanje: Pitanje)
+
+    @Query("DELETE FROM pitanje")
+    suspend fun deleteAll()
 }

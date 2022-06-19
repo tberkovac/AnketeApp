@@ -14,4 +14,7 @@ interface OdgovorDAO2 {
 
     @Insert
     suspend fun insertOne(vararg odgovor2: Odgovor2)
+
+    @Query("DELETE FROM odgovor2")
+    suspend fun deleteAll()
 }

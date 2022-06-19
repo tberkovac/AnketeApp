@@ -12,4 +12,7 @@ interface AnketaIGrupeDao2 {
 
     @Insert
     suspend fun insertOne(vararg anketaiGrupe2: AnketaiGrupe2)
+
+    @Query("DELETE FROM anketaigrupe2")
+    suspend fun deleteAll()
 }

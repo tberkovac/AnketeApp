@@ -33,8 +33,6 @@ class IstrazivanjeIGrupaRepository {
                 sleep(200)
                 val response = ApiConfig.retrofit.getIstrazivanja(offset)
                 async {obrisiIstrazivanjaDB() }.join()
-                Log.v("ISTRAZIVANJAobrisana", getAllIstrazivanjaDB().toString() + getAllIstrazivanjaDB().size)
-                Log.v("ISTRAZIVANJAyapisana", response.toString()  + getAllIstrazivanjaDB().toString() + getAllIstrazivanjaDB().size)
 
                 writeIstrazivanja(response)
 

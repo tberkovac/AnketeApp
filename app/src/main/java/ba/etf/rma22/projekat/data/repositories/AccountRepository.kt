@@ -30,6 +30,15 @@ class AccountRepository {
                 try {
                     var db = RMA22DB.getInstance(mcontext)
                     db.accountDAO().deleteAll()
+                    db.anketaDao().deleteAll()
+                    db.accountIGrupaDAO().deleteAll()
+                    db.anketaiGRUPEDAO2().deleteAll()
+                    db.anketaTakenDAO().deleteAll()
+                    db.grupaDao().deleteAll()
+                    db.istrazivanjeDao().deleteAll()
+                    db.odgDAO().deleteAll()
+                    db.odgovorDAO().deleteAll()
+                    db.pitanjeDAO().deleteAll()
                     return@withContext "success"
                 } catch (error: Exception) {
                     error.printStackTrace()

@@ -14,6 +14,7 @@ import ba.etf.rma22.projekat.R
 import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.AnketaTaken
 import ba.etf.rma22.projekat.data.models.Pitanje
+import ba.etf.rma22.projekat.data.repositories.OdgovorRepository
 import ba.etf.rma22.projekat.viewmodel.OdgovorViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -79,6 +80,8 @@ class OdgovoriListAdapter(
         GlobalScope.launch (Dispatchers.Main){
             val odgovorViewModel = OdgovorViewModel()
             val odgovori = odgovorViewModel.getOdgovorResponseAnkete(pokusaj.AnketumId)
+            Log.v("ODGOVORI", odgovori.toString()+ pokusaj.AnketumId)
+            Log.v("ODGOVORISVI", OdgovorRepository.getAllOdgovoriDB().toString())
             for(x in odgovori){
                 if(x.pitanjeId == pitanje.id && x.odgovoreno == p0){
                     odgovor.setTextColor(Color.parseColor("#0000FF"))

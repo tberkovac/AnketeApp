@@ -54,7 +54,7 @@ class AnketaListAdapter(
         fun nista(anketa: Anketa, list: List<Pitanje>) {
 
         }
-        pitanjeAnketaViewModel.getPitanja(mContext,anketa,::nista)
+        pitanjeAnketaViewModel.getPitanja(anketa,::nista)
         //popunjava nazive istrazivanja
         fun popuniIstrazivanja(listIstrazivanje: List<Istrazivanje> ){
             popuniIstrazivanjeTextView(listIstrazivanje.toSet(), holder)
@@ -79,16 +79,13 @@ class AnketaListAdapter(
                 onItemClicked(ankete[position])
             }
         }
-        anketaListViewModel.jeLiUpisanaAnketa( anketa.id, ::onSuccess)
-
+        anketaListViewModel.jeLiUpisanaAnketa(mContext, anketa.id, ::onSuccess)
     }
 
     private fun jeLiSveOdgovoreno(anketa: Anketa, holder: AnketaViewHolder, pokusaj: AnketaTaken?) {
         val odgovorViewModel = OdgovorViewModel()
         odgovorViewModel.postotakOdgovorenih(anketa, ::postaviStatusIPoruku, holder, pokusaj)
     }
-
-
 
     private fun postaviStatusIPoruku(int : Int, holder: AnketaViewHolder, anketa: Anketa, pokusaj: AnketaTaken?) {
         val date = Calendar.getInstance().time

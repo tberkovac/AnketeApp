@@ -13,4 +13,6 @@ interface AnketaDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOne(vararg ankete: Anketa)
 
+    @Query("DELETE FROM anketa")
+    suspend fun deleteAll()
 }

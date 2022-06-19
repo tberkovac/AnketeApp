@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
+import ba.etf.rma22.projekat.data.OnlineProvjera.Companion.isOnline
 import ba.etf.rma22.projekat.data.models.Anketa
 import ba.etf.rma22.projekat.data.models.Grupa
 import ba.etf.rma22.projekat.data.repositories.AnketaRepository
@@ -90,15 +91,15 @@ class AnketeListViewModel {
             return listaUpisanihAnketa
         }
 
-/*
-    fun getUradjeneAnkete(context: Context, onSuccess: (ankete: List<Anketa>) -> Unit){
+
+    fun getUradjeneAnkete(onSuccess: (ankete: List<Anketa>) -> Unit){
         scope.launch {
             val upisaneGrupe = IstrazivanjeIGrupaRepository.getUpisaneGrupe()
-            val sveAnkete = getUpisaneAnkete(context)
+            val sveAnkete = getUpisaneAnkete()
             var grupeZaAnketu : List<Grupa>
             val listaUpisanihAnketa = mutableListOf<Anketa>()
             sveAnkete.forEach {
-                grupeZaAnketu = AnketaRepository.getGroupsForAnketa(context, it.id)
+                grupeZaAnketu = AnketaRepository.getGroupsForAnketa(it.id)
                 for (grupa in grupeZaAnketu) {
                     if(upisaneGrupe.contains(grupa)){
                         if(OdgovorRepository.obracunajProgresZaAnketu(it.id) == 100)
@@ -110,8 +111,6 @@ class AnketeListViewModel {
             onSuccess.invoke(listaUpisanihAnketa)
         }
     }
-
- */
 
 
 
@@ -143,19 +142,47 @@ class AnketeListViewModel {
 
 
 
-     fun jeLiUpisanaAnketa(anketaId: Int, onSuccess: (jeLiUpisana: Boolean) -> Unit) {
+     fun jeLiUpisanaAnketa(context: Context, anketaId: Int, onSuccess: (jeLiUpisana: Boolean) -> Unit) {
         scope.launch {
-            val grupeZaAnketu = AnketaRepository.getGroupsForAnketa(anketaId)
-            val upisaneGrupe = IstrazivanjeIGrupaRepository.getUpisaneGrupe()
-            var upisana = false
+            if(isOnline(context)) {
+                val grupeZaAnketu = AnketaRepository.getGroupsForAnketa(anketaId)
+                val upisaneGrupe = IstrazivanjeIGrupaRepository.getUpisaneGrupe()
+                var upisana = false
 
-            for (grupa in grupeZaAnketu) {
-                if(upisaneGrupe.contains(grupa)){
-                    upisana = true
-                    break
+                for (grupa in grupeZaAnketu) {
+                    if (upisaneGrupe.contains(grupa)) {
+                        upisana = true
+                        break
+                    }
+                }
+                onSuccess.invoke(upisana)
+            }else{
+                val pokusaji = TakeAnketaRepository.getPoceteAnkete()
+                if(pokusaji == null || pokusaji.isEmpty()){
+                    onSuccess.invoke(false)
+                }else{
+                    val filtriranoPoAnketiPokusaj = pokusaji.filter { it.AnketumId == anketaId }
+                    if(filtriranoPoAnketiPokusaj.isEmpty())
+                        onSuccess.invoke(false)
+                    else
+                        onSuccess.invoke(true)
                 }
             }
-            onSuccess.invoke(upisana)
+        }
+    }
+
+    fun jeLiZapocetaAnketa(anketaId: Int, onSuccess: (jeLiZapoceta: Boolean) -> Unit) {
+        scope.launch {
+            val pokusaji = TakeAnketaRepository.getPoceteAnkete()
+            if(pokusaji == null || pokusaji.isEmpty()){
+                onSuccess.invoke(false)
+            }else{
+                val filtriranoPoAnketiPokusaj = pokusaji.filter { it.AnketumId == anketaId }
+                if(filtriranoPoAnketiPokusaj.isEmpty())
+                    onSuccess.invoke(false)
+                else
+                    onSuccess.invoke(true)
+            }
         }
     }
 

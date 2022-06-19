@@ -30,7 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class FragmentAnkete(private  val mContext : Context) : Fragment() {
+class FragmentAnkete() : Fragment() {
 
     private var anketeListViewModel = AnketeListViewModel()
     private lateinit var spinerFilter : Spinner
@@ -46,7 +46,7 @@ class FragmentAnkete(private  val mContext : Context) : Fragment() {
     private fun onSuccessGetPitanaja(anketa: Anketa, vracenaPitanja : List<Pitanje>){
         var pokusaj : AnketaTaken
         GlobalScope.launch (Dispatchers.Main) {
-            pokusaj =  takeAnketaViewModel.zapocniAnketu(mContext, anketa.id)
+            pokusaj =  takeAnketaViewModel.zapocniAnketu(anketa.id)
             pitanja = vracenaPitanja
             pitanja.forEach { pitanje -> MainActivity.adapter.addOnLastPosition(FragmentPitanje.newInstance(anketa, pitanje, pokusaj)) }
             MainActivity.adapter.addOnLastPosition(FragmentPredaj.newInstance(anketa))
@@ -57,7 +57,7 @@ class FragmentAnkete(private  val mContext : Context) : Fragment() {
     private fun prikaziAnketu(anketa: Anketa) {
         Log.v("POZOVE SE", "OTVORIT ANKETU ${anketa.id}")
         MainActivity.adapter.removeAll()
-        pitanjeAnketaViewModel.getPitanja(mContext, anketa, ::onSuccessGetPitanaja)
+        pitanjeAnketaViewModel.getPitanja( anketa, ::onSuccessGetPitanaja)
     }
 
 
@@ -100,19 +100,12 @@ class FragmentAnkete(private  val mContext : Context) : Fragment() {
         spinerFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 val vrijednost: String = podaciZaSpinner[p2]
-                if (vrijednost == podaciZaSpinner[0]) {
-                        anketeListViewModel.getAll(
-                            onSuccess = ::onSuccessGetAllAnkete,
-                            onError = ::onError)
-
-                }
+                if (vrijednost == podaciZaSpinner[0])
+                    anketeListViewModel.getUpisaneAnkete(onSuccess = ::onSuccessGetAllAnkete)
                 else if (vrijednost == podaciZaSpinner[1])
-                        anketeListViewModel.getAll(
-                            onSuccess = ::onSuccessGetAllAnkete,
-                            onError = ::onError)
-
+                    anketeListViewModel.getAll( onSuccess = ::onSuccessGetAllAnkete, onError = ::onError)
                 else if (vrijednost == podaciZaSpinner[2])
-                 //   anketeListViewModel.getUradjeneAnkete(context!!,::popuniAdapter)
+                    anketeListViewModel.getUradjeneAnkete(::popuniAdapter)
                 else if (vrijednost == podaciZaSpinner[3])
                     anketeListViewModel.getFutureAnkete(::popuniAdapter)
                 else if (vrijednost == podaciZaSpinner[4])

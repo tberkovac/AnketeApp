@@ -13,4 +13,7 @@ interface AccountIGrupaDAO {
 
     @Insert
     suspend fun insertOne(vararg accountIGrupa: AccountIGrupa)
+
+    @Query("DELETE FROM accountigrupa")
+    suspend fun deleteAll()
 }

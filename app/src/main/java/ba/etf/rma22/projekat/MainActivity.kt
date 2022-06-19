@@ -9,10 +9,7 @@ import ba.etf.rma22.projekat.data.OnlineProvjera
 import ba.etf.rma22.projekat.data.repositories.*
 import ba.etf.rma22.projekat.view.FragmentIstrazivanje
 import ba.etf.rma22.projekat.view.ViewPagerAdapter
-import ba.etf.rma22.projekat.viewmodel.AccountViewModel
-import ba.etf.rma22.projekat.viewmodel.IstrazivanjeIGrupaViewModel
-import ba.etf.rma22.projekat.viewmodel.OdgovorViewModel
-import ba.etf.rma22.projekat.viewmodel.PitanjeAnketaViewModel
+import ba.etf.rma22.projekat.viewmodel.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -29,6 +26,7 @@ class MainActivity : AppCompatActivity() {
         val accountViewModel = AccountViewModel()
         val odgovorViewModel = OdgovorViewModel()
         val istrazivanjaIGrupaViewModel = IstrazivanjeIGrupaViewModel()
+        val takeAnketaViewModel = TakeAnketaViewModel()
 
         AccountRepository.setContext(this.applicationContext)
         AnketaRepository.setContext(this.applicationContext)
@@ -40,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         if(OnlineProvjera.isOnline(this.applicationContext)) {
             odgovorViewModel.obrisiSve()
             istrazivanjaIGrupaViewModel.obrisiIstrazivanjaDB()
+            takeAnketaViewModel.obrisiPokusajeDB()
         }
 
         val hash = intent?.getStringExtra("payload")

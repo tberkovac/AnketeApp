@@ -14,7 +14,7 @@ class PitanjeAnketaViewModel {
 
     val scope = CoroutineScope(Job() + Dispatchers.Main)
 
-     fun getPitanja(context:Context, anketa: Anketa, onSuccess: (anketa: Anketa,pitanja : List<Pitanje>)->Unit){
+     fun getPitanja( anketa: Anketa, onSuccess: (anketa: Anketa,pitanja : List<Pitanje>)->Unit){
         scope.launch {
             var result = PitanjeAnketaRepository.getPitanja(anketa.id)
             var uniquePitanja = result.toSet().toList()

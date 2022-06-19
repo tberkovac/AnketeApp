@@ -8,7 +8,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 
 class ViewPagerAdapter(context: Context, activity: FragmentActivity) : FragmentStateAdapter(activity) {
 
-    private var fragments = mutableListOf(FragmentAnkete(context), FragmentIstrazivanje())
+    private var fragments = mutableListOf(FragmentAnkete(), FragmentIstrazivanje())
 
     fun add(index: Int, fragment: Fragment) {
         fragments.add(index, fragment)

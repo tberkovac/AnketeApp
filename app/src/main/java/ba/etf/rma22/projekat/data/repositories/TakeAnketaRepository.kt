@@ -19,6 +19,8 @@ class TakeAnketaRepository {
         public fun setContext(context: Context) {
             mcontext = context
         }
+
+        ///////////////////////
         suspend fun zapocniAnketu(idAnkete: Int): AnketaTaken? {
             var result: Response<AnketaTaken>
             result = ApiConfig.retrofit.takeAnketa(AccountRepository.getHash(), idAnkete)
@@ -34,11 +36,12 @@ class TakeAnketaRepository {
             val result: List<AnketaTaken>
             if (isOnline()) {
                 result = ApiConfig.retrofit.getTakenAnkete(AccountRepository.getHash())
+                Log.v("POK", result.toString())
                 writePokusaji(result)
             } else {
                 result = getPokusajiDB()
             }
-            if (result == null || result.isEmpty())
+            if ( result.isEmpty())
                 return null
             return result
         }
@@ -47,7 +50,15 @@ class TakeAnketaRepository {
             return withContext(Dispatchers.IO) {
                 var db = RMA22DB.getInstance(mcontext)
                 val pokusaji = db.anketaTakenDAO().getAll()
+                Log.v("POKUSAJISU", pokusaji.toString())
                 return@withContext pokusaji
+            }
+        }
+
+        suspend fun deleteAllPokusajiDB() {
+            return withContext(Dispatchers.IO) {
+                var db = RMA22DB.getInstance(mcontext)
+                db.anketaTakenDAO().deleteAll()
             }
         }
 

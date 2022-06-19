@@ -1,6 +1,7 @@
 package ba.etf.rma22.projekat.viewmodel
 
 import android.content.Context
+import android.util.Log
 import ba.etf.rma22.projekat.data.models.AnketaTaken
 import ba.etf.rma22.projekat.data.repositories.TakeAnketaRepository
 import kotlinx.coroutines.CoroutineScope
@@ -13,7 +14,7 @@ class TakeAnketaViewModel  {
 
     val scope = CoroutineScope(Job() + Dispatchers.Main)
 
-    suspend fun zapocniAnketu(context: Context, idAnkete:Int ) : AnketaTaken {
+    suspend fun zapocniAnketu(idAnkete:Int ) : AnketaTaken {
         var mozdaZapocetaAnketa : AnketaTaken?
         mozdaZapocetaAnketa= getPocetaAnketa(idAnkete)
         if(mozdaZapocetaAnketa == null && TakeAnketaRepository.isOnline())
@@ -22,13 +23,20 @@ class TakeAnketaViewModel  {
             return mozdaZapocetaAnketa!!
     }
 
-    fun getPoceteAnkete(onSuccess: KFunction1<List<AnketaTaken>, Unit>){
+    fun getPoceteAnkete(onSuccess: (List<AnketaTaken>) -> Unit){
          scope.launch {
              val result =  TakeAnketaRepository.getPoceteAnkete()
+             Log.v("*Poceteanketesu", result.toString())
              if (result != null) {
                  onSuccess.invoke(result)
              }
          }
+    }
+
+    fun obrisiPokusajeDB(){
+        scope.launch {
+            TakeAnketaRepository.deleteAllPokusajiDB()
+        }
     }
 
     suspend fun getPoceteAnkete() : List<AnketaTaken>?{

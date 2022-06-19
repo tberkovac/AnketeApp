@@ -13,5 +13,7 @@ interface GrupaDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOne(vararg grupa: Grupa)
 
+    @Query("DELETE FROM grupa")
+    suspend fun deleteAll()
 
 }

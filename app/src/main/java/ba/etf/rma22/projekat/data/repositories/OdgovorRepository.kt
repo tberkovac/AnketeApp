@@ -8,6 +8,7 @@ import ba.etf.rma22.projekat.data.RMA22DB
 import ba.etf.rma22.projekat.data.models.Odgovor
 import ba.etf.rma22.projekat.data.models.SendOdgovor
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.withContext
 import kotlin.Exception
 
@@ -30,12 +31,16 @@ class OdgovorRepository {
                         AccountRepository.getHash(),
                         pokusajRjesavanja.id
                     )
-                    writeOdgovori(listaUnesenihOdgovora)
+                    writeOdgovori(ApiConfig.retrofit.getOdgovoriAnketa(
+                        AccountRepository.getHash(),
+                        pokusajRjesavanja.id
+                    ))
                 } else {
                     listaUnesenihOdgovora = getAllOdgovoriDB()
                     listaUnesenihOdgovora = listaUnesenihOdgovora.toSet().toList()
                     listaUnesenihOdgovora =
                         listaUnesenihOdgovora.filter { it.anketaTakenId == pokusajRjesavanja.id }
+
                 }
             }
             return listaUnesenihOdgovora
@@ -137,6 +142,7 @@ class OdgovorRepository {
                     odgovori.forEach {
                         db!!.odgovorDAO().insertOne(it)
                     }
+                    Log.v("UPISANIODGOVORI", getAllOdgovoriDB().toString())
                     return@withContext "success"
                 } catch (error: Exception) {
                     error.printStackTrace()
