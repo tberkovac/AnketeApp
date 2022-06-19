@@ -146,6 +146,7 @@ class IstrazivanjeIGrupaRepository {
             } else {
                 upisaneGrupe = getAllGrupeDB()
                 upisaneGrupe = upisaneGrupe.filter { it.UpisaneGrupe != null }
+                Log.v("UPISANEGRUPESU", upisaneGrupe.toString())
             }
             return upisaneGrupe
         }

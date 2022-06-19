@@ -57,19 +57,26 @@ class AnketaRepository {
 
         suspend fun getAll(): List<Anketa> {
             var sveAnkete = listOf<Anketa>()
-            var i = 1
-            while (true) {
-                val velicina: Int
-                withContext(Dispatchers.IO) {
-                    val response = ApiConfig.retrofit.getAnkete(i)
-                    velicina = response.size
-                    sveAnkete = sveAnkete.plus(response)
+
+            if(isOnline()) {
+                var i = 1
+                while (true) {
+                    val velicina: Int
+                    withContext(Dispatchers.IO) {
+                        val response = ApiConfig.retrofit.getAnkete(i)
+                        velicina = response.size
+                        sveAnkete = sveAnkete.plus(response)
+                    }
+                    if (velicina != 5)
+                        break
+                    i++
                 }
-                if (velicina != 5)
-                    break
-                i++
+                writeAnkete(sveAnkete)
+                return sveAnkete
+            }else{
+                sveAnkete = getAllDB()
+                return sveAnkete
             }
-            return sveAnkete
         }
 
         suspend fun getGroupsForAnketa( anketaId: Int): List<Grupa> {

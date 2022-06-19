@@ -30,6 +30,7 @@ class TakeAnketaViewModel  {
              if (result != null) {
                  onSuccess.invoke(result)
              }
+             
          }
     }
 
